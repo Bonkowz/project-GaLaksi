@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "577935478102",
+    "project_id": "project-galaksi",
+    "storage_bucket": "project-galaksi.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:577935478102:android:834cc086f6e8857d7e5af7",
+        "android_client_info": {
+          "package_name": "com.galaksi.galaksi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADG0J5IeGnCmqgI_Qt7PuNseecOxEFQWM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
