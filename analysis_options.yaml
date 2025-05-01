@@ -1,1 +1,15 @@
 include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    - always_put_required_named_parameters_first
+    - one_member_abstracts
+    - omit_local_variable_types
+    - prefer_final_locals
+    - prefer_final_in_for_each
+    - prefer_const_constructors
+    - sort_constructors_first
+    - sort_unnamed_constructors_first
+    - use_named_constants
+    - use_if_null_to_convert_nulls_to_bools
+    - use_enums
