@@ -119,6 +119,11 @@ class FirebaseAuthApi {
   Future<void> signOut() async {
     await auth.signOut();
   }
+
+  /// Deletes the currently logged in user
+  Future<void> delete() async {
+    await auth.currentUser?.delete();
+  }
 }
 
 /// Represents a result of an authentication attempt
