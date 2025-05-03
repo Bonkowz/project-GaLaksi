@@ -106,7 +106,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                     ),
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(
-                        errorText: "Please enter your password",
+                        errorText: "Please enter a password",
                       ),
                       FormBuilderValidators.password(
                         minLength: 8,

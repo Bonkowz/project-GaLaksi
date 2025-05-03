@@ -74,7 +74,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                     ),
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(
-                        errorText: "Please enter an email",
+                        errorText: "Please enter your email",
                       ),
                       FormBuilderValidators.email(
                         errorText: "Please enter a valid email",
