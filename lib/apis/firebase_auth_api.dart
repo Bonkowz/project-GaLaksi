@@ -38,7 +38,7 @@ class FirebaseAuthApi {
         ),
         "network-request-failed" => const AuthResult(
           success: false,
-          message: "You are not offline. Please try again later.",
+          message: "You are offline. Please try again later.",
         ),
         "operation-not-allowed" => const AuthResult(
           success: false,
@@ -96,7 +96,7 @@ class FirebaseAuthApi {
         ),
         "network-request-failed" => const AuthResult(
           success: false,
-          message: "You are not offline. Please try again later.",
+          message: "You are offline. Please try again later.",
         ),
         "operation-not-allowed" => const AuthResult(
           success: false,
