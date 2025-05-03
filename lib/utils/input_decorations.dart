@@ -5,6 +5,7 @@ InputDecoration outlineInputDecoration({
   String? labelText,
   String? hintText,
   String? errorText,
+  String? helperText,
   Widget? prefixIcon,
   Widget? suffixIcon,
   EdgeInsetsGeometry? contentPadding,
@@ -21,6 +22,7 @@ InputDecoration outlineInputDecoration({
     prefixIcon: prefixIcon,
     suffixIcon: suffixIcon,
     errorText: errorText,
+    helperText: helperText ?? "",
     contentPadding:
         contentPadding ??
         const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
