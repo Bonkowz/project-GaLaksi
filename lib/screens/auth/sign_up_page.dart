@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:galaksi/providers/auth_notifier.dart';
+import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/utils/input_decorations.dart';
 
 class SignUpPage extends ConsumerStatefulWidget {

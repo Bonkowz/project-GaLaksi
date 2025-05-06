@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:galaksi/providers/auth_notifier.dart';
+import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/screens/auth/auth_screen.dart';
 import 'package:galaksi/screens/auth/sign_out_page.dart';
 import 'package:galaksi/theme/theme.dart';

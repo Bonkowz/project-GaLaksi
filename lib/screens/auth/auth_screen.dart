@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:galaksi/providers/auth_notifier.dart';
+import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/screens/auth/sign_in_page.dart';
 import 'package:galaksi/screens/auth/sign_up_page.dart';
 
