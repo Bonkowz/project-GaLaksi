@@ -67,7 +67,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                         (event) =>
                             FocusManager.instance.primaryFocus?.unfocus(),
                     keyboardType: TextInputType.emailAddress,
-                    decoration: outlineInputDecoration(
+                    decoration: InputDecorations.outlineBorder(
                       context: context,
                       prefixIcon: const Icon(Icons.email_rounded),
                       labelText: "Email*",
@@ -88,7 +88,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                         (event) =>
                             FocusManager.instance.primaryFocus?.unfocus(),
                     keyboardType: TextInputType.visiblePassword,
-                    decoration: outlineInputDecoration(
+                    decoration: InputDecorations.outlineBorder(
                       context: context,
                       prefixIcon: const Icon(Icons.password_rounded),
                       suffixIcon: Padding(

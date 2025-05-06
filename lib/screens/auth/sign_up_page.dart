@@ -66,7 +66,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                     onTapOutside:
                         (event) =>
                             FocusManager.instance.primaryFocus?.unfocus(),
-                    decoration: outlineInputDecoration(
+                    decoration: InputDecorations.outlineBorder(
                       context: context,
                       prefixIcon: const Icon(Icons.email_rounded),
                       labelText: "Email*",
@@ -86,7 +86,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                     onTapOutside:
                         (event) =>
                             FocusManager.instance.primaryFocus?.unfocus(),
-                    decoration: outlineInputDecoration(
+                    decoration: InputDecorations.outlineBorder(
                       context: context,
                       prefixIcon: const Icon(Icons.password),
                       suffixIcon: Padding(
