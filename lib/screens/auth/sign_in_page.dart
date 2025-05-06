@@ -50,74 +50,91 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     final authNotifier = ref.read(authNotifierProvider.notifier);
     final authState = ref.watch(authNotifierProvider);
 
-    return Center(
-      child: Form(
-        key: formKey,
-        autovalidateMode: AutovalidateMode.onUnfocus,
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: colorScheme.primary,
+        toolbarHeight: 100,
+        centerTitle: true,
+        title: Text(
+          "Welcome back!",
+          style: textTheme.headlineMedium!.copyWith(
+            color: colorScheme.onPrimary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              "Sign in",
-              style: Theme.of(
-                context,
-              ).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.bold),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 32, 16, 0),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  spacing: 16,
+                  children: [
+                    TextFormField(
+                      controller: emailTextController,
+                      onTapOutside:
+                          (event) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecorations.outlineBorder(
+                        context: context,
+                        prefixIcon: const Icon(Icons.email_rounded),
+                        labelText: "Email*",
+                        borderColor: colorScheme.primary,
+                        borderRadius: 16,
+                      ),
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(
+                          errorText: "Please enter your email",
+                        ),
+                        FormBuilderValidators.email(
+                          errorText: "Please enter a valid email",
+                        ),
+                      ]),
+                    ),
+                    TextFormField(
+                      controller: passwordTextController,
+                      obscureText: !passwordIsVisible,
+                      onTapOutside:
+                          (event) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
+                      keyboardType: TextInputType.visiblePassword,
+                      decoration: InputDecorations.outlineBorder(
+                        context: context,
+                        prefixIcon: const Icon(Icons.password_rounded),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: _showPasswordButton(),
+                        ),
+                        labelText: "Password*",
+                        borderColor: colorScheme.primary,
+                        borderRadius: 16,
+                      ),
+                      validator: FormBuilderValidators.required(
+                        errorText: "Please enter your password",
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
             Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                spacing: 12,
-                children: [
-                  TextFormField(
-                    controller: emailTextController,
-                    onTapOutside:
-                        (event) =>
-                            FocusManager.instance.primaryFocus?.unfocus(),
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecorations.outlineBorder(
-                      context: context,
-                      prefixIcon: const Icon(Icons.email_rounded),
-                      labelText: "Email*",
-                    ),
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(
-                        errorText: "Please enter your email",
-                      ),
-                      FormBuilderValidators.email(
-                        errorText: "Please enter a valid email",
-                      ),
-                    ]),
-                  ),
-                  TextFormField(
-                    controller: passwordTextController,
-                    obscureText: !passwordIsVisible,
-                    onTapOutside:
-                        (event) =>
-                            FocusManager.instance.primaryFocus?.unfocus(),
-                    keyboardType: TextInputType.visiblePassword,
-                    decoration: InputDecorations.outlineBorder(
-                      context: context,
-                      prefixIcon: const Icon(Icons.password_rounded),
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: IconButton(
-                          onPressed:
-                              () => setState(() {
-                                passwordIsVisible = !passwordIsVisible;
-                              }),
-                          icon:
-                              passwordIsVisible
-                                  ? const Icon(Icons.visibility_off_rounded)
-                                  : const Icon(Icons.visibility_rounded),
+              padding: const EdgeInsets.all(16.0),
+              child: AnimatedSwitcher(
+                duration: Durations.medium1,
+                child:
+                    message == null
+                        ? const SizedBox.shrink()
+                        : Text(
+                          message!,
+                          style: Theme.of(context).textTheme.labelLarge,
                         ),
-                      ),
-                      labelText: "Password*",
-                    ),
-                    validator: FormBuilderValidators.required(
-                      errorText: "Please enter your password",
-                    ),
-                  ),
-                ],
               ),
             ),
             FilledButton(
@@ -125,32 +142,36 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                   authState.isLoading ? null : () async => await submit(),
               child: const Text("Sign in"),
             ),
-            Row(
+            const SizedBox(height: 32),
+            Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 6,
               children: [
                 const Text("Don't have an account?"),
                 TextButton.icon(
                   onPressed: () {
                     authNotifier.switchPages();
                   },
-                  label: const Text("Sign up"),
+                  label: const Text("Create an account"),
                 ),
               ],
-            ),
-            AnimatedSwitcher(
-              duration: Durations.medium1,
-              child:
-                  message == null
-                      ? const SizedBox.shrink()
-                      : Text(
-                        message!,
-                        style: Theme.of(context).textTheme.labelLarge,
-                      ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  IconButton _showPasswordButton() {
+    final colorScheme = Theme.of(context).colorScheme;
+    return IconButton(
+      onPressed:
+          () => setState(() {
+            passwordIsVisible = !passwordIsVisible;
+          }),
+      icon:
+          passwordIsVisible
+              ? Icon(Icons.visibility_off_rounded, color: colorScheme.outline)
+              : Icon(Icons.visibility_rounded, color: colorScheme.outline),
     );
   }
 }

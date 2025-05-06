@@ -43,114 +43,117 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
     final authNotifier = ref.read(authNotifierProvider.notifier);
     final authState = ref.watch(authNotifierProvider);
 
-    return Center(
-      child: Form(
-        key: formKey,
-        autovalidateMode: AutovalidateMode.onUnfocus,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Sign up",
-              style: Theme.of(
-                context,
-              ).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.bold),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                spacing: 12,
-                children: [
-                  TextFormField(
-                    controller: emailTextController,
-                    onTapOutside:
-                        (event) =>
-                            FocusManager.instance.primaryFocus?.unfocus(),
-                    decoration: InputDecorations.outlineBorder(
-                      context: context,
-                      prefixIcon: const Icon(Icons.email_rounded),
-                      labelText: "Email*",
-                    ),
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(
-                        errorText: "Please enter an email",
+    return Scaffold(
+      appBar: AppBar(),
+      body: Center(
+        child: Form(
+          key: formKey,
+          autovalidateMode: AutovalidateMode.onUnfocus,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Sign up",
+                style: Theme.of(context).textTheme.headlineLarge!.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  spacing: 12,
+                  children: [
+                    TextFormField(
+                      controller: emailTextController,
+                      onTapOutside:
+                          (event) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
+                      decoration: InputDecorations.outlineBorder(
+                        context: context,
+                        prefixIcon: const Icon(Icons.email_rounded),
+                        labelText: "Email*",
                       ),
-                      FormBuilderValidators.email(
-                        errorText: "Please enter a valid email",
-                      ),
-                    ]),
-                  ),
-                  TextFormField(
-                    controller: passwordTextController,
-                    obscureText: !passwordIsVisible,
-                    onTapOutside:
-                        (event) =>
-                            FocusManager.instance.primaryFocus?.unfocus(),
-                    decoration: InputDecorations.outlineBorder(
-                      context: context,
-                      prefixIcon: const Icon(Icons.password),
-                      suffixIcon: Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: IconButton(
-                          onPressed:
-                              () => setState(() {
-                                passwordIsVisible = !passwordIsVisible;
-                              }),
-                          icon:
-                              passwordIsVisible
-                                  ? const Icon(Icons.visibility_off_rounded)
-                                  : const Icon(Icons.visibility_rounded),
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(
+                          errorText: "Please enter an email",
                         ),
-                      ),
-                      labelText: "Password*",
+                        FormBuilderValidators.email(
+                          errorText: "Please enter a valid email",
+                        ),
+                      ]),
                     ),
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(
-                        errorText: "Please enter a password",
+                    TextFormField(
+                      controller: passwordTextController,
+                      obscureText: !passwordIsVisible,
+                      onTapOutside:
+                          (event) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
+                      decoration: InputDecorations.outlineBorder(
+                        context: context,
+                        prefixIcon: const Icon(Icons.password),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: IconButton(
+                            onPressed:
+                                () => setState(() {
+                                  passwordIsVisible = !passwordIsVisible;
+                                }),
+                            icon:
+                                passwordIsVisible
+                                    ? const Icon(Icons.visibility_off_rounded)
+                                    : const Icon(Icons.visibility_rounded),
+                          ),
+                        ),
+                        labelText: "Password*",
                       ),
-                      FormBuilderValidators.password(
-                        minLength: 8,
-                        minLowercaseCount: 0,
-                        minNumberCount: 0,
-                        minUppercaseCount: 0,
-                        minSpecialCharCount: 0,
-                        errorText:
-                            "Password must be at least 8 characters long",
-                      ),
-                    ]),
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(
+                          errorText: "Please enter a password",
+                        ),
+                        FormBuilderValidators.password(
+                          minLength: 8,
+                          minLowercaseCount: 0,
+                          minNumberCount: 0,
+                          minUppercaseCount: 0,
+                          minSpecialCharCount: 0,
+                          errorText:
+                              "Password must be at least 8 characters long",
+                        ),
+                      ]),
+                    ),
+                  ],
+                ),
+              ),
+              FilledButton(
+                onPressed:
+                    authState.isLoading ? null : () async => await submit(),
+                child: const Text("Sign up"),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                spacing: 6,
+                children: [
+                  const Text("Already have an account?"),
+                  TextButton.icon(
+                    onPressed: () {
+                      authNotifier.switchPages();
+                    },
+                    label: const Text("Sign in"),
                   ),
                 ],
               ),
-            ),
-            FilledButton(
-              onPressed:
-                  authState.isLoading ? null : () async => await submit(),
-              child: const Text("Sign up"),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              spacing: 6,
-              children: [
-                const Text("Already have an account?"),
-                TextButton.icon(
-                  onPressed: () {
-                    authNotifier.switchPages();
-                  },
-                  label: const Text("Sign in"),
-                ),
-              ],
-            ),
-            AnimatedSwitcher(
-              duration: Durations.medium1,
-              child:
-                  message == null
-                      ? const SizedBox.shrink()
-                      : Text(
-                        message!,
-                        style: Theme.of(context).textTheme.labelLarge,
-                      ),
-            ),
-          ],
+              AnimatedSwitcher(
+                duration: Durations.medium1,
+                child:
+                    message == null
+                        ? const SizedBox.shrink()
+                        : Text(
+                          message!,
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+              ),
+            ],
+          ),
         ),
       ),
     );
