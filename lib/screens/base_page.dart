@@ -3,6 +3,7 @@ import 'package:galaksi/screens/main/find_people_page.dart';
 import 'package:galaksi/screens/main/home_page.dart';
 import 'package:galaksi/screens/main/my_friends_page.dart';
 import 'package:galaksi/screens/main/profile_page.dart';
+import 'package:galaksi/widgets/custom_bottom_nav_bar.dart';
 
 /// [BasePage] will act as a Parent of the following pages through a [BottomNavigationBar]:
 /// [HomePage], [FindPeoplePage], [ProfilePage], [MyFriendsPage]
@@ -36,43 +37,6 @@ class _BasePageState extends State<BasePage> {
     {'pageIndex': 3, 'icon': Icons.people, 'label': "Friends"},
   ];
 
-  List<Widget> _navigationButtons(
-    BuildContext context,
-    List<Map<String, dynamic>> items,
-  ) {
-    final theme = Theme.of(context);
-
-    return items.map((item) {
-      final isSelected = item['pageIndex'] == _selectedPage;
-
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(
-            onPressed: () => _setPage(item['pageIndex'] as int),
-            icon: Icon(
-              item['icon'] as IconData,
-              color:
-                  isSelected
-                      ? theme.colorScheme.primary
-                      : theme.iconTheme.color,
-            ),
-          ),
-          Text(
-            item['label'] as String,
-            style: theme.textTheme.labelSmall!.copyWith(
-              color:
-                  isSelected
-                      ? theme.colorScheme.primary
-                      : Colors.transparent, // Hide but reserve space
-            ),
-          ),
-        ],
-      );
-    }).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,38 +51,10 @@ class _BasePageState extends State<BasePage> {
           color: Theme.of(context).colorScheme.primary,
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        notchMargin: 8,
-        elevation: 100, // Slight lift
-        shadowColor: Colors.black,
-        shape: const CircularNotchedRectangle(),
-        color: Theme.of(context).colorScheme.surfaceContainer,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Expanded(
-              flex: 2,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: _navigationButtons(
-                  context,
-                  _navigationItems.sublist(0, 2),
-                ),
-              ),
-            ),
-            const Expanded(flex: 1, child: Spacer()),
-            Expanded(
-              flex: 2,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: _navigationButtons(
-                  context,
-                  _navigationItems.sublist(2, 4),
-                ),
-              ),
-            ),
-          ],
-        ),
+      bottomNavigationBar: CustomBottomNavBar(
+        items: _navigationItems,
+        selectedPage: _selectedPage,
+        onPageSelected: _setPage,
       ),
       body: _pages[_selectedPage],
     );
