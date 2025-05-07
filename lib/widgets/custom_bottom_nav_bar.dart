@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
-  final List<Map<String, dynamic>> items;
-  final int selectedPage;
-  final Function(int) onPageSelected;
-
   const CustomBottomNavBar({
-    super.key,
     required this.items,
     required this.selectedPage,
     required this.onPageSelected,
+    super.key,
   });
+
+  final List<Map<String, dynamic>> items;
+  final int selectedPage;
+  final Function(int) onPageSelected;
 
   List<Widget> _navigationButtons(
     BuildContext context,
@@ -41,7 +41,7 @@ class CustomBottomNavBar extends StatelessWidget {
               color:
                   isSelected
                       ? theme.colorScheme.primary
-                      : Colors.transparent, // Hide but reserve space
+                      : Colors.transparent, // For reserving space
             ),
           ),
         ],
@@ -54,7 +54,7 @@ class CustomBottomNavBar extends StatelessWidget {
     return BottomAppBar(
       notchMargin: 8,
       elevation: 100, // Slight lift
-      shadowColor: Colors.black,
+      shadowColor: Theme.of(context).colorScheme.shadow,
       shape: const CircularNotchedRectangle(),
       color: Theme.of(context).colorScheme.surfaceContainer,
       child: Row(

@@ -5,7 +5,7 @@ import 'package:galaksi/screens/main/my_friends_page.dart';
 import 'package:galaksi/screens/main/profile_page.dart';
 import 'package:galaksi/widgets/custom_bottom_nav_bar.dart';
 
-/// [BasePage] will act as a Parent of the following pages through a [BottomNavigationBar]:
+/// [BasePage] will act as a Parent of the following pages through a [CustomBottomNavBar]:
 /// [HomePage], [FindPeoplePage], [ProfilePage], [MyFriendsPage]
 class BasePage extends StatefulWidget {
   const BasePage({super.key});
