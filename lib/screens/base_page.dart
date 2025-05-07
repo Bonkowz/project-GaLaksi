@@ -29,21 +29,20 @@ class _BasePageState extends State<BasePage> {
     const MyFriendsPage(),
   ];
 
-  List<Widget> _navigationButtons(BuildContext context) {
-    final icons = [
-      {'pageIndex': 0, 'icon': Icons.home, 'label': "Home"},
-      {'pageIndex': 1, 'icon': Icons.person_search, 'label': "Find People"},
-      // Icons.person_search,
-      // null,
-      {'pageIndex': 2, 'icon': Icons.person, 'label': "Me"},
-      {'pageIndex': 3, 'icon': Icons.people, 'label': "Friends"},
-      // Icons.person,
-      // Icons.people,
-    ];
+  final _navigationItems = [
+    {'pageIndex': 0, 'icon': Icons.home, 'label': "Home"},
+    {'pageIndex': 1, 'icon': Icons.person_search, 'label': "Find People"},
+    {'pageIndex': 2, 'icon': Icons.person, 'label': "Me"},
+    {'pageIndex': 3, 'icon': Icons.people, 'label': "Friends"},
+  ];
 
+  List<Widget> _navigationButtons(
+    BuildContext context,
+    List<Map<String, dynamic>> items,
+  ) {
     final theme = Theme.of(context);
 
-    return icons.map((item) {
+    return items.map((item) {
       final isSelected = item['pageIndex'] == _selectedPage;
 
       return Column(
@@ -60,13 +59,15 @@ class _BasePageState extends State<BasePage> {
                       : theme.iconTheme.color,
             ),
           ),
-          if (isSelected)
-            Text(
-              item['label'] as String,
-              style: theme.textTheme.labelSmall!.copyWith(
-                color: theme.colorScheme.primary,
-              ),
+          Text(
+            item['label'] as String,
+            style: theme.textTheme.labelSmall!.copyWith(
+              color:
+                  isSelected
+                      ? theme.colorScheme.primary
+                      : Colors.transparent, // Hide but reserve space
             ),
+          ),
         ],
       );
     }).toList();
@@ -93,9 +94,30 @@ class _BasePageState extends State<BasePage> {
         shape: const CircularNotchedRectangle(),
         color: Theme.of(context).colorScheme.surfaceContainer,
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: _navigationButtons(context),
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Expanded(
+              flex: 2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: _navigationButtons(
+                  context,
+                  _navigationItems.sublist(0, 2),
+                ),
+              ),
+            ),
+            const Expanded(flex: 1, child: Spacer()),
+            Expanded(
+              flex: 2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: _navigationButtons(
+                  context,
+                  _navigationItems.sublist(2, 4),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
       body: _pages[_selectedPage],
