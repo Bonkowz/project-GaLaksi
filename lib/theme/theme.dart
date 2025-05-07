@@ -372,6 +372,10 @@ class GalaksiTheme {
     ),
     scaffoldBackgroundColor: colorScheme.surface,
     canvasColor: colorScheme.surface,
+    // ignore: deprecated_member_use
+    progressIndicatorTheme: const ProgressIndicatorThemeData(year2023: false),
+    // ignore: deprecated_member_use
+    sliderTheme: const SliderThemeData(year2023: false),
   );
 
   /// Mikado Yellow
