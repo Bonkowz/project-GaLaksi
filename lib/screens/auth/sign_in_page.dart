@@ -12,7 +12,7 @@ class SignInPage extends ConsumerStatefulWidget {
 }
 
 class _SignInPageState extends ConsumerState<SignInPage> {
-  final formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
   var passwordIsVisible = false;
@@ -23,7 +23,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
       message = null;
     });
 
-    final formIsValid = formKey.currentState?.validate() ?? false;
+    final formIsValid = _formKey.currentState?.validate() ?? false;
     if (!formIsValid) {
       return;
     }
@@ -55,13 +55,13 @@ class _SignInPageState extends ConsumerState<SignInPage> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: colorScheme.primary,
+        backgroundColor: colorScheme.primaryContainer,
         toolbarHeight: 100,
         centerTitle: true,
         title: Text(
           "Welcome back!",
           style: textTheme.headlineMedium!.copyWith(
-            color: colorScheme.onPrimary,
+            color: colorScheme.onPrimaryContainer,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -72,7 +72,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 32, 16, 0),
               child: Form(
-                key: formKey,
+                key: _formKey,
                 child: Column(
                   spacing: 16,
                   children: [

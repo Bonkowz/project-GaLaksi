@@ -11,7 +11,7 @@ class AuthScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authNotifierProvider);
     return AnimatedSwitcher(
-      duration: Durations.long1,
+      duration: Durations.medium1,
       child:
           authState.isSignIn
               ? const SignInPage(key: ValueKey("SignIn"))
