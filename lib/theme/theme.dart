@@ -213,7 +213,7 @@ class GalaksiTheme {
       onSurfaceVariant: Color(0xffcac4d0),
       outline: Color(0xff938f99),
       outlineVariant: Color(0xff49454f),
-      shadow: Color(0xffffffff),
+      shadow: Color(0xff000000),
       scrim: Color(0xff000000),
       inverseSurface: Color(0xffe6e0e9),
       inverseOnSurface: Color(0xff322f35),
