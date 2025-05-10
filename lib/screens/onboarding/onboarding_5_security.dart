@@ -52,12 +52,11 @@ class _Onboarding5SecurityState extends ConsumerState<Onboarding5Security> {
 
     _formKey.currentState!.save();
     final onboardingNotifier = ref.read(onboardingNotifierProvider.notifier);
-    onboardingNotifier.toggleIsLoading();
+    onboardingNotifier.startLoading();
 
     try {
       // Create Auth user
       final authResult = await onboardingNotifier.createAccount();
-      onboardingNotifier.toggleIsLoading();
       if (mounted) {
         if (!authResult.success) {
           showSnackbar(
@@ -68,7 +67,7 @@ class _Onboarding5SecurityState extends ConsumerState<Onboarding5Security> {
               ScaffoldMessenger.of(context).hideCurrentSnackBar();
             },
           );
-          onboardingNotifier.toggleIsLoading();
+          onboardingNotifier.stopLoading();
           onboardingNotifier.prevPage();
           return;
         }
@@ -88,13 +87,13 @@ class _Onboarding5SecurityState extends ConsumerState<Onboarding5Security> {
             },
           );
         }
-        onboardingNotifier.toggleIsLoading();
+        onboardingNotifier.stopLoading();
         return;
       }
 
       // Go to next page and complete the onboarding
       onboardingNotifier.nextPage();
-      onboardingNotifier.toggleIsLoading();
+      onboardingNotifier.stopLoading();
     } catch (e) {
       if (mounted) {
         showSnackbar(

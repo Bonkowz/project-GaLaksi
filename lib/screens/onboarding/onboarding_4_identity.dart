@@ -49,7 +49,7 @@ class _Onboarding4IdentityState extends ConsumerState<Onboarding4Identity> {
 
     final onboardingNotifier = ref.read(onboardingNotifierProvider.notifier);
 
-    onboardingNotifier.toggleIsLoading();
+    onboardingNotifier.startLoading();
     final usernameExists = await FirebaseFirestoreApi()
         .getUserDocumentByUsername(_usernameTextController.text);
 
@@ -63,12 +63,12 @@ class _Onboarding4IdentityState extends ConsumerState<Onboarding4Identity> {
             ScaffoldMessenger.of(context).hideCurrentSnackBar();
           },
         );
-        onboardingNotifier.toggleIsLoading();
+        onboardingNotifier.stopLoading();
         return;
       }
     }
 
-    onboardingNotifier.toggleIsLoading();
+    onboardingNotifier.stopLoading();
     _formKey.currentState!.save();
     onboardingNotifier.nextPage();
   }

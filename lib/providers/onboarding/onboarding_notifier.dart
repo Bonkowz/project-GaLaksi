@@ -36,6 +36,14 @@ class OnboardingNotifier extends _$OnboardingNotifier {
     }
   }
 
+  void startLoading() {
+    state = state.copyWith(isLoading: true);
+  }
+
+  void stopLoading() {
+    state = state.copyWith(isLoading: false);
+  }
+
   void updateEmail(String email) {
     state = state.copyWith(email: email);
   }
@@ -110,10 +118,6 @@ class OnboardingNotifier extends _$OnboardingNotifier {
       debugPrint("Error creating user: $e");
       return false;
     }
-  }
-
-  void toggleIsLoading() {
-    state = state.copyWith(isLoading: !state.isLoading);
   }
 }
 
