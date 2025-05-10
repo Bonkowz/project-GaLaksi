@@ -32,7 +32,10 @@ class GalaksiTheme {
     brightness: colorScheme.brightness,
     progressIndicatorTheme: const ProgressIndicatorThemeData(year2023: false),
     sliderTheme: const SliderThemeData(year2023: false),
-    textTheme: textTheme,
+    textTheme: textTheme.apply(
+      displayColor: colorScheme.onSurface,
+      bodyColor: colorScheme.onSurface,
+    ),
   );
 
   /// Mikado Yellow
