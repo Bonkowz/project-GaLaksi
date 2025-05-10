@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/apis/firebase_auth_api.dart';
+import 'package:galaksi/apis/firebase_firestore_api.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:galaksi/screens/auth/auth_screen.dart';
 import 'package:galaksi/screens/auth/sign_in_page.dart';
@@ -54,8 +55,18 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   /// Deletes the user and signs them out of the application
-  void signOutAndDelete() {
-    FirebaseAuthApi().delete();
+  Future<void> signOutAndDelete() async {
+    final currentUser = ref.watch(currentUserStreamProvider);
+    currentUser.whenData((user) async {
+      if (user == null) {
+        return;
+      }
+      final doc = await FirebaseFirestoreApi().getUserDocumentByUid(user.uid);
+      if (doc != null) {
+        await FirebaseFirestoreApi().deleteUser(doc.id);
+      }
+      FirebaseAuthApi().delete();
+    });
   }
 }
 
