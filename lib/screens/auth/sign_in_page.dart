@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/utils/input_decorations.dart';
+import 'package:galaksi/utils/snackbar.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class SignInPage extends ConsumerStatefulWidget {
@@ -17,13 +18,8 @@ class _SignInPageState extends ConsumerState<SignInPage> {
   final usernameTextController = TextEditingController();
   final passwordTextController = TextEditingController();
   var passwordIsVisible = false;
-  String? message;
 
   Future<void> submit() async {
-    setState(() {
-      message = null;
-    });
-
     final formIsValid = _formKey.currentState?.validate() ?? false;
     if (!formIsValid) {
       return;
@@ -34,9 +30,9 @@ class _SignInPageState extends ConsumerState<SignInPage> {
       username: usernameTextController.text.trim(),
       password: passwordTextController.text,
     );
-    setState(() {
-      message = result.message;
-    });
+    if (mounted) {
+      showDismissableSnackbar(context: context, message: result.message);
+    }
   }
 
   @override
@@ -123,19 +119,6 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                     ),
                   ],
                 ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: AnimatedSwitcher(
-                duration: Durations.medium1,
-                child:
-                    message == null
-                        ? const SizedBox.shrink()
-                        : Text(
-                          message!,
-                          style: Theme.of(context).textTheme.labelLarge,
-                        ),
               ),
             ),
             FilledButton(
