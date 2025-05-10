@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/screens/onboarding/onboarding_screen.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class SignUpPage extends ConsumerStatefulWidget {
   const SignUpPage({super.key});
@@ -42,13 +43,13 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 IconButton.filled(
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(
+                      CupertinoPageRoute(
                         builder: (context) => const OnboardingScreen(),
                       ),
                     );
                   },
                   icon: Icon(
-                    Icons.arrow_forward_rounded,
+                    Symbols.arrow_forward_rounded,
                     size: constraints.maxWidth * 0.6,
                   ),
                 ),

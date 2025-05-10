@@ -7,7 +7,7 @@ part of 'onboarding_notifier.dart';
 // **************************************************************************
 
 String _$onboardingNotifierHash() =>
-    r'150e5d3558af69961d46767af83b65034e7febe4';
+    r'0a7f178c784d090c322ea629f6782bf645269718';
 
 /// See also [OnboardingNotifier].
 @ProviderFor(OnboardingNotifier)

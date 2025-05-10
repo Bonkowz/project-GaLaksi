@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/utils/input_decorations.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class SignInPage extends ConsumerStatefulWidget {
   const SignInPage({super.key});
@@ -84,7 +85,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecorations.outlineBorder(
                         context: context,
-                        prefixIcon: const Icon(Icons.email_rounded),
+                        prefixIcon: const Icon(Symbols.email_rounded),
                         labelText: "Email*",
                         borderColor: colorScheme.primary,
                         borderRadius: 16,
@@ -107,7 +108,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                       keyboardType: TextInputType.visiblePassword,
                       decoration: InputDecorations.outlineBorder(
                         context: context,
-                        prefixIcon: const Icon(Icons.password_rounded),
+                        prefixIcon: const Icon(Symbols.password_rounded),
                         suffixIcon: Padding(
                           padding: const EdgeInsets.only(right: 8.0),
                           child: _showPasswordButton(),
@@ -170,8 +171,8 @@ class _SignInPageState extends ConsumerState<SignInPage> {
           }),
       icon:
           passwordIsVisible
-              ? Icon(Icons.visibility_off_rounded, color: colorScheme.outline)
-              : Icon(Icons.visibility_rounded, color: colorScheme.outline),
+              ? Icon(Symbols.visibility_off_rounded, color: colorScheme.outline)
+              : Icon(Symbols.visibility_rounded, color: colorScheme.outline),
     );
   }
 }

@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:galaksi/apis/firebase_auth_api.dart';
-import 'package:galaksi/screens/onboarding/onboarding_1_identity.dart';
-import 'package:galaksi/screens/onboarding/onboarding_2_security.dart';
-import 'package:galaksi/screens/onboarding/onboarding_3_name.dart';
+import 'package:galaksi/apis/firebase_firestore_api.dart';
+import 'package:galaksi/models/interest_model.dart';
+import 'package:galaksi/models/travel_style_model.dart';
+import 'package:galaksi/models/user_model.dart';
+import 'package:galaksi/providers/auth/auth_notifier.dart';
+import 'package:galaksi/screens/onboarding/onboarding_4_identity.dart';
+import 'package:galaksi/screens/onboarding/onboarding_5_security.dart';
+import 'package:galaksi/screens/onboarding/onboarding_1_name.dart';
+import 'package:galaksi/screens/onboarding/onboarding_2_interests.dart';
+import 'package:galaksi/screens/onboarding/onboarding_3_styles.dart';
+import 'package:galaksi/screens/onboarding/onboarding_6_complete.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'onboarding_notifier.g.dart';
@@ -17,22 +25,22 @@ class OnboardingNotifier extends _$OnboardingNotifier {
   void prevPage() {
     if (state.currentIndex > 0) {
       state = state.copyWith(currentIndex: state.currentIndex - 1);
+      debugPrint("${state.currentIndex}");
     }
   }
 
   void nextPage() {
-    if (state.currentIndex < state.pages.length - 1) {
+    if (state.currentIndex < OnboardingState.pages.length - 1) {
       state = state.copyWith(currentIndex: state.currentIndex + 1);
+      debugPrint("${state.currentIndex}");
     }
   }
 
   void updateEmail(String email) {
-    // TODO: Check if unique
     state = state.copyWith(email: email);
   }
 
   void updateUsername(String username) {
-    // TODO: Check if unique
     state = state.copyWith(username: username);
   }
 
@@ -48,12 +56,60 @@ class OnboardingNotifier extends _$OnboardingNotifier {
     state = state.copyWith(password: password);
   }
 
+  void updateInterests(Set<Interest> interests) {
+    state = state.copyWith(interests: interests);
+  }
+
+  void updateTravelStyles(Set<TravelStyle> travelStyles) {
+    state = state.copyWith(travelStyles: travelStyles);
+  }
+
   void updateConfirmPassword(String confirmPassword) {
     state = state.copyWith(confirmPassword: confirmPassword);
   }
 
   Future<AuthResult> createAccount() async {
     return await FirebaseAuthApi().signUp(state.email!, state.password!);
+  }
+
+  Future<bool> createProfile() async {
+    // Get the UID of the currently signed in user
+    final currentAuthUser = ref.watch(currentUserStreamProvider);
+    final authUid = currentAuthUser.when(
+      data: (user) => user?.uid,
+      error: (error, stackTrace) {
+        debugPrint("Error fetching current user: $stackTrace");
+        return null;
+      },
+      loading: () {
+        debugPrint("Auth data is loading.");
+        return null;
+      },
+    );
+
+    // If the UID is null, we cannot create a profile
+    if (authUid == null) {
+      debugPrint("Error creating profile: Did not obtain user UID");
+      return false;
+    }
+
+    try {
+      final user = User(
+        uid: authUid,
+        firstName: state.firstName!.trim(),
+        lastName: state.lastName!.trim(),
+        username: state.username!.trim(),
+        email: state.email!.trim(),
+        interests: state.interests,
+        travelStyles: state.travelStyles,
+      );
+      final result = await FirebaseFirestoreApi().addUser(user);
+      state = state.copyWith(uid: user.uid);
+      return result;
+    } catch (e) {
+      debugPrint("Error creating user: $e");
+      return false;
+    }
   }
 
   void toggleIsLoading() {
@@ -63,48 +119,55 @@ class OnboardingNotifier extends _$OnboardingNotifier {
 
 class OnboardingState {
   OnboardingState({
+    this.uid,
     this.firstName,
     this.lastName,
     this.email,
     this.username,
     this.password,
     this.confirmPassword,
-    this.interests,
-    this.travelStyles,
+    this.interests = const {},
+    this.travelStyles = const {},
     this.currentIndex = 0,
     this.isLoading = false,
   });
 
+  static const List<Widget> pages = [
+    Onboarding1Name(),
+    Onboarding2Interests(),
+    Onboarding3Styles(),
+    Onboarding4Identity(),
+    Onboarding5Security(),
+    Onboarding6Complete(),
+  ];
+
+  String? uid;
   String? firstName;
   String? lastName;
   String? email;
   String? username;
   String? password;
   String? confirmPassword;
-  List<String>? interests;
-  List<String>? travelStyles;
+  Set<Interest> interests;
+  Set<TravelStyle> travelStyles;
   int currentIndex;
   bool isLoading;
 
-  final List<Widget> pages = [
-    const Onboarding1Identity(),
-    const Onboarding2Security(),
-    const Onboarding3Name(),
-  ];
-
   OnboardingState copyWith({
-    firstName,
-    lastName,
-    email,
-    username,
-    password,
-    confirmPassword,
-    interests,
-    travelStyles,
-    currentIndex,
-    isLoading,
+    String? uid,
+    String? firstName,
+    String? lastName,
+    String? email,
+    String? username,
+    String? password,
+    String? confirmPassword,
+    Set<Interest>? interests,
+    Set<TravelStyle>? travelStyles,
+    int? currentIndex,
+    bool? isLoading,
   }) {
     return OnboardingState(
+      uid: uid ?? this.uid,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       email: email ?? this.email,

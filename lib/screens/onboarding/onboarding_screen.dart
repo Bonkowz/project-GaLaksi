@@ -20,8 +20,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final onboardingState = ref.watch(onboardingNotifierProvider);
-
     ref.listen<int>(
       onboardingNotifierProvider.select((state) => state.currentIndex),
       (prevIndex, newIndex) {
@@ -41,7 +39,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       body: PageView(
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
-        children: onboardingState.pages,
+        children: OnboardingState.pages,
       ),
     );
   }
@@ -52,8 +50,8 @@ class _OnboardingAppBar extends ConsumerWidget implements PreferredSizeWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final onboardingState = ref.watch(onboardingNotifierProvider);
     final onboardingProgress =
-        onboardingState.pages.isNotEmpty
-            ? (onboardingState.currentIndex + 1) / onboardingState.pages.length
+        OnboardingState.pages.isNotEmpty
+            ? (onboardingState.currentIndex + 1) / OnboardingState.pages.length
             : 0.0;
     return AppBar(
       title: TweenAnimationBuilder<double>(
