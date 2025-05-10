@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/providers/auth_notifier.dart';
 import 'package:galaksi/screens/auth/auth_screen.dart';
 import 'package:galaksi/screens/auth/sign_out_page.dart';
+import 'package:galaksi/screens/base_page.dart';
 import 'package:galaksi/theme/theme.dart';
 import 'package:galaksi/theme/util.dart';
 import 'package:galaksi/firebase_options.dart';
@@ -31,7 +32,7 @@ class MainApp extends ConsumerWidget {
           data: (user) {
             return user == null
                 ? const AuthScreen(key: ValueKey("AuthScreen"))
-                : const SignOutPage(key: ValueKey("SignOutPage"));
+                : const BasePage(key: ValueKey("BasePage"));
           },
           error: (error, stackTrace) {
             return const Scaffold(body: Text("Error fetching user!"));
