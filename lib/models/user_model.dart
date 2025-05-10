@@ -23,8 +23,14 @@ class User {
       lastName: map['lastName'],
       username: map['username'],
       email: map['email'],
-      interests: map['interests'],
-      travelStyles: map['travelStyles'],
+      interests:
+          (List<String>.from(
+            map['interests'],
+          )).map((s) => Interest.values.firstWhere((i) => s == i.name)).toSet(),
+      travelStyles:
+          (List<String>.from(map['travelStyles']))
+              .map((s) => TravelStyle.values.firstWhere((t) => s == t.name))
+              .toSet(),
     );
   }
 
