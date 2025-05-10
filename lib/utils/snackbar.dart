@@ -38,3 +38,17 @@ void showSnackbar({
     ),
   );
 }
+
+void showDismissableSnackbar({
+  required BuildContext context,
+  required String message,
+}) {
+  showSnackbar(
+    context: context,
+    message: message,
+    actionLabel: "Dismiss",
+    onActionPressed: () {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    },
+  );
+}
