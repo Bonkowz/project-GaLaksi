@@ -55,13 +55,9 @@ class _Onboarding4IdentityState extends ConsumerState<Onboarding4Identity> {
 
     if (mounted) {
       if (usernameExists != null) {
-        showSnackbar(
+        showDismissableSnackbar(
           context: context,
           message: "A user with that username already exists.",
-          actionLabel: "Dismiss",
-          onActionPressed: () {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          },
         );
         onboardingNotifier.stopLoading();
         return;

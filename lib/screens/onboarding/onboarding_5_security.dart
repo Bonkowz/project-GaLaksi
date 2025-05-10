@@ -59,13 +59,9 @@ class _Onboarding5SecurityState extends ConsumerState<Onboarding5Security> {
       final authResult = await onboardingNotifier.createAccount();
       if (mounted) {
         if (!authResult.success) {
-          showSnackbar(
+          showDismissableSnackbar(
             context: context,
             message: authResult.message,
-            actionLabel: "Dismiss",
-            onActionPressed: () {
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            },
           );
           onboardingNotifier.stopLoading();
           onboardingNotifier.prevPage();
@@ -78,13 +74,9 @@ class _Onboarding5SecurityState extends ConsumerState<Onboarding5Security> {
       if (!profileCreated) {
         await FirebaseAuthApi().delete();
         if (mounted) {
-          showSnackbar(
+          showDismissableSnackbar(
             context: context,
             message: "Profile cannot be created.",
-            actionLabel: "Dismiss",
-            onActionPressed: () {
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-            },
           );
         }
         onboardingNotifier.stopLoading();
@@ -96,13 +88,9 @@ class _Onboarding5SecurityState extends ConsumerState<Onboarding5Security> {
       onboardingNotifier.stopLoading();
     } catch (e) {
       if (mounted) {
-        showSnackbar(
+        showDismissableSnackbar(
           context: context,
           message: "An unexpected error occurred.",
-          actionLabel: "Dismiss",
-          onActionPressed: () {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          },
         );
       }
     }
