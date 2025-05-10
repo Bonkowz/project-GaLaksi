@@ -38,6 +38,31 @@ class AuthNotifier extends _$AuthNotifier {
     return result;
   }
 
+  /// Attempts to sign in with the given username and password
+  Future<AuthResult> signInWithUsername({
+    required String username,
+    required String password,
+  }) async {
+    state = state.copyWith(isLoading: true);
+    // Fetch the user from the database
+    final doc = await FirebaseFirestoreApi().getUserDocumentByUsername(
+      username,
+    );
+    if (doc == null) {
+      state = state.copyWith(isLoading: false);
+      return const AuthResult(
+        success: false,
+        message: "Incorrect username or password.",
+      );
+    }
+
+    // Attempt to sign in using the user's email
+    final email = doc.data()!["email"];
+    final result = await FirebaseAuthApi().signIn(email, password);
+    state = state.copyWith(isLoading: false);
+    return result;
+  }
+
   /// Attempts to sign up with the given email and password
   Future<AuthResult> signUp({
     required String email,

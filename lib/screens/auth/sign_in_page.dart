@@ -14,7 +14,7 @@ class SignInPage extends ConsumerStatefulWidget {
 
 class _SignInPageState extends ConsumerState<SignInPage> {
   final _formKey = GlobalKey<FormState>();
-  final emailTextController = TextEditingController();
+  final usernameTextController = TextEditingController();
   final passwordTextController = TextEditingController();
   var passwordIsVisible = false;
   String? message;
@@ -30,8 +30,8 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     }
 
     final authNotifier = ref.read(authNotifierProvider.notifier);
-    final result = await authNotifier.signIn(
-      email: emailTextController.text.trim(),
+    final result = await authNotifier.signInWithUsername(
+      username: usernameTextController.text.trim(),
       password: passwordTextController.text,
     );
     setState(() {
@@ -41,7 +41,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
 
   @override
   void dispose() {
-    emailTextController.dispose();
+    usernameTextController.dispose();
     passwordTextController.dispose();
     super.dispose();
   }
@@ -78,24 +78,24 @@ class _SignInPageState extends ConsumerState<SignInPage> {
                   spacing: 16,
                   children: [
                     TextFormField(
-                      controller: emailTextController,
+                      controller: usernameTextController,
                       onTapOutside:
                           (event) =>
                               FocusManager.instance.primaryFocus?.unfocus(),
-                      keyboardType: TextInputType.emailAddress,
                       decoration: InputDecorations.outlineBorder(
                         context: context,
-                        prefixIcon: const Icon(Symbols.email_rounded),
-                        labelText: "Email*",
+                        prefixIcon: const Icon(Symbols.alternate_email_rounded),
+                        labelText: "Username*",
                         borderColor: colorScheme.primary,
                         borderRadius: 16,
                       ),
                       validator: FormBuilderValidators.compose([
                         FormBuilderValidators.required(
-                          errorText: "Please enter your email",
+                          errorText: "Please enter a username",
                         ),
-                        FormBuilderValidators.email(
-                          errorText: "Please enter a valid email",
+                        FormBuilderValidators.username(
+                          allowDots: true,
+                          errorText: "Please enter valid username",
                         ),
                       ]),
                     ),
