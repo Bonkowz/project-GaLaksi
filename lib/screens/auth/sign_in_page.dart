@@ -30,8 +30,11 @@ class _SignInPageState extends ConsumerState<SignInPage> {
       username: usernameTextController.text.trim(),
       password: passwordTextController.text,
     );
-    if (mounted) {
-      showDismissableSnackbar(context: context, message: result.message);
+
+    if (!result.success) {
+      if (mounted) {
+        showDismissableSnackbar(context: context, message: result.message);
+      }
     }
   }
 
