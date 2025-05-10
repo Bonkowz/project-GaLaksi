@@ -38,6 +38,7 @@ class _Onboarding4IdentityState extends ConsumerState<Onboarding4Identity> {
   }
 
   void prevPage() async {
+    _formKey.currentState!.save();
     ref.read(onboardingNotifierProvider.notifier).prevPage();
   }
 
