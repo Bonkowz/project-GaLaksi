@@ -6,7 +6,7 @@ part of 'auth_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$currentUserStreamHash() => r'1db7473a73ec080823d9b1b9bf847d48c9f3b755';
+String _$currentUserStreamHash() => r'ab30ab8b73ad34240187f0406fee4ef7ba0932ae';
 
 /// Provides the current user depending on the authentication state
 ///
@@ -14,21 +14,22 @@ String _$currentUserStreamHash() => r'1db7473a73ec080823d9b1b9bf847d48c9f3b755';
 ///
 /// Copied from [currentUserStream].
 @ProviderFor(currentUserStream)
-final currentUserStreamProvider = AutoDisposeStreamProvider<User?>.internal(
-  currentUserStream,
-  name: r'currentUserStreamProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$currentUserStreamHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final currentUserStreamProvider =
+    AutoDisposeStreamProvider<auth.User?>.internal(
+      currentUserStream,
+      name: r'currentUserStreamProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$currentUserStreamHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef CurrentUserStreamRef = AutoDisposeStreamProviderRef<User?>;
-String _$authNotifierHash() => r'c641631fcee855b973eff9e245ee8c8fa69c54f8';
+typedef CurrentUserStreamRef = AutoDisposeStreamProviderRef<auth.User?>;
+String _$authNotifierHash() => r'78a6af99a0431be16a20fce1ed63a35dab10e0a4';
 
 /// A [Notifier] that manages the state of the [AuthScreen]
 ///
