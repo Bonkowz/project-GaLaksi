@@ -5,6 +5,7 @@ import 'package:galaksi/apis/firebase_firestore_api.dart';
 import 'package:galaksi/providers/onboarding/onboarding_notifier.dart';
 import 'package:galaksi/utils/input_decorations.dart';
 import 'package:galaksi/utils/snackbar.dart';
+import 'package:galaksi/utils/string_utils.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class Onboarding4Account extends ConsumerStatefulWidget {
@@ -54,13 +55,18 @@ class _Onboarding4AccountState extends ConsumerState<Onboarding4Account> {
       return;
     }
 
+    // Update onboarding state
+    _formKey.currentState!.save();
+
     final onboardingNotifier = ref.read(onboardingNotifierProvider.notifier);
     onboardingNotifier.startLoading();
 
-    // Check if email already exists
-    final emailExists = await FirebaseFirestoreApi().getUserDocumentByEmail(
-      _emailTextController.text,
-    );
+    // Retrieve email from onboarding state, normalized and alias kept
+    final email = ref.read(onboardingNotifierProvider).email;
+
+    // Check if matching email already exists in Firestore
+    final emailExists = await FirebaseFirestoreApi()
+        .getUserDocumentByCanonicalEmail(StringUtils.normalizeEmail(email!));
 
     if (mounted) {
       if (emailExists != null) {
@@ -75,7 +81,6 @@ class _Onboarding4AccountState extends ConsumerState<Onboarding4Account> {
 
     onboardingNotifier.stopLoading();
 
-    _formKey.currentState!.save();
     onboardingNotifier.nextPage();
   }
 

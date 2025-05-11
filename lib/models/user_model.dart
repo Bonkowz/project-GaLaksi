@@ -8,6 +8,7 @@ class User {
     required this.lastName,
     required this.username,
     required this.email,
+    required this.emailCanonical,
     required this.uid,
     required this.interests,
     required this.travelStyles,
@@ -23,6 +24,7 @@ class User {
       lastName: map['lastName'],
       username: map['username'],
       email: map['email'],
+      emailCanonical: map['emailCanonical'],
       interests:
           (List<String>.from(
             map['interests'],
@@ -39,6 +41,7 @@ class User {
   String lastName;
   String username;
   String email;
+  String emailCanonical;
   Set<Interest>? interests;
   Set<TravelStyle>? travelStyles;
 
@@ -48,6 +51,7 @@ class User {
       'lastName': lastName,
       'username': username,
       'email': email,
+      'emailCanonical': emailCanonical,
       'interests': interests?.map((i) => i.name).toList(),
       'travelStyles': travelStyles?.map((t) => t.name).toList(),
     };

@@ -5,12 +5,13 @@ import 'package:galaksi/models/interest_model.dart';
 import 'package:galaksi/models/travel_style_model.dart';
 import 'package:galaksi/models/user_model.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
-import 'package:galaksi/screens/onboarding/onboarding_4_identity.dart';
-import 'package:galaksi/screens/onboarding/onboarding_5_security.dart';
+import 'package:galaksi/screens/onboarding/onboarding_4_account.dart';
+import 'package:galaksi/screens/onboarding/onboarding_5_username.dart';
 import 'package:galaksi/screens/onboarding/onboarding_1_name.dart';
 import 'package:galaksi/screens/onboarding/onboarding_2_interests.dart';
 import 'package:galaksi/screens/onboarding/onboarding_3_styles.dart';
 import 'package:galaksi/screens/onboarding/onboarding_6_complete.dart';
+import 'package:galaksi/utils/string_utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'onboarding_notifier.g.dart';
@@ -45,7 +46,7 @@ class OnboardingNotifier extends _$OnboardingNotifier {
   }
 
   void updateEmail(String email) {
-    state = state.copyWith(email: email);
+    state = state.copyWith(email: email.trim().toLowerCase());
   }
 
   void updateUsername(String username) {
@@ -77,7 +78,10 @@ class OnboardingNotifier extends _$OnboardingNotifier {
   }
 
   Future<AuthResult> createAccount() async {
-    return await FirebaseAuthApi().signUp(state.email!, state.password!);
+    return await FirebaseAuthApi().signUp(
+      StringUtils.normalizeEmailKeepAlias(state.email!),
+      state.password!,
+    );
   }
 
   Future<bool> createProfile() async {
@@ -107,7 +111,8 @@ class OnboardingNotifier extends _$OnboardingNotifier {
         firstName: state.firstName!.trim(),
         lastName: state.lastName!.trim(),
         username: state.username!.trim(),
-        email: state.email!.trim(),
+        email: StringUtils.normalizeEmailKeepAlias(state.email!),
+        emailCanonical: StringUtils.normalizeEmail(state.email!),
         interests: state.interests,
         travelStyles: state.travelStyles,
       );
@@ -140,8 +145,8 @@ class OnboardingState {
     Onboarding1Name(),
     Onboarding2Interests(),
     Onboarding3Styles(),
-    Onboarding4Identity(),
-    Onboarding5Security(),
+    Onboarding4Account(),
+    Onboarding5Username(),
     Onboarding6Complete(),
   ];
 
