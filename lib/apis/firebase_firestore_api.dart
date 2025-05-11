@@ -24,6 +24,21 @@ class FirebaseFirestoreApi {
     }
   }
 
+  /// Returns a [DocumentSnapshot] of an existing user in the database given its username
+  Future<DocumentSnapshot<Map<String, dynamic>>?> getUserDocumentByEmail(
+    String email,
+  ) async {
+    try {
+      final query =
+          await db.collection("users").where("email", isEqualTo: email).get();
+
+      return query.docs.first;
+    } catch (e) {
+      debugPrint("Error getting user: $e");
+      return null;
+    }
+  }
+
   /// Returns a [DocumentSnapshot] of an existing user in the database given its uid
   Future<DocumentSnapshot<Map<String, dynamic>>?> getUserDocumentByUid(
     String uid,
