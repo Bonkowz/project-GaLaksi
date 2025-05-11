@@ -9,14 +9,17 @@ abstract class InputDecorations {
     String? helperText,
     Widget? prefixIcon,
     Widget? suffixIcon,
+    Color? borderColor,
+    double? borderRadius,
     EdgeInsetsGeometry? contentPadding,
   }) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     return InputDecoration(
       border: OutlineInputBorder(
-        borderSide: BorderSide(color: colorScheme.outline),
+        borderSide: BorderSide(color: borderColor ?? const Color(0xFF000000)),
+        borderRadius:
+            borderRadius == null
+                ? const BorderRadius.all(Radius.circular(4.0))
+                : BorderRadius.all(Radius.circular(borderRadius)),
       ),
       labelText: labelText,
       hintText: hintText,
@@ -24,9 +27,7 @@ abstract class InputDecorations {
       suffixIcon: suffixIcon,
       errorText: errorText,
       helperText: helperText ?? "",
-      contentPadding:
-          contentPadding ??
-          const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
+      contentPadding: contentPadding,
     );
   }
 }

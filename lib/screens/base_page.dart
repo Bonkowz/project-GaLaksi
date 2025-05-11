@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:galaksi/screens/auth/sign_out_page.dart';
 import 'package:galaksi/screens/main/find_people_page.dart';
 import 'package:galaksi/screens/main/home_page.dart';
 import 'package:galaksi/screens/main/my_friends_page.dart';
 import 'package:galaksi/screens/main/profile_page.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 /// [BasePage] will act as a Parent of the following pages through a [NavigationBar]:
 /// [HomePage], [FindPeoplePage], [ProfilePage], [MyFriendsPage]
@@ -19,29 +21,29 @@ class _BasePageState extends State<BasePage> {
   final List<Widget> _pages = [
     const HomePage(),
     const FindPeoplePage(),
-    const ProfilePage(),
+    const SignOutPage(),
     const MyFriendsPage(),
   ];
 
   final _navigationItems = [
     const NavigationDestination(
-      selectedIcon: Icon(Icons.home),
-      icon: Icon(Icons.home_outlined),
+      selectedIcon: Icon(Symbols.home),
+      icon: Icon(Symbols.home),
       label: 'Home',
     ),
     const NavigationDestination(
-      selectedIcon: Icon(Icons.person_search),
-      icon: Icon(Icons.person_search_outlined),
+      selectedIcon: Icon(Symbols.person_search),
+      icon: Icon(Symbols.person_search),
       label: 'Find People',
     ),
     const NavigationDestination(
-      selectedIcon: Icon(Icons.account_circle),
-      icon: Icon(Icons.account_circle_outlined),
+      selectedIcon: Icon(Symbols.account_circle),
+      icon: Icon(Symbols.account_circle),
       label: 'Profile',
     ),
     const NavigationDestination(
-      selectedIcon: Icon(Icons.notifications),
-      icon: Icon(Icons.notifications_outlined),
+      selectedIcon: Icon(Symbols.notifications),
+      icon: Icon(Symbols.notifications),
       label: 'Notifications',
     ),
   ];
@@ -52,7 +54,7 @@ class _BasePageState extends State<BasePage> {
       floatingActionButton: FloatingActionButton(
         enableFeedback: true,
         onPressed: () {},
-        child: const Icon(Icons.add_location_alt),
+        child: const Icon(Symbols.add_location_alt),
       ),
       bottomNavigationBar: NavigationBar(
         labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,

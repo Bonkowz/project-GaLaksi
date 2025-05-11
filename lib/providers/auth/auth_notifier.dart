@@ -1,6 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/apis/firebase_auth_api.dart';
+import 'package:galaksi/apis/firebase_firestore_api.dart';
+import 'package:galaksi/models/user_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:galaksi/screens/auth/auth_screen.dart';
 import 'package:galaksi/screens/auth/sign_in_page.dart';
@@ -37,6 +39,32 @@ class AuthNotifier extends _$AuthNotifier {
     return result;
   }
 
+  /// Attempts to sign in with the given username and password
+  Future<AuthResult> signInWithUsername({
+    required String username,
+    required String password,
+  }) async {
+    state = state.copyWith(isLoading: true);
+    // Fetch the user from the database
+    final doc = await FirebaseFirestoreApi().getUserDocumentByUsername(
+      username,
+    );
+    if (doc == null) {
+      state = state.copyWith(isLoading: false);
+      return const AuthResult(
+        success: false,
+        message: "Incorrect username or password.",
+      );
+    }
+
+    // Attempt to sign in using the user's email
+    final user = User.fromDocument(doc);
+    final result = await FirebaseAuthApi().signIn(user.email, password);
+    state = state.copyWith(user: user);
+    state = state.copyWith(isLoading: false);
+    return result;
+  }
+
   /// Attempts to sign up with the given email and password
   Future<AuthResult> signUp({
     required String email,
@@ -54,14 +82,24 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   /// Deletes the user and signs them out of the application
-  void signOutAndDelete() {
-    FirebaseAuthApi().delete();
+  Future<void> signOutAndDelete() async {
+    final currentUser = ref.watch(currentUserStreamProvider);
+    currentUser.whenData((user) async {
+      if (user == null) {
+        return;
+      }
+      final doc = await FirebaseFirestoreApi().getUserDocumentByUid(user.uid);
+      if (doc != null) {
+        await FirebaseFirestoreApi().deleteUser(doc.id);
+      }
+      FirebaseAuthApi().delete();
+    });
   }
 }
 
 /// Represents the state of the [AuthScreen]
 class AuthState {
-  AuthState({this.isSignIn = true, this.isLoading = false});
+  AuthState({this.isSignIn = true, this.isLoading = false, this.user});
 
   /// Whether the current page is the [SignInPage]
   final bool isSignIn;
@@ -69,11 +107,15 @@ class AuthState {
   /// Whether the app is waiting for a sign in or sign up result to finish
   bool isLoading;
 
+  /// The current user's profile
+  User? user;
+
   /// Returns a copy of this [AuthState] but with the given fields replaced
-  AuthState copyWith({bool? isSignIn, bool? isLoading}) {
+  AuthState copyWith({bool? isSignIn, bool? isLoading, User? user}) {
     return AuthState(
       isSignIn: isSignIn ?? this.isSignIn,
       isLoading: isLoading ?? this.isLoading,
+      user: user ?? this.user,
     );
   }
 }
@@ -82,6 +124,6 @@ class AuthState {
 ///
 /// If signed-in, the [Stream] returns the [User], otherwise it returns null.
 @riverpod
-Stream<User?> currentUserStream(Ref ref) {
+Stream<auth.User?> currentUserStream(Ref ref) {
   return FirebaseAuthApi().getUser();
 }

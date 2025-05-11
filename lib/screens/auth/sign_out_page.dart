@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:galaksi/providers/auth_notifier.dart';
+import 'package:galaksi/providers/auth/auth_notifier.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 /// A test page to test out authentication
 class SignOutPage extends ConsumerWidget {
@@ -31,14 +32,14 @@ class SignOutPage extends ConsumerWidget {
                 ref.read(authNotifierProvider.notifier).signOut();
               },
               label: const Text("Sign out"),
-              icon: const Icon(Icons.logout_rounded),
+              icon: const Icon(Symbols.logout_rounded),
             ),
             FilledButton.tonalIcon(
               onPressed: () {
                 ref.read(authNotifierProvider.notifier).signOutAndDelete();
               },
               label: const Text("Delete account"),
-              icon: const Icon(Icons.delete_forever_rounded),
+              icon: const Icon(Symbols.delete_forever_rounded),
             ),
           ],
         ),
