@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:galaksi/apis/firebase_auth_api.dart';
 import 'package:galaksi/apis/firebase_firestore_api.dart';
-import 'package:galaksi/models/interest_model.dart';
-import 'package:galaksi/models/travel_style_model.dart';
-import 'package:galaksi/models/user_model.dart';
+import 'package:galaksi/models/user/interest_model.dart';
+import 'package:galaksi/models/user/travel_style_model.dart';
+import 'package:galaksi/models/user/user_model.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/screens/onboarding/onboarding_4_account.dart';
 import 'package:galaksi/screens/onboarding/onboarding_5_username.dart';

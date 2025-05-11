@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:galaksi/models/travel_style_model.dart';
+import 'package:galaksi/models/user/travel_style_model.dart';
 import 'package:galaksi/providers/onboarding/onboarding_notifier.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
