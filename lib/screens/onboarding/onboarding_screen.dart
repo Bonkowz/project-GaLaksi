@@ -66,6 +66,8 @@ class _OnboardingAppBar extends ConsumerWidget implements PreferredSizeWidget {
               minHeight: 12,
             ),
       ),
+      centerTitle: true,
+      actions: const [SizedBox(width: kToolbarHeight)],
     );
   }
 
