@@ -189,22 +189,26 @@ class _Onboarding5UsernameState extends ConsumerState<Onboarding5Username> {
           ),
           const SizedBox(height: 24),
           SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+            child: Row(
               children: [
-                FilledButton.icon(
-                  onPressed:
-                      onboardingState.isLoading
-                          ? null
-                          : () async => await nextPage(),
-                  label: const Text("Next"),
-                  icon: const Icon(Symbols.arrow_forward_rounded),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed:
+                        onboardingState.isLoading ? null : () => prevPage(),
+                    label: const Text("Go back"),
+                    icon: const Icon(Symbols.arrow_back_rounded),
+                  ),
                 ),
-                OutlinedButton.icon(
-                  onPressed:
-                      onboardingState.isLoading ? null : () => prevPage(),
-                  label: const Text("Go back"),
-                  icon: const Icon(Symbols.arrow_back_rounded),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed:
+                        onboardingState.isLoading
+                            ? null
+                            : () async => await nextPage(),
+                    label: const Text("Next"),
+                    icon: const Icon(Symbols.arrow_forward_rounded),
+                  ),
                 ),
               ],
             ),

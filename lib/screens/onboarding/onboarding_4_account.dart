@@ -123,169 +123,176 @@ class _Onboarding4AccountState extends ConsumerState<Onboarding4Account> {
             child: SingleChildScrollView(
               child: Form(
                 key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextFormField(
-                      controller: _emailTextController,
-                      onSaved:
-                          (email) => onboardingNotifier.updateEmail(email!),
-                      onTapOutside:
-                          (event) =>
-                              FocusManager.instance.primaryFocus?.unfocus(),
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(
-                          errorText: "Please enter an email",
-                        ),
-                        FormBuilderValidators.email(
-                          errorText: "Please enter a valid email",
-                        ),
-                      ]),
-                      decoration: InputDecorations.outlineBorder(
-                        context: context,
-                        prefixIcon: const Icon(Symbols.email_rounded),
-                        labelText: "Email*",
-                        borderColor: colorScheme.primary,
-                        borderRadius: 16,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _passwordTextController,
-                      onSaved:
-                          (password) =>
-                              onboardingNotifier.updatePassword(password!),
-                      onTapOutside:
-                          (event) =>
-                              FocusManager.instance.primaryFocus?.unfocus(),
-                      keyboardType: TextInputType.visiblePassword,
-                      obscureText: !passwordIsVisible,
-                      decoration: InputDecorations.outlineBorder(
-                        context: context,
-                        prefixIcon: const Icon(Symbols.password_rounded),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: IconButton(
-                            onPressed:
-                                () => setState(() {
-                                  passwordIsVisible = !passwordIsVisible;
-                                }),
-                            icon:
-                                passwordIsVisible
-                                    ? Icon(
-                                      Symbols.visibility_off_rounded,
-                                      color: colorScheme.outline,
-                                    )
-                                    : Icon(
-                                      Symbols.visibility_rounded,
-                                      color: colorScheme.outline,
-                                    ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextFormField(
+                        controller: _emailTextController,
+                        onSaved:
+                            (email) => onboardingNotifier.updateEmail(email!),
+                        onTapOutside:
+                            (event) =>
+                                FocusManager.instance.primaryFocus?.unfocus(),
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                            errorText: "Please enter an email",
                           ),
-                        ),
-                        labelText: "Password*",
-                        borderColor: colorScheme.primary,
-                        borderRadius: 16,
-                      ),
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(
-                          errorText: "Please enter a password",
-                        ),
-                        FormBuilderValidators.password(
-                          minLength: 8,
-                          minLowercaseCount: 0,
-                          minNumberCount: 0,
-                          minUppercaseCount: 0,
-                          minSpecialCharCount: 0,
-                          errorText:
-                              "Password must be at least 8 characters long",
-                        ),
-                      ]),
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _confirmTextController,
-                      onSaved:
-                          (confirmPassword) => onboardingNotifier
-                              .updateConfirmPassword(confirmPassword!),
-                      onTapOutside:
-                          (event) =>
-                              FocusManager.instance.primaryFocus?.unfocus(),
-                      keyboardType: TextInputType.visiblePassword,
-                      obscureText: !confirmPasswordIsVisible,
-                      decoration: InputDecorations.outlineBorder(
-                        context: context,
-                        prefixIcon: const Icon(Symbols.password_rounded),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: IconButton(
-                            onPressed:
-                                () => setState(() {
-                                  confirmPasswordIsVisible =
-                                      !confirmPasswordIsVisible;
-                                }),
-                            icon:
-                                confirmPasswordIsVisible
-                                    ? Icon(
-                                      Symbols.visibility_off_rounded,
-                                      color: colorScheme.outline,
-                                    )
-                                    : Icon(
-                                      Symbols.visibility_rounded,
-                                      color: colorScheme.outline,
-                                    ),
+                          FormBuilderValidators.email(
+                            errorText: "Please enter a valid email",
                           ),
+                        ]),
+                        decoration: InputDecorations.outlineBorder(
+                          context: context,
+                          prefixIcon: const Icon(Symbols.email_rounded),
+                          labelText: "Email*",
+                          borderColor: colorScheme.primary,
+                          borderRadius: 16,
                         ),
-                        labelText: "Confirm Password*",
-                        borderColor: colorScheme.primary,
-                        borderRadius: 16,
                       ),
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(
-                          errorText: "Please reenter your password",
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _passwordTextController,
+                        onSaved:
+                            (password) =>
+                                onboardingNotifier.updatePassword(password!),
+                        onTapOutside:
+                            (event) =>
+                                FocusManager.instance.primaryFocus?.unfocus(),
+                        keyboardType: TextInputType.visiblePassword,
+                        obscureText: !passwordIsVisible,
+                        decoration: InputDecorations.outlineBorder(
+                          context: context,
+                          prefixIcon: const Icon(Symbols.password_rounded),
+                          suffixIcon: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: IconButton(
+                              onPressed:
+                                  () => setState(() {
+                                    passwordIsVisible = !passwordIsVisible;
+                                  }),
+                              icon:
+                                  passwordIsVisible
+                                      ? Icon(
+                                        Symbols.visibility_off_rounded,
+                                        color: colorScheme.outline,
+                                      )
+                                      : Icon(
+                                        Symbols.visibility_rounded,
+                                        color: colorScheme.outline,
+                                      ),
+                            ),
+                          ),
+                          labelText: "Password*",
+                          borderColor: colorScheme.primary,
+                          borderRadius: 16,
                         ),
-                        (confirmPassword) {
-                          if (confirmPassword != null) {
-                            if (confirmPassword !=
-                                _passwordTextController.text) {
-                              return "Passwords do not match";
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                            errorText: "Please enter a password",
+                          ),
+                          FormBuilderValidators.password(
+                            minLength: 8,
+                            minLowercaseCount: 0,
+                            minNumberCount: 0,
+                            minUppercaseCount: 0,
+                            minSpecialCharCount: 0,
+                            errorText:
+                                "Password must be at least 8 characters long",
+                          ),
+                        ]),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _confirmTextController,
+                        onSaved:
+                            (confirmPassword) => onboardingNotifier
+                                .updateConfirmPassword(confirmPassword!),
+                        onTapOutside:
+                            (event) =>
+                                FocusManager.instance.primaryFocus?.unfocus(),
+                        keyboardType: TextInputType.visiblePassword,
+                        obscureText: !confirmPasswordIsVisible,
+                        decoration: InputDecorations.outlineBorder(
+                          context: context,
+                          prefixIcon: const Icon(Symbols.password_rounded),
+                          suffixIcon: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: IconButton(
+                              onPressed:
+                                  () => setState(() {
+                                    confirmPasswordIsVisible =
+                                        !confirmPasswordIsVisible;
+                                  }),
+                              icon:
+                                  confirmPasswordIsVisible
+                                      ? Icon(
+                                        Symbols.visibility_off_rounded,
+                                        color: colorScheme.outline,
+                                      )
+                                      : Icon(
+                                        Symbols.visibility_rounded,
+                                        color: colorScheme.outline,
+                                      ),
+                            ),
+                          ),
+                          labelText: "Confirm Password*",
+                          borderColor: colorScheme.primary,
+                          borderRadius: 16,
+                        ),
+                        validator: FormBuilderValidators.compose([
+                          FormBuilderValidators.required(
+                            errorText: "Please reenter your password",
+                          ),
+                          (confirmPassword) {
+                            if (confirmPassword != null) {
+                              if (confirmPassword !=
+                                  _passwordTextController.text) {
+                                return "Passwords do not match";
+                              }
                             }
-                          }
-                          return null;
-                        },
-                      ]),
-                    ),
-                    const SizedBox(height: 8),
-                    const Center(
-                      child: Text(
-                        "Password must have 8-32 characters",
-                        textAlign: TextAlign.center,
+                            return null;
+                          },
+                        ]),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      const Center(
+                        child: Text(
+                          "Password must have 8-32 characters",
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
           const SizedBox(height: 24),
           SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+            child: Row(
               children: [
-                FilledButton.icon(
-                  onPressed:
-                      onboardingState.isLoading
-                          ? null
-                          : () async => await nextPage(),
-                  label: const Text("Next"),
-                  icon: const Icon(Symbols.arrow_forward_rounded),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed:
+                        onboardingState.isLoading ? null : () => prevPage(),
+                    label: const Text("Go back"),
+                    icon: const Icon(Symbols.arrow_back_rounded),
+                  ),
                 ),
-                OutlinedButton.icon(
-                  onPressed:
-                      onboardingState.isLoading ? null : () => prevPage(),
-                  label: const Text("Go back"),
-                  icon: const Icon(Symbols.arrow_back_rounded),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed:
+                        onboardingState.isLoading
+                            ? null
+                            : () async => await nextPage(),
+                    label: const Text("Next"),
+                    icon: const Icon(Symbols.arrow_forward_rounded),
+                  ),
                 ),
               ],
             ),
