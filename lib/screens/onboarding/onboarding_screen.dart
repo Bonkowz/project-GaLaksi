@@ -55,7 +55,7 @@ class _OnboardingAppBar extends ConsumerWidget implements PreferredSizeWidget {
             : 0.0;
     return AppBar(
       title: TweenAnimationBuilder<double>(
-        duration: Durations.medium4,
+        duration: Durations.medium1,
         curve: Curves.easeInOutCubic,
         tween: Tween<double>(end: onboardingProgress),
         builder:
