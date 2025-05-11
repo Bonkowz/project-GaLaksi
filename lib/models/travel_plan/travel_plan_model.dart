@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:galaksi/models/travel_plan/accommodation_model.dart';
 import 'package:galaksi/models/travel_plan/flight_detail_model.dart';
 import 'package:galaksi/models/travel_plan/note_model.dart';
@@ -13,10 +14,35 @@ class TravelPlan {
     required this.notes,
     required this.activities,
     required this.flightDetails,
-    required this.accomodations,
+    required this.accommodations,
   });
 
   /// TODO: Add attribute for travel plan image
+
+  factory TravelPlan.fromDocument(DocumentSnapshot doc) {
+    final map = doc.data() as Map<String, dynamic>;
+
+    return TravelPlan(
+      id: doc.id,
+      title: map['title'],
+      description: map['description'],
+      creatorID: map['creatorID'],
+      sharedWith: List<String>.from(map['sharedWith']),
+      notes: (map['notes'] as List).map((note) => Note.fromJSON(note)).toList(),
+      activities:
+          (map['activities'] as List)
+              .map((activity) => TravelActivity.fromJson(activity))
+              .toList(),
+      flightDetails:
+          (map['flightDetails'] as List)
+              .map((flight) => FlightDetail.fromJson(flight))
+              .toList(),
+      accommodations:
+          (map['accommodations'] as List)
+              .map((accom) => Accommodation.fromJson(accom))
+              .toList(),
+    );
+  }
 
   String id;
   String title;
@@ -26,5 +52,19 @@ class TravelPlan {
   List<Note> notes;
   List<TravelActivity> activities;
   List<FlightDetail> flightDetails;
-  List<Accommodation> accomodations;
+  List<Accommodation> accommodations;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+      'creatorID': creatorID,
+      'sharedWith': sharedWith,
+      'notes': notes.map((note) => note.toMap()).toList(),
+      'activities': activities.map((activity) => activity.toMap()).toList(),
+      'flightDetails': flightDetails.map((flight) => flight.toMap()).toList(),
+      'accomodations': accommodations.map((accom) => accom.toMap()).toList(),
+    };
+  }
 }
