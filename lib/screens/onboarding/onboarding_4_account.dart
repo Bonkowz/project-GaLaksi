@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:galaksi/apis/firebase_auth_api.dart';
+import 'package:galaksi/apis/firebase_firestore_api.dart';
 import 'package:galaksi/providers/onboarding/onboarding_notifier.dart';
 import 'package:galaksi/utils/input_decorations.dart';
 import 'package:galaksi/utils/snackbar.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class Onboarding5Security extends ConsumerStatefulWidget {
-  const Onboarding5Security({super.key});
+class Onboarding4Account extends ConsumerStatefulWidget {
+  const Onboarding4Account({super.key});
 
   @override
-  ConsumerState<Onboarding5Security> createState() =>
-      _Onboarding5SecurityState();
+  ConsumerState<Onboarding4Account> createState() => _Onboarding4AccountState();
 }
 
-class _Onboarding5SecurityState extends ConsumerState<Onboarding5Security> {
+class _Onboarding4AccountState extends ConsumerState<Onboarding4Account> {
   final _formKey = GlobalKey<FormState>();
+  late final TextEditingController _emailTextController;
   late final TextEditingController _passwordTextController;
   late final TextEditingController _confirmTextController;
   bool passwordIsVisible = false;
@@ -26,6 +26,7 @@ class _Onboarding5SecurityState extends ConsumerState<Onboarding5Security> {
   void initState() {
     super.initState();
     final onboardingState = ref.read(onboardingNotifierProvider);
+    _emailTextController = TextEditingController(text: onboardingState.email);
     _passwordTextController = TextEditingController(
       text: onboardingState.password,
     );
@@ -36,64 +37,46 @@ class _Onboarding5SecurityState extends ConsumerState<Onboarding5Security> {
 
   @override
   void dispose() {
-    super.dispose();
+    _emailTextController.dispose();
     _passwordTextController.dispose();
     _confirmTextController.dispose();
+    super.dispose();
   }
 
-  void prevPage() {
+  void prevPage() async {
     _formKey.currentState!.save();
     ref.read(onboardingNotifierProvider.notifier).prevPage();
   }
 
   Future<void> nextPage() async {
     final formIsValid = _formKey.currentState?.validate() ?? false;
-    if (!formIsValid) return;
+    if (!formIsValid) {
+      return;
+    }
 
-    _formKey.currentState!.save();
     final onboardingNotifier = ref.read(onboardingNotifierProvider.notifier);
     onboardingNotifier.startLoading();
 
-    try {
-      // Create Auth user
-      final authResult = await onboardingNotifier.createAccount();
-      if (mounted) {
-        if (!authResult.success) {
-          showDismissableSnackbar(
-            context: context,
-            message: authResult.message,
-          );
-          onboardingNotifier.stopLoading();
-          onboardingNotifier.prevPage();
-          return;
-        }
-      }
+    // Check if email already exists
+    final emailExists = await FirebaseFirestoreApi().getUserDocumentByEmail(
+      _emailTextController.text,
+    );
 
-      // Create Firestore profile
-      final profileCreated = await onboardingNotifier.createProfile();
-      if (!profileCreated) {
-        await FirebaseAuthApi().delete();
-        if (mounted) {
-          showDismissableSnackbar(
-            context: context,
-            message: "Profile cannot be created.",
-          );
-        }
+    if (mounted) {
+      if (emailExists != null) {
+        showDismissableSnackbar(
+          context: context,
+          message: "A user with that email already exists.",
+        );
         onboardingNotifier.stopLoading();
         return;
       }
-
-      // Go to next page and complete the onboarding
-      onboardingNotifier.nextPage();
-      onboardingNotifier.stopLoading();
-    } catch (e) {
-      if (mounted) {
-        showDismissableSnackbar(
-          context: context,
-          message: "An unexpected error occurred.",
-        );
-      }
     }
+
+    onboardingNotifier.stopLoading();
+
+    _formKey.currentState!.save();
+    onboardingNotifier.nextPage();
   }
 
   @override
@@ -125,7 +108,7 @@ class _Onboarding5SecurityState extends ConsumerState<Onboarding5Security> {
           const Divider(),
           const SizedBox(height: 16),
           Text(
-            "Secure your account.",
+            "Create your account.",
             style: textTheme.headlineSmall!.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -138,6 +121,32 @@ class _Onboarding5SecurityState extends ConsumerState<Onboarding5Security> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    TextFormField(
+                      controller: _emailTextController,
+                      onSaved:
+                          (email) => onboardingNotifier.updateEmail(email!),
+                      onTapOutside:
+                          (event) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(
+                          errorText: "Please enter an email",
+                        ),
+                        FormBuilderValidators.email(
+                          errorText: "Please enter a valid email",
+                        ),
+                      ]),
+                      decoration: InputDecorations.outlineBorder(
+                        context: context,
+                        prefixIcon: const Icon(Symbols.email_rounded),
+                        labelText: "Email*",
+                        borderColor: colorScheme.primary,
+                        borderRadius: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     TextFormField(
                       controller: _passwordTextController,
                       onSaved:
@@ -245,7 +254,7 @@ class _Onboarding5SecurityState extends ConsumerState<Onboarding5Security> {
                     const SizedBox(height: 8),
                     const Center(
                       child: Text(
-                        "Password must have at 8-32 characters",
+                        "Password must have 8-32 characters",
                         textAlign: TextAlign.center,
                       ),
                     ),

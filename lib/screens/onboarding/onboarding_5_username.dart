@@ -1,30 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:galaksi/apis/firebase_auth_api.dart';
 import 'package:galaksi/apis/firebase_firestore_api.dart';
 import 'package:galaksi/providers/onboarding/onboarding_notifier.dart';
 import 'package:galaksi/utils/input_decorations.dart';
 import 'package:galaksi/utils/snackbar.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class Onboarding4Identity extends ConsumerStatefulWidget {
-  const Onboarding4Identity({super.key});
+class Onboarding5Username extends ConsumerStatefulWidget {
+  const Onboarding5Username({super.key});
 
   @override
-  ConsumerState<Onboarding4Identity> createState() =>
-      _Onboarding4IdentityState();
+  ConsumerState<Onboarding5Username> createState() =>
+      _Onboarding5UsernameState();
 }
 
-class _Onboarding4IdentityState extends ConsumerState<Onboarding4Identity> {
+class _Onboarding5UsernameState extends ConsumerState<Onboarding5Username> {
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _emailTextController;
+
   late final TextEditingController _usernameTextController;
 
   @override
   void initState() {
     super.initState();
     final onboardingState = ref.read(onboardingNotifierProvider);
-    _emailTextController = TextEditingController(text: onboardingState.email);
+
     _usernameTextController = TextEditingController(
       text: onboardingState.username,
     );
@@ -32,42 +33,78 @@ class _Onboarding4IdentityState extends ConsumerState<Onboarding4Identity> {
 
   @override
   void dispose() {
-    _emailTextController.dispose();
-    _usernameTextController.dispose();
     super.dispose();
+    _usernameTextController.dispose();
   }
 
-  void prevPage() async {
+  void prevPage() {
     _formKey.currentState!.save();
     ref.read(onboardingNotifierProvider.notifier).prevPage();
   }
 
   Future<void> nextPage() async {
     final formIsValid = _formKey.currentState?.validate() ?? false;
-    if (!formIsValid) {
-      return;
-    }
+    if (!formIsValid) return;
 
+    _formKey.currentState!.save();
     final onboardingNotifier = ref.read(onboardingNotifierProvider.notifier);
-
     onboardingNotifier.startLoading();
-    final usernameExists = await FirebaseFirestoreApi()
-        .getUserDocumentByUsername(_usernameTextController.text);
 
-    if (mounted) {
-      if (usernameExists != null) {
-        showDismissableSnackbar(
-          context: context,
-          message: "A user with that username already exists.",
-        );
+    try {
+      // Check if username already exists
+      final usernameExists = await FirebaseFirestoreApi()
+          .getUserDocumentByUsername(_usernameTextController.text);
+
+      if (mounted) {
+        if (usernameExists != null) {
+          showDismissableSnackbar(
+            context: context,
+            message: "A user with that username already exists.",
+          );
+          onboardingNotifier.stopLoading();
+          return;
+        }
+      }
+
+      // Attempt to create Auth user
+      final authResult = await onboardingNotifier.createAccount();
+      if (mounted) {
+        if (!authResult.success) {
+          showDismissableSnackbar(
+            context: context,
+            message: authResult.message,
+          );
+          onboardingNotifier.stopLoading();
+          onboardingNotifier.prevPage();
+          return;
+        }
+      }
+
+      // Attempt to create profile
+      final profileCreated = await onboardingNotifier.createProfile();
+      if (!profileCreated) {
+        await FirebaseAuthApi().delete();
+        if (mounted) {
+          showDismissableSnackbar(
+            context: context,
+            message: "Profile cannot be created.",
+          );
+        }
         onboardingNotifier.stopLoading();
         return;
       }
-    }
 
-    onboardingNotifier.stopLoading();
-    _formKey.currentState!.save();
-    onboardingNotifier.nextPage();
+      // Go to next page and complete the onboarding
+      onboardingNotifier.nextPage();
+      onboardingNotifier.stopLoading();
+    } catch (e) {
+      if (mounted) {
+        showDismissableSnackbar(
+          context: context,
+          message: "An unexpected error occurred.",
+        );
+      }
+    }
   }
 
   @override
@@ -99,7 +136,7 @@ class _Onboarding4IdentityState extends ConsumerState<Onboarding4Identity> {
           const Divider(),
           const SizedBox(height: 16),
           Text(
-            "Let's talk details.",
+            "Pick a unique handle.",
             style: textTheme.headlineSmall!.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -112,32 +149,6 @@ class _Onboarding4IdentityState extends ConsumerState<Onboarding4Identity> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextFormField(
-                      controller: _emailTextController,
-                      onSaved:
-                          (email) => onboardingNotifier.updateEmail(email!),
-                      onTapOutside:
-                          (event) =>
-                              FocusManager.instance.primaryFocus?.unfocus(),
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(
-                          errorText: "Please enter an email",
-                        ),
-                        FormBuilderValidators.email(
-                          errorText: "Please enter a valid email",
-                        ),
-                      ]),
-                      decoration: InputDecorations.outlineBorder(
-                        context: context,
-                        prefixIcon: const Icon(Symbols.email_rounded),
-                        labelText: "Email*",
-                        borderColor: colorScheme.primary,
-                        borderRadius: 16,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
                     TextFormField(
                       controller: _usernameTextController,
                       onSaved:
@@ -167,7 +178,7 @@ class _Onboarding4IdentityState extends ConsumerState<Onboarding4Identity> {
                     const SizedBox(height: 8),
                     const Center(
                       child: Text(
-                        "Username must be unique, have at 3-32 characters, and must only contain alphanumeric characters and or \".\"",
+                        "Username must have 3-32 characters, and must only contain alphanumeric characters and or \".\"",
                         textAlign: TextAlign.center,
                       ),
                     ),
