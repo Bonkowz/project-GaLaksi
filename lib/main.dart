@@ -8,6 +8,9 @@ import 'package:galaksi/theme/theme.dart';
 import 'package:galaksi/theme/util.dart';
 import 'package:galaksi/firebase_options.dart';
 
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -23,6 +26,7 @@ class MainApp extends ConsumerWidget {
     final textTheme = createTextTheme(context, "Figtree", "Figtree");
 
     return MaterialApp(
+      scaffoldMessengerKey: scaffoldMessengerKey,
       theme: GalaksiTheme(textTheme).light(),
       darkTheme: GalaksiTheme(textTheme).dark(),
       home: AnimatedSwitcher(

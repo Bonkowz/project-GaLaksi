@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:galaksi/main.dart';
 
 void showSnackbar({
   required BuildContext context,
@@ -9,8 +10,11 @@ void showSnackbar({
   final colorScheme = Theme.of(context).colorScheme;
   final textTheme = Theme.of(context).textTheme;
 
-  ScaffoldMessenger.of(context).clearSnackBars();
-  ScaffoldMessenger.of(context).showSnackBar(
+  final scaffoldMessenger = scaffoldMessengerKey.currentState;
+  if (scaffoldMessenger == null) return;
+
+  scaffoldMessenger.clearSnackBars();
+  scaffoldMessenger.showSnackBar(
     snackBarAnimationStyle: AnimationStyle(
       duration: Durations.medium4,
       reverseDuration: Durations.medium4,
@@ -48,7 +52,7 @@ void showDismissableSnackbar({
     message: message,
     actionLabel: "Dismiss",
     onActionPressed: () {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
     },
   );
 }
