@@ -5,6 +5,7 @@ class Note {
     required this.createdAt,
   });
 
+  /// Factory constructor to instantiate [Note] from JSON
   factory Note.fromJSON(Map<String, dynamic> json) {
     return Note(
       authorID: json['authorID'],
@@ -17,6 +18,7 @@ class Note {
   String message;
   DateTime createdAt;
 
+  /// Method to convert [Note] to JSON
   Map<String, dynamic> toMap() {
     return {
       "authorID": authorID,

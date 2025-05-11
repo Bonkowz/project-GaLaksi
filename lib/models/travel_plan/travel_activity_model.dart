@@ -9,7 +9,7 @@ class TravelActivity {
     required this.reminders,
   });
 
-  /// Factory method to convert [TravelActivity] from [Map]
+  /// Factory method to instantiate [TravelActivity] from JSON
   factory TravelActivity.fromJson(Map<String, dynamic> json) {
     return TravelActivity(
       startAt: DateTime.parse(json['startAt']),
@@ -29,7 +29,7 @@ class TravelActivity {
   String location;
   List<Duration> reminders;
 
-  /// Function to convert [TravelActivity] to [Map]
+  /// Function to convert [TravelActivity] to JSON
   Map<String, dynamic> toMap() {
     return {
       'startAt': startAt.toIso8601String(), // Timestamp

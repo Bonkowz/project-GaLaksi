@@ -7,7 +7,7 @@ class FlightDetail {
     required this.departureAt,
   });
 
-  // Factory method to create a FlightDetail from JSON
+  /// Factory constructor to create a [FlightDetail] from JSON
   factory FlightDetail.fromJson(Map<String, dynamic> json) {
     return FlightDetail(
       flightNumber: json['flightNumber'],
@@ -24,8 +24,8 @@ class FlightDetail {
   String destination; // Arrival airport / city
   DateTime departureAt;
 
-  // Method to convert a FlightDetail to JSON
-  Map<String, dynamic> toJson() {
+  /// Method to convert [FlightDetail] to JSON
+  Map<String, dynamic> toMap() {
     return {
       'flightNumber': flightNumber,
       'airline': airline,

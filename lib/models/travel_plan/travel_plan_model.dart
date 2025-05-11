@@ -1,4 +1,4 @@
-import 'package:galaksi/models/travel_plan/accomodation_model.dart';
+import 'package:galaksi/models/travel_plan/accommodation_model.dart';
 import 'package:galaksi/models/travel_plan/flight_detail_model.dart';
 import 'package:galaksi/models/travel_plan/note_model.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
