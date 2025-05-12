@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class FlightDetail {
   FlightDetail({
     required this.flightNumber,
@@ -14,7 +16,7 @@ class FlightDetail {
       airline: json['airline'],
       location: json['location'],
       destination: json['destination'],
-      departureAt: DateTime.parse(json['departureAt']),
+      departureAt: (json['departureAt'] as Timestamp).toDate(),
     );
   }
 
@@ -31,7 +33,7 @@ class FlightDetail {
       'airline': airline,
       'location': location,
       'destination': destination,
-      'departureAt': departureAt.toIso8601String(),
+      'departureAt': Timestamp.fromDate(departureAt),
     };
   }
 }

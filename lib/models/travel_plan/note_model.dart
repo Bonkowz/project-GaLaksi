@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Note {
   Note({
     required this.authorID,
@@ -10,7 +12,7 @@ class Note {
     return Note(
       authorID: json['authorID'],
       message: json['message'],
-      createdAt: DateTime.parse(json['createdAt']),
+      createdAt: (json['createdAt'] as Timestamp).toDate(),
     );
   }
 
@@ -23,7 +25,7 @@ class Note {
     return {
       "authorID": authorID,
       "message": message,
-      "createdAt": createdAt.toIso8601String(),
+      "createdAt": Timestamp.fromDate(createdAt),
     };
   }
 }

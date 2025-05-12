@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Accommodation {
   Accommodation({
     required this.name,
@@ -10,8 +12,8 @@ class Accommodation {
   factory Accommodation.fromMap(Map<String, dynamic> json) {
     return Accommodation(
       name: json['name'],
-      checkIn: DateTime.parse(json['checkIn']),
-      checkOut: DateTime.parse(json['checkOut']),
+      checkIn: (json['checkIn'] as Timestamp).toDate(),
+      checkOut: (json['checkOut'] as Timestamp).toDate(),
       location: json['location'],
     );
   }
@@ -25,8 +27,8 @@ class Accommodation {
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'checkIn': checkIn.toIso8601String(),
-      'checkOut': checkOut.toIso8601String(),
+      'checkIn': Timestamp.fromDate(checkIn),
+      'checkOut': Timestamp.fromDate(checkOut),
       'location': location,
     };
   }

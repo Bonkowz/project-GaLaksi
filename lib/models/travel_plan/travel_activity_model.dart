@@ -12,8 +12,8 @@ class TravelActivity {
   /// Factory method to instantiate [TravelActivity] from [Map]
   factory TravelActivity.fromMap(Map<String, dynamic> json) {
     return TravelActivity(
-      startAt: DateTime.parse(json['startAt']),
-      endAt: DateTime.parse(json['endAt']),
+      startAt: (json['startAt'] as Timestamp).toDate(),
+      endAt: (json['endAt'] as Timestamp).toDate(),
       title: json['title'],
       location: json['location'],
       reminders:
@@ -32,8 +32,8 @@ class TravelActivity {
   /// Function to convert [TravelActivity] to a [Map]
   Map<String, dynamic> toMap() {
     return {
-      'startAt': startAt.toIso8601String(),
-      'endAt': endAt.toIso8601String(),
+      'startAt': Timestamp.fromDate(startAt),
+      'endAt': Timestamp.fromDate(endAt),
       'title': title,
       'location': location,
       'reminders': reminders.map((e) => {'minutes': e.inMinutes}).toList(),
