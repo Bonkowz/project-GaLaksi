@@ -18,7 +18,7 @@ class Note {
   String message;
   DateTime createdAt;
 
-  /// Method to convert [Note] to JSON
+  /// Method to convert [Note] to a [Map]
   Map<String, dynamic> toMap() {
     return {
       "authorID": authorID,

@@ -29,11 +29,11 @@ class TravelActivity {
   String location;
   List<Duration> reminders;
 
-  /// Function to convert [TravelActivity] to JSON
+  /// Function to convert [TravelActivity] to a [Map]
   Map<String, dynamic> toMap() {
     return {
-      'startAt': startAt.toIso8601String(), // Timestamp
-      'endAt': endAt.toIso8601String(), // Timestamp
+      'startAt': startAt.toIso8601String(),
+      'endAt': endAt.toIso8601String(),
       'title': title,
       'location': location,
       'reminders': reminders.map((e) => {'minutes': e.inMinutes}).toList(),

@@ -21,7 +21,7 @@ class Accommodation {
   DateTime checkOut;
   String location;
 
-  /// Method to convert [Accommodation] to JSON
+  /// Method to convert [Accommodation] to a [Map]
   Map<String, dynamic> toMap() {
     return {
       'name': name,

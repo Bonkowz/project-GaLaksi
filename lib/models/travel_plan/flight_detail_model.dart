@@ -24,7 +24,7 @@ class FlightDetail {
   String destination; // Arrival airport / city
   DateTime departureAt;
 
-  /// Method to convert [FlightDetail] to JSON
+  /// Method to convert [FlightDetail] to a [Map]
   Map<String, dynamic> toMap() {
     return {
       'flightNumber': flightNumber,
