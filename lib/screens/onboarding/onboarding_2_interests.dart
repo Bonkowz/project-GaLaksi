@@ -1,7 +1,7 @@
 import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:galaksi/models/interest_model.dart';
+import 'package:galaksi/models/user/interest_model.dart';
 import 'package:galaksi/providers/onboarding/onboarding_notifier.dart';
 import 'package:collection/collection.dart';
 import 'package:material_symbols_icons/symbols.dart';

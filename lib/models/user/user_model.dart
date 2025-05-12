@@ -1,5 +1,5 @@
-import 'package:galaksi/models/interest_model.dart';
-import 'package:galaksi/models/travel_style_model.dart';
+import 'package:galaksi/models/user/interest_model.dart';
+import 'package:galaksi/models/user/travel_style_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {

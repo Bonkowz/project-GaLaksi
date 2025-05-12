@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/apis/firebase_auth_api.dart';
 import 'package:galaksi/apis/firebase_firestore_api.dart';
-import 'package:galaksi/models/user_model.dart';
+import 'package:galaksi/models/user/user_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:galaksi/screens/auth/auth_screen.dart';
 import 'package:galaksi/screens/auth/sign_in_page.dart';
