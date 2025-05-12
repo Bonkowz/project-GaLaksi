@@ -6,8 +6,8 @@ class Accommodation {
     required this.location,
   });
 
-  /// Factory to instantiate [Accommodation] from JSON
-  factory Accommodation.fromJson(Map<String, dynamic> json) {
+  /// Factory to instantiate [Accommodation] from [Map]
+  factory Accommodation.fromMap(Map<String, dynamic> json) {
     return Accommodation(
       name: json['name'],
       checkIn: DateTime.parse(json['checkIn']),

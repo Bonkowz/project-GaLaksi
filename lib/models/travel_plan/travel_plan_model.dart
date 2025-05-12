@@ -28,18 +28,18 @@ class TravelPlan {
       description: map['description'],
       creatorID: map['creatorID'],
       sharedWith: List<String>.from(map['sharedWith']),
-      notes: (map['notes'] as List).map((note) => Note.fromJSON(note)).toList(),
+      notes: (map['notes'] as List).map((note) => Note.fromMap(note)).toList(),
       activities:
           (map['activities'] as List)
-              .map((activity) => TravelActivity.fromJson(activity))
+              .map((activity) => TravelActivity.fromMap(activity))
               .toList(),
       flightDetails:
           (map['flightDetails'] as List)
-              .map((flight) => FlightDetail.fromJson(flight))
+              .map((flight) => FlightDetail.fromMap(flight))
               .toList(),
       accommodations:
           (map['accommodations'] as List)
-              .map((accom) => Accommodation.fromJson(accom))
+              .map((accom) => Accommodation.fromMap(accom))
               .toList(),
     );
   }

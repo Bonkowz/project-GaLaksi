@@ -5,8 +5,8 @@ class Note {
     required this.createdAt,
   });
 
-  /// Factory constructor to instantiate [Note] from JSON
-  factory Note.fromJSON(Map<String, dynamic> json) {
+  /// Factory constructor to instantiate [Note] from [Map]
+  factory Note.fromMap(Map<String, dynamic> json) {
     return Note(
       authorID: json['authorID'],
       message: json['message'],

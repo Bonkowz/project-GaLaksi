@@ -9,8 +9,8 @@ class TravelActivity {
     required this.reminders,
   });
 
-  /// Factory method to instantiate [TravelActivity] from JSON
-  factory TravelActivity.fromJson(Map<String, dynamic> json) {
+  /// Factory method to instantiate [TravelActivity] from [Map]
+  factory TravelActivity.fromMap(Map<String, dynamic> json) {
     return TravelActivity(
       startAt: DateTime.parse(json['startAt']),
       endAt: DateTime.parse(json['endAt']),
