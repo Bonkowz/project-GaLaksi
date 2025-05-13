@@ -9,7 +9,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'get_travel_plan_provider.g.dart';
 
 @riverpod
-Stream<List<TravelPlan>> myTravelPlans(Ref ref) {
+Stream<List<TravelPlan>> myTravelPlansStream(Ref ref) {
   final currentAuthUser = ref.watch(currentUserStreamProvider);
   final authUid = currentAuthUser.when(
     data: (user) => user?.uid,
