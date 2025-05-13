@@ -114,6 +114,7 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
             Form(
               key: _formKey,
               child: Column(
+                spacing: 8,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   TextFormField(
@@ -131,6 +132,10 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(
                         errorText: "Please enter a title",
+                      ),
+                      FormBuilderValidators.maxLength(
+                        15,
+                        errorText: "Title must be less than 15 characters.",
                       ),
                     ]),
                   ),
