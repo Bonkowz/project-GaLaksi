@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:galaksi/providers/travel_plan/create_travel_plan_notifier.dart';
 import 'package:galaksi/utils/input_decorations.dart';
+import 'package:galaksi/utils/snackbar.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class CreateTravelPlanPage extends ConsumerStatefulWidget {
@@ -18,6 +20,50 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
   final descriptionTextController = TextEditingController();
   final descriptionScrollController = ScrollController();
 
+  Future<void> submit() async {
+    final formIsValid = _formKey.currentState?.validate() ?? false;
+    if (!formIsValid) {
+      return;
+    }
+
+    final travelPlanNotifier = ref.read(
+      createTravelPlanNotifierProvider.notifier,
+    );
+
+    travelPlanNotifier.updateTitle(titleTextController.text);
+    travelPlanNotifier.updateDescription(descriptionTextController.text);
+
+    final result = await travelPlanNotifier.createTravelPlan();
+
+    if (!result) {
+      if (mounted) {
+        showDismissableSnackbar(
+          context: context,
+          message: "Failed to create travel plan.",
+        );
+      }
+    } else {
+      if (mounted) {
+        showDismissableSnackbar(
+          context: context,
+          message: "Travel plan created!",
+        );
+      }
+      // Pop after the success message
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    titleTextController.dispose();
+    descriptionTextController.dispose();
+    descriptionScrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -29,8 +75,8 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {
-              Navigator.pop(context);
+            onPressed: () async {
+              await submit();
             },
             icon: const Icon(Icons.check),
           ),
