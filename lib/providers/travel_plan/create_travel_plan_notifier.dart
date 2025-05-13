@@ -7,8 +7,12 @@ import 'package:galaksi/models/travel_plan/note_model.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-class CreateTravelPlanNotifier extends Notifier<TravelPlanState> {
+part 'create_travel_plan_notifier.g.dart';
+
+@riverpod
+class CreateTravelPlanNotifier extends _$CreateTravelPlanNotifier {
   TravelPlanState build() {
     return TravelPlanState();
   }
