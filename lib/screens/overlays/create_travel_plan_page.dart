@@ -16,6 +16,7 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
   final _formKey = GlobalKey<FormState>();
   final titleTextController = TextEditingController();
   final descriptionTextController = TextEditingController();
+  final descriptionScrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +62,7 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
                     decoration: InputDecorations.underlineBorder(
                       context: context,
                       prefixIcon: const Icon(Symbols.title),
-                      hintText: "Title",
+                      hintText: "Trip Title",
                       borderColor: Theme.of(context).colorScheme.primary,
                       contentPadding: const EdgeInsets.all(16.0),
                     ),
@@ -72,15 +73,16 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
                     ]),
                   ),
                   TextFormField(
+                    scrollController: descriptionScrollController,
                     controller: descriptionTextController,
                     keyboardType: TextInputType.multiline,
-                    maxLines: null,
+                    maxLines: 5,
                     onTapOutside:
                         (event) =>
                             FocusManager.instance.primaryFocus?.unfocus(),
                     decoration: InputDecorations.outlineBorder(
                       context: context,
-                      hintText: "Description",
+                      hintText: "Additional details about your trip...",
                       borderColor: Theme.of(context).colorScheme.primary,
                       contentPadding: const EdgeInsets.all(16.0),
                     ),
@@ -110,9 +112,9 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
                 children: [
                   IconButton.filled(
                     onPressed: () {},
-                    icon: Icon(Symbols.camera_alt_rounded),
+                    icon: const Icon(Symbols.camera_alt_rounded),
                     iconSize: 48,
-                    padding: EdgeInsets.all(24.0),
+                    padding: const EdgeInsets.all(24.0),
                   ),
                   Text(
                     "Ask your friend for their QR code!",
