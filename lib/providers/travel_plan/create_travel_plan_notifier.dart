@@ -13,6 +13,7 @@ part 'create_travel_plan_notifier.g.dart';
 
 @riverpod
 class CreateTravelPlanNotifier extends _$CreateTravelPlanNotifier {
+  @override
   TravelPlanState build() {
     return TravelPlanState();
   }
