@@ -54,7 +54,7 @@ class TravelPlan {
   List<FlightDetail> flightDetails;
   List<Accommodation> accommodations;
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
       'id': id,
       'title': title,
