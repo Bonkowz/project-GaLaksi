@@ -44,6 +44,20 @@ class TravelPlan {
     );
   }
 
+  TravelPlan setID(String newID) {
+    return TravelPlan(
+      id: newID,
+      title: title,
+      description: description,
+      creatorID: creatorID,
+      sharedWith: sharedWith,
+      notes: notes,
+      activities: activities,
+      flightDetails: flightDetails,
+      accommodations: accommodations,
+    );
+  }
+
   String id;
   String title;
   String description;
