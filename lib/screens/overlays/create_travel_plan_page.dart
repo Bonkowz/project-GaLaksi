@@ -20,11 +20,17 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
   final descriptionTextController = TextEditingController();
   final descriptionScrollController = ScrollController();
 
+  bool _isLoading = false;
+
   Future<void> submit() async {
     final formIsValid = _formKey.currentState?.validate() ?? false;
     if (!formIsValid) {
       return;
     }
+
+    setState(() {
+      _isLoading = true;
+    });
 
     final travelPlanNotifier = ref.read(
       createTravelPlanNotifierProvider.notifier,
@@ -34,6 +40,10 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
     travelPlanNotifier.updateDescription(descriptionTextController.text);
 
     final result = await travelPlanNotifier.createTravelPlan();
+
+    setState(() {
+      _isLoading = false;
+    });
 
     if (!result) {
       if (mounted) {
@@ -70,15 +80,21 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: !_isLoading,
         actionsPadding: const EdgeInsets.fromLTRB(0, 0, 16, 0),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () async {
-              await submit();
-            },
-            icon: const Icon(Icons.check),
+            onPressed: _isLoading ? null : () async => await submit(),
+            icon:
+                _isLoading
+                    ? const SizedBox(
+                      width: 32,
+                      height: 32,
+                      child: CircularProgressIndicator(strokeWidth: 2.5),
+                    )
+                    : const Icon(Icons.check),
           ),
         ],
         title: Text("Create a travel plan", style: textTheme.bodyLarge),
