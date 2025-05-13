@@ -48,7 +48,7 @@ abstract class InputDecorations {
         borderSide: BorderSide(color: borderColor ?? const Color(0xFF000000)),
         borderRadius:
             borderRadius == null
-                ? const BorderRadius.all(Radius.circular(0))
+                ? BorderRadius.zero
                 : BorderRadius.all(Radius.circular(borderRadius)),
       ),
       labelText: labelText,
