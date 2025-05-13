@@ -56,7 +56,7 @@ class _SignInPageState extends ConsumerState<SignInPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: colorScheme.primaryContainer,
-        toolbarHeight: 100,
+        toolbarHeight: kToolbarHeight * 1.75,
         centerTitle: true,
         title: Text(
           "Welcome back!",
