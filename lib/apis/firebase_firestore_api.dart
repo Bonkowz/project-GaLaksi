@@ -104,4 +104,20 @@ class FirebaseFirestoreApi {
       return false;
     }
   }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> fetchUserPlans(String uid) {
+    return db
+        .collection("plans")
+        .where('creatorID', isEqualTo: uid)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> fetchPlansSharedWithUser(
+    String uid,
+  ) {
+    return db
+        .collection("plans")
+        .where('sharedWithMe', arrayContains: uid)
+        .snapshots();
+  }
 }
