@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/apis/firebase_firestore_api.dart';
 import 'package:galaksi/models/travel_plan/accommodation_model.dart';
 import 'package:galaksi/models/travel_plan/flight_detail_model.dart';
