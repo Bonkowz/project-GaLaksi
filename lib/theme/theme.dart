@@ -36,6 +36,9 @@ class GalaksiTheme {
       displayColor: colorScheme.onSurface,
       bodyColor: colorScheme.onSurface,
     ),
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {TargetPlatform.android: FadeForwardsPageTransitionsBuilder()},
+    ),
   );
 
   /// Mikado Yellow
