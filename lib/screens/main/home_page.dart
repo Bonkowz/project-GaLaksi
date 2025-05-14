@@ -24,7 +24,7 @@ class HomePage extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Hey, ${authState.user?.firstName}!"),
+                  Text("Hey, ${authState.user?.firstName ?? "traveler"}!"),
                   const Text("Where to?"),
                 ],
               ),
