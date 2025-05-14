@@ -11,16 +11,35 @@ import 'package:galaksi/screens/auth/sign_up_page.dart';
 part 'auth_notifier.g.dart';
 
 /// A [Notifier] that manages the state of the [AuthScreen]
-@riverpod
+@Riverpod(keepAlive: true)
 class AuthNotifier extends _$AuthNotifier {
   @override
   AuthState build() {
-    final currentUser = ref.watch(currentUserStreamProvider);
-    return currentUser.when(
-      data: (user) => AuthState(),
-      error: (error, stackTrace) => AuthState(),
-      loading: () => AuthState(),
-    );
+    // Automatically fetch the user profile from the database
+    // if the user is signed in
+    ref.listen(currentUserStreamProvider, (previous, next) async {
+      final firebaseUser = next.valueOrNull;
+      if (firebaseUser != null) {
+        await _fetchUserProfile(firebaseUser.uid);
+      } else {
+        state = AuthState();
+      }
+    }, fireImmediately: true);
+
+    // Return an initial state
+    return AuthState();
+  }
+
+  /// Fetches the user profile
+  Future<void> _fetchUserProfile(String uid) async {
+    state = state.copyWith(isLoading: true);
+    final doc = await FirebaseFirestoreApi().getUserDocumentByUid(uid);
+    if (doc != null) {
+      final userProfile = User.fromDocument(doc);
+      state = state.copyWith(user: userProfile, isLoading: false);
+    } else {
+      state = state.copyWith(user: null, isLoading: false);
+    }
   }
 
   /// Toggles between [SignInPage] and [SignUpPage] in the [AuthScreen]
@@ -105,10 +124,10 @@ class AuthState {
   final bool isSignIn;
 
   /// Whether the app is waiting for a sign in or sign up result to finish
-  bool isLoading;
+  final bool isLoading;
 
   /// The current user's profile
-  User? user;
+  final User? user;
 
   /// Returns a copy of this [AuthState] but with the given fields replaced
   AuthState copyWith({bool? isSignIn, bool? isLoading, User? user}) {
