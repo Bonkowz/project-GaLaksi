@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
@@ -11,7 +10,7 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final myTravelPlans = ref.watch(myTravelPlansStreamProvider);
-    final user = ref.watch(currentUserStreamProvider);
+    final authState = ref.watch(authNotifierProvider);
 
     final myTravelPlansView = myTravelPlans.when(
       data:
@@ -37,14 +36,17 @@ class HomePage extends ConsumerWidget {
         appBar: AppBar(
           toolbarHeight: kToolbarHeight * 1.75,
           backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-          title: const Row(
+          title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [Text("Hey, Steve!"), Text("Where to?")],
+                children: [
+                  Text("Hey, ${authState.user?.firstName}!"),
+                  const Text("Where to?"),
+                ],
               ),
-              Text("galaksi"),
+              const Text("galaksi"),
             ],
           ),
           bottom: const TabBar(
@@ -59,7 +61,7 @@ class HomePage extends ConsumerWidget {
           child: TabBarView(
             children: [
               SingleChildScrollView(child: myTravelPlansView),
-              Center(child: Text("Shared with you")),
+              const Center(child: Text("Shared with you")),
             ],
           ),
         ),
