@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
@@ -43,7 +42,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                 IconButton.filled(
                   onPressed: () {
                     Navigator.of(context).push(
-                      CupertinoPageRoute(
+                      MaterialPageRoute(
                         builder: (context) => const OnboardingScreen(),
                       ),
                     );
