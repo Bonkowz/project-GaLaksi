@@ -94,103 +94,106 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
                       height: 32,
                       child: CircularProgressIndicator(strokeWidth: 2.5),
                     )
-                    : const Icon(Icons.check),
+                    : const Icon(Symbols.check),
           ),
         ],
         title: Text("Create a travel plan", style: textTheme.bodyLarge),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          spacing: 16,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Create from scratch",
-              style: textTheme.headlineMedium!.copyWith(
-                fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            spacing: 16,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Text(
+                "Create from scratch",
+                style: textTheme.headlineMedium!.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            Form(
-              key: _formKey,
-              child: Column(
-                spacing: 8,
-                crossAxisAlignment: CrossAxisAlignment.center,
+              Form(
+                key: _formKey,
+                child: Column(
+                  spacing: 8,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    TextFormField(
+                      controller: titleTextController,
+                      onTapOutside:
+                          (event) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
+                      decoration: InputDecorations.outlineBorder(
+                        context: context,
+                        prefixIcon: const Icon(Symbols.title),
+                        hintText: "Trip Title",
+                        borderRadius: 16,
+                      ),
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(
+                          errorText: "Please enter a title",
+                        ),
+                        FormBuilderValidators.maxLength(
+                          15,
+                          errorText: "Title must be less than 15 characters.",
+                        ),
+                      ]),
+                    ),
+                    TextFormField(
+                      scrollController: descriptionScrollController,
+                      controller: descriptionTextController,
+                      keyboardType: TextInputType.multiline,
+                      maxLines: 5,
+                      onTapOutside:
+                          (event) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
+                      decoration: InputDecorations.outlineBorder(
+                        context: context,
+                        hintText: "Additional details about your trip...",
+                        borderColor: Theme.of(context).colorScheme.primary,
+                        contentPadding: const EdgeInsets.all(16.0),
+                        borderRadius: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Row(
+                spacing: 16,
                 children: [
-                  TextFormField(
-                    controller: titleTextController,
-                    onTapOutside:
-                        (event) =>
-                            FocusManager.instance.primaryFocus?.unfocus(),
-                    decoration: InputDecorations.underlineBorder(
-                      context: context,
-                      prefixIcon: const Icon(Symbols.title),
-                      hintText: "Trip Title",
-                      borderColor: Theme.of(context).colorScheme.primary,
-                      contentPadding: const EdgeInsets.all(16.0),
-                    ),
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(
-                        errorText: "Please enter a title",
-                      ),
-                      FormBuilderValidators.maxLength(
-                        15,
-                        errorText: "Title must be less than 15 characters.",
-                      ),
-                    ]),
-                  ),
-                  TextFormField(
-                    scrollController: descriptionScrollController,
-                    controller: descriptionTextController,
-                    keyboardType: TextInputType.multiline,
-                    maxLines: 5,
-                    onTapOutside:
-                        (event) =>
-                            FocusManager.instance.primaryFocus?.unfocus(),
-                    decoration: InputDecorations.outlineBorder(
-                      context: context,
-                      hintText: "Additional details about your trip...",
-                      borderColor: Theme.of(context).colorScheme.primary,
-                      contentPadding: const EdgeInsets.all(16.0),
-                    ),
-                  ),
+                  Expanded(child: Divider()),
+                  Text("or"),
+                  Expanded(child: Divider()),
                 ],
               ),
-            ),
-            const Row(
-              spacing: 16,
-              children: [
-                Expanded(child: Divider()),
-                Text("or"),
-                Expanded(child: Divider()),
-              ],
-            ),
-            Text(
-              "Join a friend's travel plan",
-              style: textTheme.headlineMedium!.copyWith(
-                fontWeight: FontWeight.bold,
+              Text(
+                "Join a friend's travel plan",
+                style: textTheme.headlineMedium!.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                spacing: 8,
-                children: [
-                  IconButton.filled(
-                    onPressed: () {},
-                    icon: const Icon(Symbols.camera_alt_rounded),
-                    iconSize: 48,
-                    padding: const EdgeInsets.all(24.0),
-                  ),
-                  Text(
-                    "Ask your friend for their QR code!",
-                    style: textTheme.bodyMedium,
-                  ),
-                ],
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  spacing: 8,
+                  children: [
+                    IconButton.filled(
+                      onPressed: () {},
+                      icon: const Icon(Symbols.camera_alt_rounded),
+                      iconSize: 48,
+                      padding: const EdgeInsets.all(24.0),
+                    ),
+                    Text(
+                      "Ask your friend for their QR code!",
+                      style: textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
