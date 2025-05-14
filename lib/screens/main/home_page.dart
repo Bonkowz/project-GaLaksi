@@ -25,24 +25,29 @@ class HomePage extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AnimatedSwitcher(
-                    duration: Durations.short3,
-                    child:
-                        authState.user != null
-                            ? Text(
-                              "Hey, ${authState.user!.firstName}!",
-                              style: textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                              key: const ValueKey("UserLoaded"),
-                            )
-                            : Text(
-                              "Hey, traveler!",
-                              style: textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                              key: const ValueKey("UserNotLoaded"),
-                            ),
+                  Row(
+                    children: [
+                      Text(
+                        "Hey, ",
+                        style: textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      AnimatedSwitcher(
+                        duration: Durations.medium4,
+                        child: Text(
+                          authState.user != null
+                              ? "${authState.user!.firstName}!"
+                              : "traveler!",
+                          style: textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                          key: ValueKey(
+                            authState.user?.firstName ?? "traveler",
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   Text("Where to?", style: textTheme.titleMedium),
                 ],
