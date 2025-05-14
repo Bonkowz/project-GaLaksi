@@ -73,7 +73,13 @@ class _BasePageState extends State<BasePage> {
           });
         },
       ),
-      body: _pages[_selectedPage],
+      body:
+          _pages
+              .map(
+                (page) =>
+                    AnimatedSwitcher(duration: Durations.short3, child: page),
+              )
+              .toList()[_selectedPage],
     );
   }
 }
