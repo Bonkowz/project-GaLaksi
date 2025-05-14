@@ -10,6 +10,7 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authNotifierProvider);
+    final textTheme = Theme.of(context).textTheme;
 
     return DefaultTabController(
       initialIndex: 0,
@@ -24,11 +25,44 @@ class HomePage extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Hey, ${authState.user?.firstName ?? "traveler"}!"),
-                  const Text("Where to?"),
+                  AnimatedSwitcher(
+                    duration: Durations.short3,
+                    child:
+                        authState.user != null
+                            ? Text(
+                              "Hey, ${authState.user!.firstName}!",
+                              style: textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                              key: const ValueKey("UserLoaded"),
+                            )
+                            : Text(
+                              "Hey, traveler!",
+                              style: textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                              key: const ValueKey("UserNotLoaded"),
+                            ),
+                  ),
+                  Text("Where to?", style: textTheme.titleMedium),
                 ],
               ),
-              const Text("galaksi"),
+              RichText(
+                text: TextSpan(
+                  text: "gala",
+                  style: textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  children: [
+                    TextSpan(
+                      text: "ksi",
+                      style: textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
           bottom: const TabBar(
