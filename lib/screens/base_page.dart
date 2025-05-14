@@ -22,7 +22,7 @@ class _BasePageState extends State<BasePage> {
   final List<Widget> _pages = [
     const HomePage(),
     const FindPeoplePage(),
-    const SignOutPage(),
+    const ProfilePage(), 
     const MyFriendsPage(),
   ];
 
