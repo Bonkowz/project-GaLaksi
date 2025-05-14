@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:galaksi/screens/auth/sign_out_page.dart';
+import 'package:galaksi/screens/main/create_travel_page.dart';
 import 'package:galaksi/screens/main/find_people_page.dart';
 import 'package:galaksi/screens/main/home_page.dart';
 import 'package:galaksi/screens/main/my_friends_page.dart';
@@ -53,7 +54,12 @@ class _BasePageState extends State<BasePage> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         enableFeedback: true,
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const CreateTravelPage()),
+          );
+        },
         child: const Icon(Symbols.add_location_alt),
       ),
       bottomNavigationBar: NavigationBar(
