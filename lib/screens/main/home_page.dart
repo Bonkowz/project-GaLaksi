@@ -9,25 +9,7 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final myTravelPlans = ref.watch(myTravelPlansStreamProvider);
     final authState = ref.watch(authNotifierProvider);
-
-    final myTravelPlansView = myTravelPlans.when(
-      data:
-          (plans) => Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children:
-                plans.map((plan) => TravelPlanCard(travelPlan: plan)).toList(),
-          ),
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error:
-          (err, stack) => Center(
-            child: Text(
-              'Error: $err',
-              style: const TextStyle(color: Colors.red),
-            ),
-          ),
-    );
 
     return DefaultTabController(
       initialIndex: 0,
@@ -56,16 +38,53 @@ class HomePage extends ConsumerWidget {
             ],
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+        body: const Padding(
+          padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
           child: TabBarView(
             children: [
-              SingleChildScrollView(child: myTravelPlansView),
-              const Center(child: Text("Shared with you")),
+              TravelPlansView(),
+              Center(child: Text("Shared with you")),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class TravelPlansView extends ConsumerWidget {
+  const TravelPlansView({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final plansAsyncValue = ref.watch(myTravelPlansStreamProvider);
+
+    return plansAsyncValue.when(
+      data: (plans) {
+        if (plans.isEmpty) {
+          return Center(
+            child: Text(
+              "No plans... so far.",
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          );
+        }
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children:
+                plans.map((plan) => TravelPlanCard(travelPlan: plan)).toList(),
+          ),
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error:
+          (err, stack) => Center(
+            child: Text(
+              'Error: $err',
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
     );
   }
 }
