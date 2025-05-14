@@ -26,7 +26,7 @@ class TravelPlanCard extends StatelessWidget {
               flex: 4,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
-                child: Image(
+                child: const Image(
                   image: AssetImage('assets/images/galaksi-placeholder.jpg'),
                   fit: BoxFit.cover,
                 ),
@@ -53,7 +53,7 @@ class TravelPlanCard extends StatelessWidget {
                     Row(
                       spacing: 4,
                       children: [
-                        Icon(Icons.alarm),
+                        const Icon(Symbols.alarm),
                         Text(
                           "Happening in 2 days",
                           style: textTheme.bodyMedium,
@@ -63,7 +63,7 @@ class TravelPlanCard extends StatelessWidget {
                     Row(
                       spacing: 4,
                       children: [
-                        Icon(Icons.calendar_month),
+                        const Icon(Symbols.calendar_month),
                         Text(
                           "May 5 - June 3, 2025",
                           style: textTheme.bodyMedium,
@@ -73,9 +73,9 @@ class TravelPlanCard extends StatelessWidget {
                     Row(
                       spacing: 4,
                       children: [
-                        Icon(Icons.map),
+                        const Icon(Symbols.map),
                         Text(
-                          travelPlan.activities.length == 0
+                          travelPlan.activities.isEmpty
                               ? "No activities yet"
                               : "${travelPlan.activities.length} activities",
                           style: textTheme.bodyMedium,
