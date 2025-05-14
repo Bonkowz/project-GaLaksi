@@ -1,12 +1,70 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class CreateTravelPage extends ConsumerWidget {
+class CreateTravelPage extends ConsumerStatefulWidget {
   const CreateTravelPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CreateTravelPage> createState() => _CreateTravelPageState();
+}
+
+class _CreateTravelPageState extends ConsumerState<CreateTravelPage> {
+  final _titleController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  bool _isSaving = false;
+
+  Future<void> _saveTravelPlan() async {
+    if (_titleController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a title')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isSaving = true;
+    });
+
+    try { // Save to firestore database
+      await FirebaseFirestore.instance.collection('plans').add({
+        'title': _titleController.text.trim(),
+        'description': _descriptionController.text.trim(),
+        'accomodations': [],
+        'activities': [],
+        'flightDetails': [],
+        'notes': [],
+        'sharedWith': [],
+      });
+
+      if (mounted) {
+        Navigator.of(context).pop(); // Return to home page
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error saving plan: ${e.toString()}')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final Color accent = Theme.of(context).colorScheme.primary;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -21,8 +79,14 @@ class CreateTravelPage extends ConsumerWidget {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: () {}, // TODO: Implement save
+            icon: _isSaving 
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.check),
+            onPressed: _isSaving ? null : _saveTravelPlan,
           ),
         ],
       ),
@@ -64,6 +128,7 @@ class CreateTravelPage extends ConsumerWidget {
             ),
             const SizedBox(height: 20),
             TextField(
+              controller: _titleController,
               decoration: InputDecoration(
                 prefixIcon: Icon(Symbols.text_fields, color: accent),
                 hintText: 'Title',
@@ -85,6 +150,8 @@ class CreateTravelPage extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             TextField(
+              controller: _descriptionController,
+              maxLines: 2,
               decoration: InputDecoration(
                 prefixIcon: Icon(Symbols.text_fields, color: accent),
                 hintText: 'Description',
