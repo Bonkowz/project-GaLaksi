@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/apis/firebase_auth_api.dart';
 import 'package:galaksi/apis/firebase_firestore_api.dart';
@@ -15,9 +16,14 @@ part 'auth_notifier.g.dart';
 class AuthNotifier extends _$AuthNotifier {
   @override
   AuthState build() {
+    // Initial state
+    state = AuthState(isLoading: true);
+
     // Automatically fetch the user profile from the database
     // if the user is signed in
     ref.listen(currentUserStreamProvider, (previous, next) async {
+      debugPrint(previous.toString());
+      debugPrint(next.toString());
       final firebaseUser = next.valueOrNull;
       if (firebaseUser != null) {
         await _fetchUserProfile(firebaseUser.uid);
@@ -26,8 +32,7 @@ class AuthNotifier extends _$AuthNotifier {
       }
     }, fireImmediately: true);
 
-    // Return an initial state
-    return AuthState();
+    return state;
   }
 
   /// Fetches the user profile
