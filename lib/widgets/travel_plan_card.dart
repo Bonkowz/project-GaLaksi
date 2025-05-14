@@ -11,22 +11,21 @@ class TravelPlanCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return Container(
-      margin:
-          EdgeInsets.zero +
-          const EdgeInsets.only(top: 8) +
-          const EdgeInsets.only(bottom: 8),
-      height: 180,
+    return SizedBox(
+      height: 170,
       child: Card.outlined(
         margin: EdgeInsets.zero,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(
+            const Expanded(
               flex: 4,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(12.0),
-                child: const Image(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  bottomLeft: Radius.circular(12),
+                ),
+                child: Image(
                   image: AssetImage('assets/images/galaksi-placeholder.jpg'),
                   fit: BoxFit.cover,
                 ),

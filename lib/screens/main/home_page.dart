@@ -77,14 +77,8 @@ class HomePage extends ConsumerWidget {
             ],
           ),
         ),
-        body: const Padding(
-          padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-          child: TabBarView(
-            children: [
-              TravelPlansView(),
-              Center(child: Text("Shared with you")),
-            ],
-          ),
+        body: const TabBarView(
+          children: [TravelPlansView(), Center(child: Text("Shared with you"))],
         ),
       ),
     );
@@ -109,10 +103,16 @@ class TravelPlansView extends ConsumerWidget {
           );
         }
         return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children:
-                plans.map((plan) => TravelPlanCard(travelPlan: plan)).toList(),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              spacing: 8,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children:
+                  plans
+                      .map((plan) => TravelPlanCard(travelPlan: plan))
+                      .toList(),
+            ),
           ),
         );
       },
