@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/models/user/travel_style_model.dart';
 import 'package:galaksi/providers/onboarding/onboarding_notifier.dart';
+import 'package:galaksi/widgets/travel_style_selection.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class Onboarding3Styles extends ConsumerStatefulWidget {
@@ -51,14 +52,12 @@ class _Onboarding3StylesState extends ConsumerState<Onboarding3Styles> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Excited to travel? and subtitle
           Center(
             child: Column(
               children: [
@@ -84,28 +83,7 @@ class _Onboarding3StylesState extends ConsumerState<Onboarding3Styles> {
           const SizedBox(height: 16),
           Expanded(
             child: SingleChildScrollView(
-              child: Column(
-                children:
-                    selectionMap.keys.map((style) {
-                      return Card.outlined(
-                        clipBehavior: Clip.hardEdge,
-                        child: CheckboxListTile(
-                          title: Text(
-                            style.title,
-                            style: TextStyle(
-                              color: colorScheme.onPrimaryContainer,
-                            ),
-                          ),
-                          value: selectionMap[style],
-                          onChanged: (value) {
-                            setState(() {
-                              selectionMap[style] = value ?? false;
-                            });
-                          },
-                        ),
-                      );
-                    }).toList(),
-              ),
+              child: TravelStyleSelection(selectionMap: selectionMap),
             ),
           ),
           const SizedBox(height: 24),
