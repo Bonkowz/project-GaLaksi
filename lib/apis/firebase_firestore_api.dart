@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
 import 'package:galaksi/models/user/user_model.dart';
 
 class FirebaseFirestoreApi {
@@ -91,5 +92,32 @@ class FirebaseFirestoreApi {
       debugPrint("Error updating user profile: $e");
       return false;
     }
+  }
+
+  /// Creates a new [TravelPlan] in the `plans` collection
+  Future<bool> createTravelPlan(TravelPlan travelPlan) async {
+    try {
+      await db.collection("plans").add(travelPlan.toMap());
+      return true;
+    } catch (e) {
+      debugPrint("Error creating travel plan: $e");
+      return false;
+    }
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> fetchUserPlans(String uid) {
+    return db
+        .collection("plans")
+        .where('creatorID', isEqualTo: uid)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> fetchPlansSharedWithUser(
+    String uid,
+  ) {
+    return db
+        .collection("plans")
+        .where('sharedWithMe', arrayContains: uid)
+        .snapshots();
   }
 }
