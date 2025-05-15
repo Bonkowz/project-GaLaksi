@@ -24,7 +24,7 @@ class AuthNotifier extends _$AuthNotifier {
     ref.listen(currentUserStreamProvider, (previous, next) async {
       final firebaseUser = next.valueOrNull;
       if (firebaseUser != null) {
-        await _fetchUserProfile(firebaseUser.uid);
+        await fetchUserProfile(firebaseUser.uid);
       } else {
         state = AuthState();
       }
@@ -34,7 +34,7 @@ class AuthNotifier extends _$AuthNotifier {
   }
 
   /// Fetches the user profile
-  Future<void> _fetchUserProfile(String uid) async {
+  Future<void> fetchUserProfile(String uid) async {
     state = state.copyWith(isLoading: true);
     final result = await FirebaseFirestoreApi().getUserDocumentByUid(uid);
 

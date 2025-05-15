@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
+import 'package:galaksi/screens/overlays/edit_profile_page.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
@@ -69,11 +70,24 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         alignment: Alignment.topRight,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: IconButton(
-            onPressed: () {
-              ref.read(authNotifierProvider.notifier).signOut();
-            },
-            icon: const Icon(Symbols.logout_rounded),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => EditProfilePage()),
+                  );
+                },
+                icon: const Icon(Symbols.edit_rounded),
+              ),
+              IconButton(
+                onPressed: () {
+                  ref.read(authNotifierProvider.notifier).signOut();
+                },
+                icon: const Icon(Symbols.logout_rounded),
+              ),
+            ],
           ),
         ),
       ),
