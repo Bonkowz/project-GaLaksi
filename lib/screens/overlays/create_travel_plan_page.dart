@@ -50,7 +50,7 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
         showDismissableSnackbar(
           context: context,
           message:
-              "You are offline. This travel plan is added to the queue. "
+              "You are offline. This travel plan is currently pending. "
               "Please connect to the internet before quitting the app to "
               "succesfully create this travel plan.",
           duration: const Duration(minutes: 1),
