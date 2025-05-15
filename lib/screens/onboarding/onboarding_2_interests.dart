@@ -99,6 +99,9 @@ class _Onboarding2InterestsState extends ConsumerState<Onboarding2Interests> {
                             children:
                                 interests.map((e) {
                                   return InputChip(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(32),
+                                    ),
                                     label: Text(e.title),
                                     selected: selection.contains(e),
                                     onSelected: (selected) {
