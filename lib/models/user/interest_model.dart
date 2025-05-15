@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 enum Interest {
   // Sports
   athletics(InterestCategory.sports, "Athletics"),
@@ -82,6 +84,9 @@ enum Interest {
   const Interest(this.category, this.title);
   final InterestCategory category;
   final String title;
+
+  static Map<InterestCategory, List<Interest>> get categorized =>
+      Interest.values.groupListsBy((interest) => interest.category);
 }
 
 enum InterestCategory {
