@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:galaksi/screens/auth/sign_out_page.dart';
 import 'package:galaksi/screens/main/find_people_page.dart';
 import 'package:galaksi/screens/main/home_page.dart';
 import 'package:galaksi/screens/main/my_friends_page.dart';
@@ -22,7 +21,7 @@ class _BasePageState extends State<BasePage> {
   final List<Widget> _pages = [
     const HomePage(),
     const FindPeoplePage(),
-    const ProfilePage(), 
+    const ProfilePage(),
     const MyFriendsPage(),
   ];
 
@@ -52,17 +51,20 @@ class _BasePageState extends State<BasePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        enableFeedback: true,
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const CreateTravelPlanPage(),
-            ),
-          );
-        },
-        child: const Icon(Symbols.add_location_alt),
-      ),
+      floatingActionButton:
+          _selectedPage == 0
+              ? FloatingActionButton(
+                enableFeedback: true,
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const CreateTravelPlanPage(),
+                    ),
+                  );
+                },
+                child: const Icon(Symbols.add_location_alt),
+              )
+              : null,
       bottomNavigationBar: NavigationBar(
         labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
         destinations: _navigationItems,
