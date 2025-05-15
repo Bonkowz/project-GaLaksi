@@ -118,13 +118,18 @@ class TravelPlansView extends ConsumerWidget {
         );
       },
       loading: () => const Center(child: CircularProgressIndicator()),
-      error:
-          (err, stack) => Center(
+      error: (err, stack) {
+        debugPrint("$err");
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(
             child: Text(
               'Error: $err',
               style: const TextStyle(color: Colors.red),
             ),
           ),
+        );
+      },
     );
   }
 }

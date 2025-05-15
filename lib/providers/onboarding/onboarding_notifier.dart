@@ -105,24 +105,27 @@ class OnboardingNotifier extends _$OnboardingNotifier {
       return false;
     }
 
-    try {
-      final user = User(
-        uid: authUid,
-        firstName: state.firstName!.trim(),
-        lastName: state.lastName!.trim(),
-        username: state.username!.trim(),
-        email: StringUtils.normalizeEmailKeepAlias(state.email!),
-        emailCanonical: StringUtils.normalizeEmail(state.email!),
-        interests: state.interests,
-        travelStyles: state.travelStyles,
-      );
-      final result = await FirebaseFirestoreApi().addUser(user);
-      state = state.copyWith(uid: user.uid);
-      return result;
-    } catch (e) {
-      debugPrint("Error creating user: $e");
-      return false;
-    }
+    final user = User(
+      uid: authUid,
+      firstName: state.firstName!.trim(),
+      lastName: state.lastName!.trim(),
+      username: state.username!.trim(),
+      email: StringUtils.normalizeEmailKeepAlias(state.email!),
+      emailCanonical: StringUtils.normalizeEmail(state.email!),
+      interests: state.interests,
+      travelStyles: state.travelStyles,
+    );
+    final result = await FirebaseFirestoreApi().addUser(user);
+    return result.when(
+      onSuccess: (success) {
+        state = state.copyWith(uid: user.uid);
+        return success.data;
+      },
+      onFailure: (failure) {
+        debugPrint("Error creating user: ${failure.message}");
+        return false;
+      },
+    );
   }
 }
 

@@ -49,7 +49,11 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
       if (mounted) {
         showDismissableSnackbar(
           context: context,
-          message: "Failed to create travel plan.",
+          message:
+              "You are offline. This travel plan is added to the queue. "
+              "Please connect to the internet before quitting the app to "
+              "succesfully create this travel plan.",
+          duration: const Duration(minutes: 1),
         );
       }
     } else {

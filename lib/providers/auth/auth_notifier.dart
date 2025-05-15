@@ -22,8 +22,6 @@ class AuthNotifier extends _$AuthNotifier {
     // Automatically fetch the user profile from the database
     // if the user is signed in
     ref.listen(currentUserStreamProvider, (previous, next) async {
-      debugPrint(previous.toString());
-      debugPrint(next.toString());
       final firebaseUser = next.valueOrNull;
       if (firebaseUser != null) {
         await _fetchUserProfile(firebaseUser.uid);
@@ -38,13 +36,17 @@ class AuthNotifier extends _$AuthNotifier {
   /// Fetches the user profile
   Future<void> _fetchUserProfile(String uid) async {
     state = state.copyWith(isLoading: true);
-    final doc = await FirebaseFirestoreApi().getUserDocumentByUid(uid);
-    if (doc != null) {
-      final userProfile = User.fromDocument(doc);
-      state = state.copyWith(user: userProfile, isLoading: false);
-    } else {
-      state = state.copyWith(user: null, isLoading: false);
-    }
+    final result = await FirebaseFirestoreApi().getUserDocumentByUid(uid);
+
+    result.when(
+      onSuccess: (success) {
+        final userProfile = User.fromDocument(success.data);
+        state = state.copyWith(user: userProfile, isLoading: false);
+      },
+      onFailure: (failure) {
+        state = state.copyWith(user: null, isLoading: false);
+      },
+    );
   }
 
   /// Toggles between [SignInPage] and [SignUpPage] in the [AuthScreen]
@@ -70,23 +72,38 @@ class AuthNotifier extends _$AuthNotifier {
   }) async {
     state = state.copyWith(isLoading: true);
     // Fetch the user from the database
-    final doc = await FirebaseFirestoreApi().getUserDocumentByUsername(
+    final result = await FirebaseFirestoreApi().getUserDocumentByUsername(
       username,
     );
-    if (doc == null) {
-      state = state.copyWith(isLoading: false);
-      return const AuthResult(
-        success: false,
-        message: "Incorrect username or password.",
-      );
-    }
 
-    // Attempt to sign in using the user's email
-    final user = User.fromDocument(doc);
-    final result = await FirebaseAuthApi().signIn(user.email, password);
-    state = state.copyWith(user: user);
-    state = state.copyWith(isLoading: false);
-    return result;
+    return result.when(
+      onSuccess: (success) async {
+        // Attempt to sign in using the user's email
+        final user = User.fromDocument(success.data);
+        final result = await FirebaseAuthApi().signIn(user.email, password);
+        state = state.copyWith(user: user);
+        state = state.copyWith(isLoading: false);
+        return result;
+      },
+      onFailure: (failure) {
+        state = state.copyWith(isLoading: false);
+
+        return switch (failure.error) {
+          FirestoreFailureError.networkError => const AuthResult(
+            success: false,
+            message: "You are offline. Please try again later.",
+          ),
+          FirestoreFailureError.notFound => const AuthResult(
+            success: false,
+            message: "Incorrect username or password.",
+          ),
+          _ => const AuthResult(
+            success: false,
+            message: "An unknown error occurred",
+          ),
+        };
+      },
+    );
   }
 
   /// Attempts to sign up with the given email and password
@@ -112,11 +129,18 @@ class AuthNotifier extends _$AuthNotifier {
       if (user == null) {
         return;
       }
-      final doc = await FirebaseFirestoreApi().getUserDocumentByUid(user.uid);
-      if (doc != null) {
-        await FirebaseFirestoreApi().deleteUser(doc.id);
-      }
-      FirebaseAuthApi().delete();
+      final result = await FirebaseFirestoreApi().getUserDocumentByUid(
+        user.uid,
+      );
+      result.when(
+        onSuccess: (success) async {
+          await FirebaseFirestoreApi().deleteUser(success.data.id);
+          FirebaseAuthApi().delete();
+        },
+        onFailure: (failure) {
+          debugPrint(failure.message);
+        },
+      );
     });
   }
 }

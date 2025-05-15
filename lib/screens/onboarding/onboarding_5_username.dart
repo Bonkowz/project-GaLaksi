@@ -50,61 +50,60 @@ class _Onboarding5UsernameState extends ConsumerState<Onboarding5Username> {
     final onboardingNotifier = ref.read(onboardingNotifierProvider.notifier);
     onboardingNotifier.startLoading();
 
-    try {
-      // Check if username already exists
-      final usernameExists = await FirebaseFirestoreApi()
-          .getUserDocumentByUsername(_usernameTextController.text);
+    // Check if username already exists
+    final result = await FirebaseFirestoreApi().getUserDocumentByUsername(
+      _usernameTextController.text.trim(),
+    );
 
-      if (mounted) {
-        if (usernameExists != null) {
-          showDismissableSnackbar(
-            context: context,
-            message: "A user with that username already exists.",
-          );
-          onboardingNotifier.stopLoading();
-          return;
-        }
-      }
-
-      // Attempt to create Auth user
-      final authResult = await onboardingNotifier.createAccount();
-      if (mounted) {
-        if (!authResult.success) {
-          showDismissableSnackbar(
-            context: context,
-            message: authResult.message,
-          );
-          onboardingNotifier.stopLoading();
-          onboardingNotifier.prevPage();
-          return;
-        }
-      }
-
-      // Attempt to create profile
-      final profileCreated = await onboardingNotifier.createProfile();
-      if (!profileCreated) {
-        await FirebaseAuthApi().delete();
-        if (mounted) {
-          showDismissableSnackbar(
-            context: context,
-            message: "Profile cannot be created.",
-          );
-        }
-        onboardingNotifier.stopLoading();
-        return;
-      }
-
-      // Go to next page and complete the onboarding
-      onboardingNotifier.nextPage();
-      onboardingNotifier.stopLoading();
-    } catch (e) {
-      if (mounted) {
+    result.when(
+      onSuccess: (success) {
         showDismissableSnackbar(
           context: context,
-          message: "An unexpected error occurred.",
+          message: "A user with that username already exists.",
         );
-      }
-    }
+        onboardingNotifier.stopLoading();
+        return;
+      },
+      onFailure: (failure) async {
+        if (failure.error == FirestoreFailureError.networkError) {
+          showDismissableSnackbar(context: context, message: failure.message);
+          onboardingNotifier.stopLoading();
+          return;
+        }
+
+        // Attempt to create Auth user
+        final authResult = await onboardingNotifier.createAccount();
+        if (mounted) {
+          if (!authResult.success) {
+            showDismissableSnackbar(
+              context: context,
+              message: authResult.message,
+            );
+            onboardingNotifier.stopLoading();
+            onboardingNotifier.prevPage();
+            return;
+          }
+        }
+
+        // Attempt to create profile
+        final profileCreated = await onboardingNotifier.createProfile();
+        if (!profileCreated) {
+          await FirebaseAuthApi().delete();
+          if (mounted) {
+            showDismissableSnackbar(
+              context: context,
+              message: "Profile cannot be created.",
+            );
+          }
+          onboardingNotifier.stopLoading();
+          return;
+        }
+
+        // Go to next page and complete the onboarding
+        onboardingNotifier.nextPage();
+        onboardingNotifier.stopLoading();
+      },
+    );
   }
 
   @override
