@@ -4,6 +4,7 @@ import 'package:galaksi/main.dart';
 void showSnackbar({
   required BuildContext context,
   required String message,
+  Duration? duration,
   String? actionLabel,
   VoidCallback? onActionPressed,
 }) {
@@ -20,6 +21,7 @@ void showSnackbar({
       reverseDuration: Durations.medium4,
     ),
     SnackBar(
+      duration: duration ?? const Duration(seconds: 4),
       backgroundColor: colorScheme.inverseSurface,
       content: Text(
         message,
@@ -46,10 +48,12 @@ void showSnackbar({
 void showDismissableSnackbar({
   required BuildContext context,
   required String message,
+  Duration? duration,
 }) {
   showSnackbar(
     context: context,
     message: message,
+    duration: duration,
     actionLabel: "Dismiss",
     onActionPressed: () {
       scaffoldMessengerKey.currentState?.hideCurrentSnackBar();
