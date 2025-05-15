@@ -18,12 +18,15 @@ class BasePage extends StatefulWidget {
 class _BasePageState extends State<BasePage> {
   int _selectedPage = 0;
 
-  final List<Widget> _pages = [
-    const HomePage(),
-    const FindPeoplePage(),
-    const ProfilePage(),
-    const MyFriendsPage(),
-  ];
+  final List<Widget> _pages =
+      [
+        const HomePage(),
+        const FindPeoplePage(),
+        const ProfilePage(),
+        const MyFriendsPage(),
+      ].map((page) {
+        return AnimatedSwitcher(duration: Durations.short3, child: page);
+      }).toList();
 
   final _navigationItems = [
     const NavigationDestination(
@@ -75,13 +78,7 @@ class _BasePageState extends State<BasePage> {
           });
         },
       ),
-      body:
-          _pages
-              .map(
-                (page) =>
-                    AnimatedSwitcher(duration: Durations.short3, child: page),
-              )
-              .toList()[_selectedPage],
+      body: _pages[_selectedPage],
     );
   }
 }
