@@ -78,6 +78,7 @@ class HomePage extends ConsumerWidget {
           ),
         ),
         body: const TabBarView(
+          physics: NeverScrollableScrollPhysics(),
           children: [TravelPlansView(), Center(child: Text("Shared with you"))],
         ),
       ),
