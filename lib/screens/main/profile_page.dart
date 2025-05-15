@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:galaksi/screens/auth/sign_out_page.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
   const ProfilePage({super.key});
@@ -14,123 +14,254 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   final double coverHeight = 150;
   final double profileHeight = 200;
 
-  
   @override
   Widget build(BuildContext context) {
-
+    final user = ref.watch(authNotifierProvider).user;
     return Scaffold(
-      body: ListView(
-       padding: EdgeInsets.zero, 
-       children: <Widget>[
-        buildTop(),
-        buildContent(),
-       ],
-      )
+      body:
+          user == null
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                child: Column(
+                  children: [buildTop(), _profileInfo(), buildAbout()],
+                ),
+              ),
     );
   }
 
-  Widget buildTop(){
+  Widget buildTop() {
     final bottom = profileHeight / 2;
     final top = coverHeight - profileHeight / 2;
-    
-    return Stack(
-      clipBehavior: Clip.none,
-      alignment: Alignment.center,
+
+    return Column(
       children: [
-        Container(
-          margin: EdgeInsets.only(bottom: bottom),
-          child: buildCoverImage(),
+        SizedBox(
+          width: double.infinity,
+          height: kToolbarHeight,
+          child: ColoredBox(
+            color: Theme.of(context).colorScheme.primaryContainer,
+          ),
         ),
-        Positioned(
-          top: top,
-          child: buildProfileImage(),
-        )
-      ], 
+        Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            Container(
+              margin: EdgeInsets.only(bottom: bottom),
+              child: buildCoverImage(),
+            ),
+            Positioned(top: top, child: _profileImage()),
+          ],
+        ),
+      ],
     );
   }
 
-  Widget buildCoverImage() => Container(
-    color: Theme.of(context).colorScheme.primaryContainer,
-    width: double.infinity,
-    height: coverHeight,
-    // fit: BoxFit.cover,
+  Widget buildCoverImage() => Stack(
+    children: [
+      Container(
+        color: Theme.of(context).colorScheme.primaryContainer,
+        width: double.infinity,
+        height: coverHeight,
+        // fit: BoxFit.cover,
+      ),
+      Align(
+        alignment: Alignment.topRight,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: IconButton(
+            onPressed: () {
+              ref.read(authNotifierProvider.notifier).signOut();
+            },
+            icon: const Icon(Symbols.logout_rounded),
+          ),
+        ),
+      ),
+    ],
   );
 
-  Widget buildProfileImage() { 
+  Widget _profileImage() {
     final innerRadius = (profileHeight / 2) - 8.0;
-    final outerSize = profileHeight; 
+    final outerSize = profileHeight;
 
     return Container(
       width: outerSize,
       height: outerSize,
       decoration: BoxDecoration(
-        shape: BoxShape.circle, 
+        shape: BoxShape.circle,
         border: Border.all(
-          color: Theme.of(context).scaffoldBackgroundColor, 
-          width: 8.0, 
+          color: Theme.of(context).scaffoldBackgroundColor,
+          width: 8.0,
         ),
       ),
       child: CircleAvatar(
-        radius: innerRadius, 
-        backgroundColor: Colors.grey.shade600, 
+        radius: innerRadius,
+        backgroundColor: Colors.grey.shade600,
       ),
     );
   }
 
-  Widget buildContent() {
-    final authState = ref.watch(authNotifierProvider);
-    return Column(
+  Widget _profileInfo() {
+    final user = ref.watch(authNotifierProvider).user!;
+
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
         children: [
           const SizedBox(height: 8),
           Text(
-            "${authState.user!.firstName} ${authState.user!.lastName}",
-            style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-              fontWeight: FontWeight.bold
-            )
+            "${user.firstName} ${user.lastName}",
+            style: Theme.of(
+              context,
+            ).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(
-            "@${authState.user!.username}",
-            style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-              color: Theme.of(context).colorScheme.outline
-            )
-
+            "@${user.username}",
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+              color: Theme.of(context).colorScheme.outline,
+            ),
           ),
-
-          const SizedBox(height: 8),
-          const SizedBox(height: 8),
-          buildAbout(),
-        ], 
+        ],
+      ),
     );
   }
 
-
-
   Widget buildAbout() {
-    final authState = ref.watch(authNotifierProvider);
+    final user = ref.watch(authNotifierProvider).user!;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        buildTile("Biography","I am steve."), 
-        buildTile("Interests",authState.user != null ? (authState.user!.interests)!.map((item) => (item as dynamic).title.toString()).join(", ") : "No interests to show!"), 
-        buildTile("Travel Styles",authState.user != null ? (authState.user!.travelStyles)!.map((item) => (item as dynamic).title.toString()).join(", ") : "No particular travel styles"), 
-        Row(
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _biography(),
+          _interests(),
+          _travelStyles(),
+          Row(
+            children: [
+              Expanded(child: infoCard("Email", user.email)),
+              Expanded(child: infoCard("Phone Number", "---")),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _biography() {
+    return Card.filled(
+      color: Theme.of(context).colorScheme.primaryContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded( child: buildTile("Email", authState.user!.email)),
-            Expanded( child: buildTile("Phone Number", "---")),
+            Text(
+              "Biography",
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              "According to all known laws of aviation, there is no way that a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway because bees don't care what humans think is impossible. Yellow, black. Yellow, black. Yellow, black. Yellow, black. Ooh, black and yellow!",
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
           ],
         ),
-        // const SignOutPage() // TODO: fix this
-      ],
-    ); 
+      ),
+    );
   }
-  
-   
 
-  Widget buildTile(String title, String content) => Card(
-    elevation: 1.0, 
-    margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+  Widget _interests() {
+    final user = ref.watch(authNotifierProvider).user!;
+
+    if (user.interests?.isEmpty ?? true) {
+      return const SizedBox.shrink();
+    }
+
+    return Card.filled(
+      color: Theme.of(context).colorScheme.primaryContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Interests",
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 4,
+              runSpacing: 4,
+              children:
+                  user.interests!
+                      .map(
+                        (item) => Chip(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(32),
+                          ),
+                          label: Text(item.title),
+                        ),
+                      )
+                      .toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _travelStyles() {
+    final user = ref.watch(authNotifierProvider).user!;
+
+    if (user.travelStyles?.isEmpty ?? true) {
+      return const SizedBox.shrink();
+    }
+
+    return Card.filled(
+      color: Theme.of(context).colorScheme.primaryContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Travel Styles",
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 4,
+              runSpacing: 4,
+              children:
+                  user.travelStyles!
+                      .map(
+                        (item) => Chip(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(32),
+                          ),
+                          label: Text(item.title),
+                        ),
+                      )
+                      .toList(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget infoCard(String title, String content) => Card.filled(
     color: Theme.of(context).colorScheme.primaryContainer,
     child: Padding(
       padding: const EdgeInsets.all(16.0),
@@ -145,9 +276,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             ),
           ),
           const SizedBox(height: 8.0),
-          Text(
-            content,
-            style: Theme.of(context).textTheme.bodyMedium,
+          FittedBox(
+            fit: BoxFit.contain,
+            child: Text(content, style: Theme.of(context).textTheme.bodyMedium),
           ),
         ],
       ),
