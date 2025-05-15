@@ -45,9 +45,6 @@ class UserProfileFormNotifier extends _$UserProfileFormNotifier {
       travelStyles: state.travelStyles,
     );
 
-    debugPrint(user.toMap().toString());
-    debugPrint(updatedUser.toMap().toString());
-
     final result = await FirebaseFirestoreApi().updateUser(user, updatedUser);
     return result.when(
       onSuccess: (success) {
