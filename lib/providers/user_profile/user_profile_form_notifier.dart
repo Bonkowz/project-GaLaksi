@@ -38,8 +38,6 @@ class UserProfileFormNotifier extends _$UserProfileFormNotifier {
       return false;
     }
 
-    state = state.copyWith(isLoading: true);
-
     final updatedUser = user.copyWith(
       firstName: state.firstName,
       lastName: state.lastName,
@@ -55,7 +53,6 @@ class UserProfileFormNotifier extends _$UserProfileFormNotifier {
           lastName: updatedUser.lastName,
           interests: updatedUser.interests,
           travelStyles: updatedUser.travelStyles,
-          isLoading: false,
         );
         return success.data;
       },
@@ -75,7 +72,6 @@ class UserProfileFormState {
     this.uid,
     this.interests = const {},
     this.travelStyles = const {},
-    this.isLoading = false,
   });
 
   final String? uid;
@@ -83,7 +79,6 @@ class UserProfileFormState {
   final String? lastName;
   final Set<Interest> interests;
   final Set<TravelStyle> travelStyles;
-  final bool isLoading;
 
   UserProfileFormState copyWith({
     String? uid,
@@ -99,7 +94,6 @@ class UserProfileFormState {
       uid: uid ?? this.uid,
       interests: interests ?? this.interests,
       travelStyles: travelStyles ?? this.travelStyles,
-      isLoading: isLoading ?? this.isLoading,
     );
   }
 }

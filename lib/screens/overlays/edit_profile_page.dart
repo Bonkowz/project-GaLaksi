@@ -24,6 +24,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   late final TextEditingController _lastNameTextController;
   final interestSelection = <Interest>{};
   final travelStyleSelectionMap = <TravelStyle, bool>{};
+  bool _hasSaved = false;
 
   void _saveInterests() {
     ref
@@ -43,6 +44,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   }
 
   Future<void> _saveProfile() async {
+    setState(() {
+      _hasSaved = true;
+    });
+
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -58,18 +63,26 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _saveStyles();
     final result = await userProfileFormNotifier.updateProfile();
 
-    if (mounted) {
-      if (!result) {
-        showDismissableSnackbar(
-          context: context,
-          message: "Failed to update profile",
-        );
+    if (!result) {
+      setState(() {
+        _hasSaved = false;
+      });
+      if (!mounted) {
         return;
       }
-      await authNotifier.fetchUserProfile(uid);
-      if (mounted) {
-        Navigator.of(context).pop();
-      }
+      showDismissableSnackbar(
+        context: context,
+        message:
+            "You are offline. This change is currently pending. "
+            "Please connect to the internet before quitting the app to "
+            "succesfully update your profile.",
+        duration: const Duration(minutes: 1),
+      );
+      return;
+    }
+    await authNotifier.fetchUserProfile(uid);
+    if (mounted) {
+      Navigator.of(context).pop();
     }
   }
 
@@ -211,10 +224,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             FilledButton.icon(
-              onPressed:
-                  ref.watch(userProfileFormNotifierProvider).isLoading
-                      ? null
-                      : () async => await _saveProfile(),
+              onPressed: _hasSaved ? null : () async => await _saveProfile(),
               label: const Text("Save"),
               icon: const Icon(Symbols.save_rounded),
             ),
