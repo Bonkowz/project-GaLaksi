@@ -26,6 +26,7 @@ class MainApp extends ConsumerWidget {
     final textTheme = createTextTheme(context, "Figtree", "Figtree");
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: scaffoldMessengerKey,
       theme: GalaksiTheme(textTheme).light(),
       darkTheme: GalaksiTheme(textTheme).dark(),

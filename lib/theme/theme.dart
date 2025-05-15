@@ -36,6 +36,12 @@ class GalaksiTheme {
       displayColor: colorScheme.onSurface,
       bodyColor: colorScheme.onSurface,
     ),
+    pageTransitionsTheme: PageTransitionsTheme(
+      builders: Map.fromIterable(
+        TargetPlatform.values,
+        value: (_) => const FadeForwardsPageTransitionsBuilder(),
+      ),
+    ),
   );
 
   /// Mikado Yellow

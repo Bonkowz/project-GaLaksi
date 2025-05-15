@@ -27,20 +27,24 @@ class TravelPlan {
       title: map['title'],
       description: map['description'],
       creatorID: map['creatorID'],
-      sharedWith: List<String>.from(map['sharedWith']),
-      notes: (map['notes'] as List).map((note) => Note.fromMap(note)).toList(),
+      sharedWith: List<String>.from(map['sharedWith'] ?? []),
+      notes:
+          (map['notes'] as List?)?.map((nt) => Note.fromMap(nt)).toList() ?? [],
       activities:
-          (map['activities'] as List)
-              .map((activity) => TravelActivity.fromMap(activity))
-              .toList(),
+          (map['activities'] as List?)
+              ?.map((ac) => TravelActivity.fromMap(ac))
+              .toList() ??
+          [],
       flightDetails:
-          (map['flightDetails'] as List)
-              .map((flight) => FlightDetail.fromMap(flight))
-              .toList(),
+          (map['flightDetails'] as List?)
+              ?.map((fl) => FlightDetail.fromMap(fl))
+              .toList() ??
+          [],
       accommodations:
-          (map['accommodations'] as List)
-              .map((accom) => Accommodation.fromMap(accom))
-              .toList(),
+          (map['accommodations'] as List?)
+              ?.map((am) => Accommodation.fromMap(am))
+              .toList() ??
+          [],
     );
   }
 
@@ -54,9 +58,8 @@ class TravelPlan {
   List<FlightDetail> flightDetails;
   List<Accommodation> accommodations;
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'title': title,
       'description': description,
       'creatorID': creatorID,

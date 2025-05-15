@@ -5,6 +5,7 @@ import 'package:galaksi/screens/main/find_people_page.dart';
 import 'package:galaksi/screens/main/home_page.dart';
 import 'package:galaksi/screens/main/my_friends_page.dart';
 import 'package:galaksi/screens/main/profile_page.dart';
+import 'package:galaksi/screens/overlays/create_travel_plan_page.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 /// [BasePage] will act as a Parent of the following pages through a [NavigationBar]:
@@ -55,9 +56,10 @@ class _BasePageState extends State<BasePage> {
       floatingActionButton: FloatingActionButton(
         enableFeedback: true,
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const CreateTravelPage()),
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const CreateTravelPlanPage(),
+            ),
           );
         },
         child: const Icon(Symbols.add_location_alt),
@@ -72,7 +74,13 @@ class _BasePageState extends State<BasePage> {
           });
         },
       ),
-      body: _pages[_selectedPage],
+      body:
+          _pages
+              .map(
+                (page) =>
+                    AnimatedSwitcher(duration: Durations.short3, child: page),
+              )
+              .toList()[_selectedPage],
     );
   }
 }
