@@ -76,7 +76,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               IconButton(
                 onPressed: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => EditProfilePage()),
+                    MaterialPageRoute(
+                      builder: (context) => const EditProfilePage(),
+                    ),
                   );
                 },
                 icon: const Icon(Symbols.edit_rounded),

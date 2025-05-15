@@ -48,23 +48,23 @@ class UserProfileFormNotifier extends _$UserProfileFormNotifier {
     );
 
     final result = await FirebaseFirestoreApi().updateUser(user, updatedUser);
-    final success = result.when(
+    return result.when(
       onSuccess: (success) {
         state = state.copyWith(
           firstName: updatedUser.firstName,
           lastName: updatedUser.lastName,
           interests: updatedUser.interests,
           travelStyles: updatedUser.travelStyles,
+          isLoading: false,
         );
         return success.data;
       },
       onFailure: (failure) {
         debugPrint("Failed to update user profile: ${failure.message}");
+        state = state.copyWith(isLoading: false);
         return false;
       },
     );
-    state = state.copyWith(isLoading: false);
-    return success;
   }
 }
 
