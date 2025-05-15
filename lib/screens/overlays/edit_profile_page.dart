@@ -58,7 +58,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     final authNotifier = ref.read(authNotifierProvider.notifier);
     final uid = ref.read(authNotifierProvider).user!.uid;
 
-    _formKey.currentState!.save();
+    userProfileFormNotifier.updateFirstName(
+      _firstNameTextController.text.trim(),
+    );
+    userProfileFormNotifier.updateLastName(_lastNameTextController.text.trim());
     _saveInterests();
     _saveStyles();
     final result = await userProfileFormNotifier.updateProfile();
@@ -101,9 +104,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final userProfileFormNotifier = ref.read(
-      userProfileFormNotifierProvider.notifier,
-    );
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -115,13 +115,13 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              Card.outlined(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            Card.outlined(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -134,9 +134,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: _firstNameTextController,
-                        onSaved:
-                            (firstName) => userProfileFormNotifier
-                                .updateFirstName(firstName!),
                         onTapOutside:
                             (event) =>
                                 FocusManager.instance.primaryFocus?.unfocus(),
@@ -155,9 +152,6 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                       const SizedBox(height: 16),
                       TextFormField(
                         controller: _lastNameTextController,
-                        onSaved:
-                            (lastName) => userProfileFormNotifier
-                                .updateLastName(lastName!),
                         onTapOutside:
                             (event) =>
                                 FocusManager.instance.primaryFocus?.unfocus(),
@@ -177,46 +171,44 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   ),
                 ),
               ),
-              Card.outlined(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Interests",
-                        style: textTheme.headlineSmall!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+            ),
+            Card.outlined(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Interests",
+                      style: textTheme.headlineSmall!.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(height: 16),
-                      InterestSelection(selection: interestSelection),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 16),
+                    InterestSelection(selection: interestSelection),
+                  ],
                 ),
               ),
-              Card.outlined(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Travel Styles",
-                        style: textTheme.headlineSmall!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+            ),
+            Card.outlined(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Travel Styles",
+                      style: textTheme.headlineSmall!.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                      const SizedBox(height: 16),
-                      TravelStyleSelection(
-                        selectionMap: travelStyleSelectionMap,
-                      ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 16),
+                    TravelStyleSelection(selectionMap: travelStyleSelectionMap),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: BottomAppBar(

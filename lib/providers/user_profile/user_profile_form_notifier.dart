@@ -45,20 +45,16 @@ class UserProfileFormNotifier extends _$UserProfileFormNotifier {
       travelStyles: state.travelStyles,
     );
 
+    debugPrint(user.toMap().toString());
+    debugPrint(updatedUser.toMap().toString());
+
     final result = await FirebaseFirestoreApi().updateUser(user, updatedUser);
     return result.when(
       onSuccess: (success) {
-        state = state.copyWith(
-          firstName: updatedUser.firstName,
-          lastName: updatedUser.lastName,
-          interests: updatedUser.interests,
-          travelStyles: updatedUser.travelStyles,
-        );
         return success.data;
       },
       onFailure: (failure) {
         debugPrint("Failed to update user profile: ${failure.message}");
-        state = state.copyWith(isLoading: false);
         return false;
       },
     );
@@ -86,7 +82,6 @@ class UserProfileFormState {
     String? lastName,
     Set<Interest>? interests,
     Set<TravelStyle>? travelStyles,
-    bool? isLoading,
   }) {
     return UserProfileFormState(
       firstName: firstName ?? this.firstName,
