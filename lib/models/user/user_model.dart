@@ -56,4 +56,25 @@ class User {
       'travelStyles': travelStyles?.map((t) => t.name).toList(),
     };
   }
+
+  User copyWith({
+    String? firstName,
+    String? lastName,
+    String? username,
+    String? email,
+    String? emailCanonical,
+    Set<Interest>? interests,
+    Set<TravelStyle>? travelStyles,
+  }) {
+    return User(
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      username: username ?? this.username,
+      email: email ?? this.email,
+      emailCanonical: emailCanonical ?? this.emailCanonical,
+      uid: uid,
+      interests: interests ?? this.interests,
+      travelStyles: travelStyles ?? this.travelStyles,
+    );
+  }
 }
