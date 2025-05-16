@@ -115,13 +115,13 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: ListView(
-          children: [
-            Card.outlined(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  key: _formKey,
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              Card.outlined(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -171,50 +171,50 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                   ),
                 ),
               ),
-            ),
-            Card.outlined(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Interests",
-                      style: textTheme.headlineSmall!.copyWith(
-                        fontWeight: FontWeight.bold,
+              Card.outlined(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Interests",
+                        style: textTheme.headlineSmall!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    InterestSelection(
-                      selection: interestSelection,
-                      onSelectionChanged: () => setState(() {}),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      InterestSelection(
+                        selection: interestSelection,
+                        onSelectionChanged: () => setState(() {}),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Card.outlined(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Travel Styles",
-                      style: textTheme.headlineSmall!.copyWith(
-                        fontWeight: FontWeight.bold,
+              Card.outlined(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Travel Styles",
+                        style: textTheme.headlineSmall!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    TravelStyleSelection(
-                      selectionMap: travelStyleSelectionMap,
-                      onSelectionChanged: () => setState(() {}),
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      TravelStyleSelection(
+                        selectionMap: travelStyleSelectionMap,
+                        onSelectionChanged: () => setState(() {}),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: BottomAppBar(
