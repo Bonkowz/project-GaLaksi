@@ -2,9 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:galaksi/models/user/travel_style_model.dart';
 
 class TravelStyleSelection extends StatefulWidget {
-  const TravelStyleSelection({super.key, required this.selectionMap});
+  const TravelStyleSelection({
+    required this.selectionMap,
+    required this.onSelectionChanged,
+    super.key,
+  });
 
   final Map<TravelStyle, bool> selectionMap;
+  final VoidCallback onSelectionChanged;
 
   @override
   State<TravelStyleSelection> createState() => _TravelStyleSelectionState();
@@ -29,6 +34,7 @@ class _TravelStyleSelectionState extends State<TravelStyleSelection> {
                 onChanged: (value) {
                   setState(() {
                     widget.selectionMap[style] = value ?? false;
+                    widget.onSelectionChanged();
                   });
                 },
               ),

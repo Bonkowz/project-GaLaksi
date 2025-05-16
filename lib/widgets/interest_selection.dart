@@ -4,9 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/models/user/interest_model.dart';
 
 class InterestSelection extends ConsumerStatefulWidget {
-  const InterestSelection({required this.selection, super.key});
+  const InterestSelection({
+    required this.selection,
+    required this.onSelectionChanged,
+    super.key,
+  });
 
   final Set<Interest> selection;
+  final VoidCallback onSelectionChanged;
 
   @override
   ConsumerState<InterestSelection> createState() => _InterestSelectionState();
@@ -51,6 +56,7 @@ class _InterestSelectionState extends ConsumerState<InterestSelection> {
                               } else {
                                 widget.selection.remove(e);
                               }
+                              widget.onSelectionChanged();
                             });
                           },
                         );

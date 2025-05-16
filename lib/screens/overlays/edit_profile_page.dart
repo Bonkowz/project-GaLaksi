@@ -185,7 +185,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    InterestSelection(selection: interestSelection),
+                    InterestSelection(
+                      selection: interestSelection,
+                      onSelectionChanged: () => setState(() {}),
+                    ),
                   ],
                 ),
               ),
@@ -203,7 +206,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    TravelStyleSelection(selectionMap: travelStyleSelectionMap),
+                    TravelStyleSelection(
+                      selectionMap: travelStyleSelectionMap,
+                      onSelectionChanged: () => setState(() {}),
+                    ),
                   ],
                 ),
               ),

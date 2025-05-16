@@ -71,7 +71,10 @@ class _Onboarding2InterestsState extends ConsumerState<Onboarding2Interests> {
           const SizedBox(height: 16),
           Expanded(
             child: SingleChildScrollView(
-              child: InterestSelection(selection: selection),
+              child: InterestSelection(
+                selection: selection,
+                onSelectionChanged: () => setState(() {}),
+              ),
             ),
           ),
           const SizedBox(height: 24),

@@ -83,7 +83,10 @@ class _Onboarding3StylesState extends ConsumerState<Onboarding3Styles> {
           const SizedBox(height: 16),
           Expanded(
             child: SingleChildScrollView(
-              child: TravelStyleSelection(selectionMap: selectionMap),
+              child: TravelStyleSelection(
+                selectionMap: selectionMap,
+                onSelectionChanged: () => setState(() {}),
+              ),
             ),
           ),
           const SizedBox(height: 24),
