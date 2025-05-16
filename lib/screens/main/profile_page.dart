@@ -1,5 +1,7 @@
+import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:galaksi/models/user/interest_model.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/screens/overlays/edit_profile_page.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -213,21 +215,43 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               ),
             ),
             const SizedBox(height: 8),
-            Wrap(
-              spacing: 4,
-              runSpacing: 4,
-              children:
-                  user.interests!
-                      .map(
-                        (item) => Chip(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(32),
-                          ),
-                          label: Text(item.title),
-                        ),
-                      )
-                      .toList(),
-            ),
+            ...Interest.categorized.entries.map((entry) {
+              final category = entry.key;
+              final interests =
+                  entry.value
+                      .where((e) => user.interests!.contains(e))
+                      .toList();
+              if (interests.isEmpty) return const SizedBox.shrink();
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 18, bottom: 6),
+                    child: Text(
+                      StringUtils.capitalize(category.title),
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 4,
+                    children:
+                        interests.where((e) => user.interests!.contains(e)).map(
+                          (e) {
+                            return Chip(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(32),
+                              ),
+                              label: Text(e.title),
+                            );
+                          },
+                        ).toList(),
+                  ),
+                ],
+              );
+            }),
           ],
         ),
       ),
