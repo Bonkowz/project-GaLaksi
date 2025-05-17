@@ -66,26 +66,25 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
                 },
               ),
             ],
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer, 
-            expandedHeight: appBarHeight, 
-            pinned: true, 
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            expandedHeight: appBarHeight,
+            pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true, 
-              title:  Padding(
-                padding: const EdgeInsets.only(bottom: 24.0), 
+              centerTitle: true,
+              title: Padding(
+                padding: const EdgeInsets.only(bottom: 24.0),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end, 
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
                       "Everest Trek", // Title
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 4), 
+                    const SizedBox(height: 4),
                     Text(
                       "May 5 - June 5, 2025", // Date range
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith( 
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: Theme.of(context).colorScheme.outline,
                       ),
                     ),
@@ -93,24 +92,22 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
                 ),
               ),
               background: Container(
-                color: Theme.of(context).colorScheme.primaryContainer, 
+                color: Theme.of(context).colorScheme.primaryContainer,
               ),
             ),
             bottom: TabBar(
               controller: _tabController,
               tabs: const [Tab(text: "Itinerary"), Tab(text: "Notes")],
-              labelColor: Theme.of(context).colorScheme.primary, 
-              unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant, 
-              indicatorColor: Theme.of(context).colorScheme.primary, 
+              labelColor: Theme.of(context).colorScheme.primary,
+              unselectedLabelColor:
+                  Theme.of(context).colorScheme.onSurfaceVariant,
+              indicatorColor: Theme.of(context).colorScheme.primary,
             ),
           ),
           SliverFillRemaining(
             child: TabBarView(
               controller: _tabController,
-              children: [
-                buildItineraryTab(),
-                buildNotesTab(),
-              ],
+              children: [buildItineraryTab(), buildNotesTab()],
             ),
           ),
         ],
@@ -119,16 +116,24 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
   }
 
   Widget buildItineraryTab() {
-    final List<List<String>> tempItineraryItems = [
-      ["7:15 AM to 8:15 AM", "Mount Everest Basecamp", "Quick camping and breakfast at basecamp"],
-      ["8:15 AM to 10:00 AM", "Mount Everest Camp IV", "Go to camp IV and prepare for summit"],
+    final tempItineraryItems = <List<String>>[
+      [
+        "7:15 AM to 8:15 AM",
+        "Mount Everest Basecamp",
+        "Quick camping and breakfast at basecamp",
+      ],
+      [
+        "8:15 AM to 10:00 AM",
+        "Mount Everest Camp IV",
+        "Go to camp IV and prepare for summit",
+      ],
       ["10:00 AM to 7:00 PM", "Mount Everest Summit", "Ideal push"],
       ["7:00 PM to 6:00 AM", "Mount Everest Summit", "Sleep"],
     ];
 
     return ListView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(), 
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: tempItineraryItems.length,
       itemBuilder: (context, index) {
         return Padding(
@@ -164,20 +169,28 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
   }
 
   Widget buildNotesTab() {
-    final List<List<String>> noteItems = [
-      ["William", "May 5, 2025 at 9:01 AM", "I just want to remind everyone to be careful when descending down the mountain. Anyways, food is on me when we get down. :) Happy hiking!"],
-      ["Claire", "May 8, 2025 at 2:12 PM", "Things to bring for Everest Summit: \n1. Hiking bag, \n2. Individual tents, \n3. Food and water not exceeding 25 kg"],
+    final noteItems = <List<String>>[
+      [
+        "William",
+        "May 5, 2025 at 9:01 AM",
+        "I just want to remind everyone to be careful when descending down the mountain. Anyways, food is on me when we get down. :) Happy hiking!",
+      ],
+      [
+        "Claire",
+        "May 8, 2025 at 2:12 PM",
+        "Things to bring for Everest Summit: \n1. Hiking bag, \n2. Individual tents, \n3. Food and water not exceeding 25 kg",
+      ],
     ];
 
     return ListView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(), 
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: noteItems.length,
       itemBuilder: (context, index) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Card(
-            elevation: 0.5, 
+            elevation: 0.5,
             color: Theme.of(context).colorScheme.secondaryContainer,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -188,26 +201,19 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
                     children: [
                       Container(
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle, 
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 16.0, 
-                          ),
-                        )
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.grey, width: 16.0),
+                        ),
                       ),
                       const SizedBox(width: 6.0),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "${noteItems[index][0]} added a note:"
-                          ),
-                          Text(
-                            noteItems[index][1],
-                          )
+                          Text("${noteItems[index][0]} added a note:"),
+                          Text(noteItems[index][1]),
                         ],
                       ),
-                    ]
+                    ],
                   ),
                   const SizedBox(height: 4.0),
                   Text(
