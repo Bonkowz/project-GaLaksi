@@ -81,11 +81,15 @@ class OnboardingNotifier extends _$OnboardingNotifier {
     state = state.copyWith(confirmPassword: confirmPassword);
   }
 
-  void updateImage(XFile imageFile) {
-    final serializedImage = base64Encode(
-      File(imageFile.path).readAsBytesSync(),
-    );
-    state = state.copyWith(image: serializedImage);
+  void updateImage(XFile? imageFile) {
+    if (imageFile == null) {
+      state = state.copyWith(image: ''); // Explicitly remove image
+    } else {
+      final serializedImage = base64Encode(
+        File(imageFile.path).readAsBytesSync(),
+      );
+      state = state.copyWith(image: serializedImage);
+    }
   }
 
   Future<AuthResult> createAccount() async {
@@ -125,6 +129,7 @@ class OnboardingNotifier extends _$OnboardingNotifier {
       emailCanonical: StringUtils.normalizeEmail(state.email!),
       interests: state.interests,
       travelStyles: state.travelStyles,
+      image: state.image ?? '',
     );
     final result = await FirebaseFirestoreApi().addUser(user);
     return result.when(

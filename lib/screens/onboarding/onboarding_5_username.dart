@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -6,6 +9,7 @@ import 'package:galaksi/apis/firebase_firestore_api.dart';
 import 'package:galaksi/providers/onboarding/onboarding_notifier.dart';
 import 'package:galaksi/utils/input_decorations.dart';
 import 'package:galaksi/utils/snackbar.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class Onboarding5Username extends ConsumerStatefulWidget {
@@ -135,7 +139,7 @@ class _Onboarding5UsernameState extends ConsumerState<Onboarding5Username> {
           const Divider(),
           const SizedBox(height: 16),
           Text(
-            "Pick a unique handle.",
+            "Show yourself to the world.",
             style: textTheme.headlineSmall!.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -148,6 +152,8 @@ class _Onboarding5UsernameState extends ConsumerState<Onboarding5Username> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    _ProfilePicture(),
+                    const SizedBox(height: 16),
                     TextFormField(
                       controller: _usernameTextController,
                       onSaved:
@@ -214,6 +220,135 @@ class _Onboarding5UsernameState extends ConsumerState<Onboarding5Username> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ProfilePicture extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_ProfilePicture> createState() => _ProfilePictureState();
+}
+
+class _ProfilePictureState extends ConsumerState<_ProfilePicture> {
+  bool imageRemoved = false;
+
+  void _saveImageFromGallery() async {
+    final imageFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
+    if (imageFile == null) {
+      return;
+    }
+    setState(() => imageRemoved = false);
+    ref.read(onboardingNotifierProvider.notifier).updateImage(imageFile);
+  }
+
+  void _saveImageFromCamera() async {
+    final imageFile = await ImagePicker().pickImage(source: ImageSource.camera);
+    if (imageFile == null) {
+      return;
+    }
+    setState(() => imageRemoved = false);
+    ref.read(onboardingNotifierProvider.notifier).updateImage(imageFile);
+  }
+
+  void _removeImage() {
+    ref.read(onboardingNotifierProvider.notifier).updateImage(null);
+    setState(() => imageRemoved = true);
+    showSnackbar(
+      context: context,
+      message: "Image removed",
+      duration: const Duration(seconds: 2),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final onboardingState = ref.watch(onboardingNotifierProvider);
+    final newImage = onboardingState.image;
+
+    final avatar = _selectAvatar(context, newImage);
+
+    return Card.outlined(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            LayoutBuilder(
+              builder: (context, constraints) {
+                return Center(
+                  child: SizedBox(
+                    width: constraints.maxWidth / 2,
+                    height: constraints.maxWidth / 2,
+                    child: avatar,
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  FilledButton.tonalIcon(
+                    onPressed: _saveImageFromGallery,
+                    label: const Text("Pick from gallery"),
+                    icon: const Icon(Symbols.photo_rounded),
+                  ),
+                  FilledButton.tonalIcon(
+                    onPressed: _saveImageFromCamera,
+                    label: const Text("Take a picture"),
+                    icon: const Icon(Symbols.camera_alt_rounded),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: _removeImage,
+                    label: const Text("Remove"),
+                    icon: const Icon(Symbols.delete_rounded),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _selectAvatar(BuildContext context, String? newImage) {
+    final firstName = ref.watch(onboardingNotifierProvider).firstName;
+    final image = ref.watch(onboardingNotifierProvider).image;
+
+    if (imageRemoved) {
+      return _buildInitialAvatar(context, firstName!);
+    } else if (newImage == null || newImage == '') {
+      return _buildInitialAvatar(context, firstName!);
+    } else {
+      return _buildImageAvatar(context, image!);
+    }
+  }
+
+  Widget _buildImageAvatar(BuildContext context, String base64Image) {
+    return CircleAvatar(
+      radius: double.infinity,
+      backgroundImage: MemoryImage(base64Decode(base64Image)),
+    );
+  }
+
+  Widget _buildInitialAvatar(BuildContext context, String initial) {
+    return CircleAvatar(
+      radius: double.infinity,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      child:
+          initial.isEmpty
+              ? const SizedBox.shrink()
+              : Text(
+                StringUtils.capitalize(initial[0]),
+                style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
+              ),
     );
   }
 }
