@@ -12,6 +12,7 @@ class User {
     required this.uid,
     required this.interests,
     required this.travelStyles,
+    this.image = '',
   });
 
   /// Factory constructor to instantiate object from a [DocumentSnapshot]
@@ -20,6 +21,7 @@ class User {
     return User(
       // The uid is directly obtainable from the document id, since they match
       uid: doc.id,
+      image: map['image'] ?? '',
       firstName: map['firstName'],
       lastName: map['lastName'],
       username: map['username'],
@@ -37,6 +39,7 @@ class User {
   }
 
   String uid;
+  String image;
   String firstName;
   String lastName;
   String username;
@@ -54,6 +57,7 @@ class User {
       'emailCanonical': emailCanonical,
       'interests': interests?.map((i) => i.name).toList(),
       'travelStyles': travelStyles?.map((t) => t.name).toList(),
+      'image': image,
     };
   }
 
@@ -65,6 +69,7 @@ class User {
     String? emailCanonical,
     Set<Interest>? interests,
     Set<TravelStyle>? travelStyles,
+    String? image,
   }) {
     return User(
       firstName: firstName ?? this.firstName,
@@ -75,6 +80,7 @@ class User {
       uid: uid,
       interests: interests ?? this.interests,
       travelStyles: travelStyles ?? this.travelStyles,
+      image: image ?? this.image,
     );
   }
 }

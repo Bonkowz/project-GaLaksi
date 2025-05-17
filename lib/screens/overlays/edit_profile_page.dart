@@ -1,14 +1,20 @@
+import 'dart:convert';
+
+import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:galaksi/models/user/interest_model.dart';
 import 'package:galaksi/models/user/travel_style_model.dart';
+import 'package:galaksi/models/user/user_model.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/providers/user_profile/user_profile_form_notifier.dart';
+import 'package:galaksi/utils/dialog.dart';
 import 'package:galaksi/utils/input_decorations.dart';
 import 'package:galaksi/utils/snackbar.dart';
 import 'package:galaksi/widgets/interest_selection.dart';
 import 'package:galaksi/widgets/travel_style_selection.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class EditProfilePage extends ConsumerStatefulWidget {
@@ -44,14 +50,16 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   }
 
   Future<void> _saveProfile() async {
-    setState(() {
-      _hasSaved = true;
-    });
+    setState(() => _hasSaved = true);
 
+    // Validate form
     if (!_formKey.currentState!.validate()) {
       return;
     }
+    // Show loading dialog
+    showLoadingDialog(context: context, message: "Saving profile...");
 
+    // Update profile
     final userProfileFormNotifier = ref.read(
       userProfileFormNotifierProvider.notifier,
     );
@@ -66,27 +74,29 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _saveStyles();
     final result = await userProfileFormNotifier.updateProfile();
 
+    // Close loading dialog
+    if (mounted) {
+      if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+    }
+
+    // Check if update was successful
     if (!result) {
-      setState(() {
-        _hasSaved = false;
-      });
-      if (!mounted) {
-        return;
-      }
+      setState(() => _hasSaved = false);
+      if (!mounted) return;
       showDismissableSnackbar(
         context: context,
         message:
             "You are offline. This change is currently pending. "
             "Please connect to the internet before quitting the app to "
-            "succesfully update your profile.",
+            "successfully update your profile.",
         duration: const Duration(minutes: 1),
       );
       return;
     }
+
+    // Fetch updated user profile
     await authNotifier.fetchUserProfile(uid);
-    if (mounted) {
-      Navigator.of(context).pop();
-    }
+    if (mounted) Navigator.of(context).pop();
   }
 
   @override
@@ -113,107 +123,62 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         centerTitle: true,
         backgroundColor: colorScheme.primaryContainer,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              Card.outlined(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Name",
-                        style: textTheme.headlineSmall!.copyWith(
-                          fontWeight: FontWeight.bold,
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                _ProfilePicture(),
+                _Name(
+                  firstNameTextController: _firstNameTextController,
+                  lastNameTextController: _lastNameTextController,
+                ),
+                Card.outlined(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Interests",
+                          style: textTheme.headlineSmall!.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _firstNameTextController,
-                        onTapOutside:
-                            (event) =>
-                                FocusManager.instance.primaryFocus?.unfocus(),
-                        keyboardType: TextInputType.name,
-                        decoration: InputDecorations.outlineBorder(
-                          context: context,
-                          prefixIcon: const Icon(Symbols.abc_rounded),
-                          labelText: "First Name*",
-                          borderColor: colorScheme.primary,
-                          borderRadius: 16,
+                        const SizedBox(height: 16),
+                        InterestSelection(
+                          selection: interestSelection,
+                          onSelectionChanged: () => setState(() {}),
                         ),
-                        validator: FormBuilderValidators.required(
-                          errorText: "Please enter your first name",
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _lastNameTextController,
-                        onTapOutside:
-                            (event) =>
-                                FocusManager.instance.primaryFocus?.unfocus(),
-                        keyboardType: TextInputType.name,
-                        decoration: InputDecorations.outlineBorder(
-                          context: context,
-                          prefixIcon: const Icon(Symbols.abc_rounded),
-                          labelText: "Last Name*",
-                          borderColor: colorScheme.primary,
-                          borderRadius: 16,
-                        ),
-                        validator: FormBuilderValidators.required(
-                          errorText: "Please enter your last name",
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Card.outlined(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Interests",
-                        style: textTheme.headlineSmall!.copyWith(
-                          fontWeight: FontWeight.bold,
+                Card.outlined(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Travel Styles",
+                          style: textTheme.headlineSmall!.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      InterestSelection(
-                        selection: interestSelection,
-                        onSelectionChanged: () => setState(() {}),
-                      ),
-                    ],
+                        const SizedBox(height: 16),
+                        TravelStyleSelection(
+                          selectionMap: travelStyleSelectionMap,
+                          onSelectionChanged: () => setState(() {}),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Card.outlined(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Travel Styles",
-                        style: textTheme.headlineSmall!.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TravelStyleSelection(
-                        selectionMap: travelStyleSelectionMap,
-                        onSelectionChanged: () => setState(() {}),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -227,6 +192,223 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
               icon: const Icon(Symbols.save_rounded),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Name extends StatelessWidget {
+  const _Name({
+    required TextEditingController firstNameTextController,
+    required TextEditingController lastNameTextController,
+  }) : _firstNameTextController = firstNameTextController,
+       _lastNameTextController = lastNameTextController;
+
+  final TextEditingController _firstNameTextController;
+  final TextEditingController _lastNameTextController;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Card.outlined(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Name",
+              style: textTheme.headlineSmall!.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _firstNameTextController,
+              onTapOutside:
+                  (event) => FocusManager.instance.primaryFocus?.unfocus(),
+              keyboardType: TextInputType.name,
+              decoration: InputDecorations.outlineBorder(
+                context: context,
+                prefixIcon: const Icon(Symbols.abc_rounded),
+                labelText: "First Name*",
+                borderColor: colorScheme.primary,
+                borderRadius: 16,
+              ),
+              validator: FormBuilderValidators.required(
+                errorText: "Please enter your first name",
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _lastNameTextController,
+              onTapOutside:
+                  (event) => FocusManager.instance.primaryFocus?.unfocus(),
+              keyboardType: TextInputType.name,
+              decoration: InputDecorations.outlineBorder(
+                context: context,
+                prefixIcon: const Icon(Symbols.abc_rounded),
+                labelText: "Last Name*",
+                borderColor: colorScheme.primary,
+                borderRadius: 16,
+              ),
+              validator: FormBuilderValidators.required(
+                errorText: "Please enter your last name",
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfilePicture extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_ProfilePicture> createState() => _ProfilePictureState();
+}
+
+class _ProfilePictureState extends ConsumerState<_ProfilePicture> {
+  bool imageRemoved = false;
+
+  void _saveImageFromGallery() async {
+    final imageFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
+    if (imageFile == null) {
+      return;
+    }
+    setState(() => imageRemoved = false);
+    ref.read(userProfileFormNotifierProvider.notifier).updateImage(imageFile);
+  }
+
+  void _saveImageFromCamera() async {
+    final imageFile = await ImagePicker().pickImage(source: ImageSource.camera);
+    if (imageFile == null) {
+      return;
+    }
+    setState(() => imageRemoved = false);
+    ref.read(userProfileFormNotifierProvider.notifier).updateImage(imageFile);
+  }
+
+  void _removeImage() {
+    ref.read(userProfileFormNotifierProvider.notifier).updateImage(null);
+    setState(() => imageRemoved = true);
+    showSnackbar(
+      context: context,
+      message: "Image removed",
+      duration: const Duration(seconds: 2),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final userProfileFormState = ref.watch(userProfileFormNotifierProvider);
+    final user = ref.watch(authNotifierProvider).user!;
+    final newImage = userProfileFormState.image;
+    final hasNewImage = newImage != null && newImage.isNotEmpty;
+    final hasUserImage = user.image.isNotEmpty;
+
+    final avatar = _selectAvatar(
+      context,
+      user,
+      newImage,
+      hasNewImage,
+      hasUserImage,
+    );
+
+    return Card.outlined(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Profile Picture",
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                return Center(
+                  child: SizedBox(
+                    width: constraints.maxWidth / 2,
+                    height: constraints.maxWidth / 2,
+                    child: avatar,
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  FilledButton.tonalIcon(
+                    onPressed: _saveImageFromGallery,
+                    label: const Text("Pick from gallery"),
+                    icon: const Icon(Symbols.photo_rounded),
+                  ),
+                  FilledButton.tonalIcon(
+                    onPressed: _saveImageFromCamera,
+                    label: const Text("Take a picture"),
+                    icon: const Icon(Symbols.camera_alt_rounded),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: _removeImage,
+                    label: const Text("Remove"),
+                    icon: const Icon(Symbols.delete_rounded),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _selectAvatar(
+    BuildContext context,
+    User user,
+    String? newImage,
+    bool hasNewImage,
+    bool hasUserImage,
+  ) {
+    if (imageRemoved) {
+      return _buildInitialAvatar(context, user.firstName[0]);
+    } else if (newImage == '') {
+      return _buildInitialAvatar(context, user.firstName[0]);
+    } else if (hasNewImage) {
+      return _buildImageAvatar(context, newImage!);
+    } else if (hasUserImage) {
+      return _buildImageAvatar(context, user.image);
+    } else {
+      return _buildInitialAvatar(context, user.firstName[0]);
+    }
+  }
+
+  Widget _buildImageAvatar(BuildContext context, String base64Image) {
+    return CircleAvatar(
+      radius: double.infinity,
+      backgroundImage: MemoryImage(base64Decode(base64Image)),
+    );
+  }
+
+  Widget _buildInitialAvatar(BuildContext context, String initial) {
+    return CircleAvatar(
+      radius: double.infinity,
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      child: Text(
+        StringUtils.capitalize(initial),
+        style: Theme.of(context).textTheme.displayLarge!.copyWith(
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).colorScheme.onPrimaryContainer,
         ),
       ),
     );

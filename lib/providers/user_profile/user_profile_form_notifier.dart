@@ -1,8 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:galaksi/apis/firebase_firestore_api.dart';
 import 'package:galaksi/models/user/interest_model.dart';
 import 'package:galaksi/models/user/travel_style_model.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_profile_form_notifier.g.dart';
@@ -30,6 +34,17 @@ class UserProfileFormNotifier extends _$UserProfileFormNotifier {
     state = state.copyWith(travelStyles: travelStyles);
   }
 
+  void updateImage(XFile? imageFile) {
+    if (imageFile == null) {
+      state = state.copyWith(image: ''); // Explicitly remove image
+    } else {
+      final serializedImage = base64Encode(
+        File(imageFile.path).readAsBytesSync(),
+      );
+      state = state.copyWith(image: serializedImage);
+    }
+  }
+
   Future<bool> updateProfile() async {
     final user = ref.watch(authNotifierProvider).user;
 
@@ -39,6 +54,7 @@ class UserProfileFormNotifier extends _$UserProfileFormNotifier {
     }
 
     final updatedUser = user.copyWith(
+      image: state.image ?? user.image,
       firstName: state.firstName,
       lastName: state.lastName,
       interests: state.interests,
@@ -65,9 +81,11 @@ class UserProfileFormState {
     this.uid,
     this.interests = const {},
     this.travelStyles = const {},
+    this.image, // nullable by default
   });
 
   final String? uid;
+  final String? image;
   final String? firstName;
   final String? lastName;
   final Set<Interest> interests;
@@ -79,8 +97,10 @@ class UserProfileFormState {
     String? lastName,
     Set<Interest>? interests,
     Set<TravelStyle>? travelStyles,
+    String? image,
   }) {
     return UserProfileFormState(
+      image: image ?? this.image,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       uid: uid ?? this.uid,

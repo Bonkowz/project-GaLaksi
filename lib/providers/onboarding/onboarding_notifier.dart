@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:galaksi/apis/firebase_auth_api.dart';
 import 'package:galaksi/apis/firebase_firestore_api.dart';
@@ -12,7 +14,9 @@ import 'package:galaksi/screens/onboarding/onboarding_2_interests.dart';
 import 'package:galaksi/screens/onboarding/onboarding_3_styles.dart';
 import 'package:galaksi/screens/onboarding/onboarding_6_complete.dart';
 import 'package:galaksi/utils/string_utils.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'dart:convert';
 
 part 'onboarding_notifier.g.dart';
 
@@ -77,6 +81,13 @@ class OnboardingNotifier extends _$OnboardingNotifier {
     state = state.copyWith(confirmPassword: confirmPassword);
   }
 
+  void updateImage(XFile imageFile) {
+    final serializedImage = base64Encode(
+      File(imageFile.path).readAsBytesSync(),
+    );
+    state = state.copyWith(image: serializedImage);
+  }
+
   Future<AuthResult> createAccount() async {
     return await FirebaseAuthApi().signUp(
       StringUtils.normalizeEmailKeepAlias(state.email!),
@@ -132,6 +143,7 @@ class OnboardingNotifier extends _$OnboardingNotifier {
 class OnboardingState {
   OnboardingState({
     this.uid,
+    this.image,
     this.firstName,
     this.lastName,
     this.email,
@@ -154,6 +166,7 @@ class OnboardingState {
   ];
 
   String? uid;
+  String? image;
   String? firstName;
   String? lastName;
   String? email;
@@ -167,6 +180,7 @@ class OnboardingState {
 
   OnboardingState copyWith({
     String? uid,
+    String? image,
     String? firstName,
     String? lastName,
     String? email,
@@ -180,6 +194,7 @@ class OnboardingState {
   }) {
     return OnboardingState(
       uid: uid ?? this.uid,
+      image: image ?? this.image,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       email: email ?? this.email,

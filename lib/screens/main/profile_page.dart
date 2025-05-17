@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -99,6 +101,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   );
 
   Widget _profileImage() {
+    final user = ref.watch(authNotifierProvider).user!;
+    final image = user.image;
+    final s = user.firstName[0].toUpperCase();
     final innerRadius = (profileHeight / 2) - 8.0;
     final outerSize = profileHeight;
 
@@ -112,10 +117,23 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           width: 8.0,
         ),
       ),
-      child: CircleAvatar(
-        radius: innerRadius,
-        backgroundColor: Colors.grey.shade600,
-      ),
+      child:
+          image.isEmpty
+              ? CircleAvatar(
+                radius: innerRadius,
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                child: Text(
+                  StringUtils.capitalize(s),
+                  style: Theme.of(context).textTheme.displayLarge!.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
+                ),
+              )
+              : CircleAvatar(
+                radius: innerRadius,
+                backgroundImage: MemoryImage(base64Decode(image)),
+              ),
     );
   }
 
