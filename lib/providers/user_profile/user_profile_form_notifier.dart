@@ -45,6 +45,14 @@ class UserProfileFormNotifier extends _$UserProfileFormNotifier {
     }
   }
 
+  void updateBiography(String biography) {
+    state = state.copyWith(biography: biography);
+  }
+
+  void updatePhoneNumber(String phoneNumber) {
+    state = state.copyWith(phoneNumber: phoneNumber);
+  }
+
   Future<bool> updateProfile() async {
     final user = ref.watch(authNotifierProvider).user;
 
@@ -59,6 +67,8 @@ class UserProfileFormNotifier extends _$UserProfileFormNotifier {
       lastName: state.lastName,
       interests: state.interests,
       travelStyles: state.travelStyles,
+      biography: state.biography ?? user.biography,
+      phoneNumber: state.phoneNumber ?? user.phoneNumber,
     );
 
     final result = await FirebaseFirestoreApi().updateUser(user, updatedUser);
@@ -82,6 +92,8 @@ class UserProfileFormState {
     this.interests = const {},
     this.travelStyles = const {},
     this.image, // nullable by default
+    this.biography,
+    this.phoneNumber,
   });
 
   final String? uid;
@@ -90,6 +102,8 @@ class UserProfileFormState {
   final String? lastName;
   final Set<Interest> interests;
   final Set<TravelStyle> travelStyles;
+  final String? biography;
+  final String? phoneNumber;
 
   UserProfileFormState copyWith({
     String? uid,
@@ -98,6 +112,8 @@ class UserProfileFormState {
     Set<Interest>? interests,
     Set<TravelStyle>? travelStyles,
     String? image,
+    String? biography,
+    String? phoneNumber,
   }) {
     return UserProfileFormState(
       image: image ?? this.image,
@@ -106,6 +122,8 @@ class UserProfileFormState {
       uid: uid ?? this.uid,
       interests: interests ?? this.interests,
       travelStyles: travelStyles ?? this.travelStyles,
+      biography: biography ?? this.biography,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
     );
   }
 }
