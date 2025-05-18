@@ -13,6 +13,8 @@ class User {
     required this.interests,
     required this.travelStyles,
     this.image = '',
+    this.biography = '',
+    this.phoneNumber = '',
   });
 
   /// Factory constructor to instantiate object from a [DocumentSnapshot]
@@ -35,6 +37,8 @@ class User {
           (List<String>.from(map['travelStyles']))
               .map((s) => TravelStyle.values.firstWhere((t) => s == t.name))
               .toSet(),
+      biography: map['biography'] ?? '',
+      phoneNumber: map['phoneNumber'] ?? '',
     );
   }
 
@@ -47,6 +51,8 @@ class User {
   String emailCanonical;
   Set<Interest>? interests;
   Set<TravelStyle>? travelStyles;
+  String biography;
+  String phoneNumber;
 
   Map<String, dynamic> toMap() {
     return {
@@ -58,6 +64,8 @@ class User {
       'interests': interests?.map((i) => i.name).toList(),
       'travelStyles': travelStyles?.map((t) => t.name).toList(),
       'image': image,
+      'biography':biography,
+      'phoneNumber': phoneNumber
     };
   }
 
@@ -70,6 +78,8 @@ class User {
     Set<Interest>? interests,
     Set<TravelStyle>? travelStyles,
     String? image,
+    String? biography,
+    String? phoneNumber
   }) {
     return User(
       firstName: firstName ?? this.firstName,
@@ -81,6 +91,8 @@ class User {
       interests: interests ?? this.interests,
       travelStyles: travelStyles ?? this.travelStyles,
       image: image ?? this.image,
+      biography: biography ?? this.biography,
+      phoneNumber: phoneNumber ?? this.phoneNumber
     );
   }
 }
