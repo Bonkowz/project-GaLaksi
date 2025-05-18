@@ -11,92 +11,102 @@ class TravelPlanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-
     return SizedBox(
       height: 170,
-      child: GestureDetector(
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const TravelPlanDetailsPage(),
-            ),
-          );
-        },
-        child: Card.outlined(
-          margin: EdgeInsets.zero,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Expanded(
-                flex: 4,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(12),
-                    bottomLeft: Radius.circular(12),
-                  ),
-                  child: Image(
-                    image: AssetImage('assets/images/galaksi-placeholder.jpg'),
-                    fit: BoxFit.cover,
+      child: Stack(
+        children: <Widget>[
+          Card.outlined(
+            margin: EdgeInsets.zero,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Expanded(
+                  flex: 4,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(12),
+                      bottomLeft: Radius.circular(12),
+                    ),
+                    child: Image(
+                      image: AssetImage(
+                        'assets/images/galaksi-placeholder.jpg',
+                      ),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                flex: 6,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    spacing: 4,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Text(
-                          travelPlan.title,
-                          style: textTheme.bodyLarge!.copyWith(
-                            fontWeight: FontWeight.bold,
+                Expanded(
+                  flex: 6,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      spacing: 4,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Text(
+                            travelPlan.title,
+                            style: textTheme.bodyLarge!.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.start,
                           ),
-                          textAlign: TextAlign.start,
                         ),
-                      ),
-                      Row(
-                        spacing: 4,
-                        children: [
-                          const Icon(Symbols.alarm),
-                          Text(
-                            "Happening in 2 days",
-                            style: textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        spacing: 4,
-                        children: [
-                          const Icon(Symbols.calendar_month),
-                          Text(
-                            "May 5 - June 3, 2025",
-                            style: textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        spacing: 4,
-                        children: [
-                          const Icon(Symbols.map),
-                          Text(
-                            travelPlan.activities.isEmpty
-                                ? "No activities yet"
-                                : "${travelPlan.activities.length} activities",
-                            style: textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                    ],
+                        Row(
+                          spacing: 4,
+                          children: [
+                            const Icon(Symbols.alarm),
+                            Text(
+                              "Happening in 2 days",
+                              style: textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          spacing: 4,
+                          children: [
+                            const Icon(Symbols.calendar_month),
+                            Text(
+                              "May 5 - June 3, 2025",
+                              style: textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          spacing: 4,
+                          children: [
+                            const Icon(Symbols.map),
+                            Text(
+                              travelPlan.activities.isEmpty
+                                  ? "No activities yet"
+                                  : "${travelPlan.activities.length} activities",
+                              style: textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+          Positioned.fill(
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const TravelPlanDetailsPage(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
