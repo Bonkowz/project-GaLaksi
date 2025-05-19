@@ -196,6 +196,34 @@ class FirebaseFirestoreApi {
     }
   }
 
+  Future<FirestoreResult<bool>> editTravelPlan(TravelPlan travelPlan) async {
+    try {
+      await db
+          .collection("plans")
+          .doc(travelPlan.id)
+          .update({
+            "title": travelPlan.title,
+            "description": travelPlan.description,
+          })
+          .timeout(const Duration(seconds: 10));
+      return const FirestoreSuccess(
+        message: "Plan edited succesfully.",
+        data: true,
+      );
+    } on TimeoutException catch (_) {
+      return const FirestoreFailure(
+        message: "Request timed out. Please check your internet connection.",
+        error: FirestoreFailureError.networkError,
+      );
+    } catch (e) {
+      debugPrint("Error creating travel plan: $e");
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
   FirestoreResult<Stream<QuerySnapshot<Map<String, dynamic>>>> fetchUserPlans(
     String uid,
   ) {
