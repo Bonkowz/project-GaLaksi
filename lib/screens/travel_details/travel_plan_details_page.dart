@@ -72,7 +72,9 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
                   debugPrint("Pressed");
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => const EditTravelPlanPage(),
+                      builder:
+                          (context) =>
+                              EditTravelPlanPage(travelPlan: widget.travelPlan),
                     ),
                   );
                 },

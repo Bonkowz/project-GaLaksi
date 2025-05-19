@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
 import 'package:galaksi/providers/travel_plan/create_travel_plan_notifier.dart';
+import 'package:galaksi/providers/travel_plan/edit_travel_plan_notifier.dart';
 import 'package:galaksi/utils/input_decorations.dart';
 import 'package:galaksi/utils/snackbar.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class EditTravelPlanPage extends ConsumerStatefulWidget {
-  const EditTravelPlanPage({super.key});
+  const EditTravelPlanPage({super.key, required this.travelPlan});
+
+  final TravelPlan travelPlan;
 
   @override
   ConsumerState<EditTravelPlanPage> createState() => EditTravelPlanPageState();
@@ -32,13 +36,15 @@ class EditTravelPlanPageState extends ConsumerState<EditTravelPlanPage> {
     });
 
     final travelPlanNotifier = ref.read(
-      createTravelPlanNotifierProvider.notifier,
+      editTravelPlanNotifierProvider.notifier,
     );
+
+    travelPlanNotifier.setCurrentTravelPlan(widget.travelPlan);
 
     travelPlanNotifier.updateTitle(titleTextController.text);
     travelPlanNotifier.updateDescription(descriptionTextController.text);
 
-    final result = await travelPlanNotifier.createTravelPlan();
+    final result = await travelPlanNotifier.editTravelPlan();
 
     setState(() {
       _isLoading = false;
@@ -67,6 +73,13 @@ class EditTravelPlanPageState extends ConsumerState<EditTravelPlanPage> {
         Navigator.pop(context);
       }
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    titleTextController.text = widget.travelPlan.title;
+    descriptionTextController.text = widget.travelPlan.description;
   }
 
   @override
