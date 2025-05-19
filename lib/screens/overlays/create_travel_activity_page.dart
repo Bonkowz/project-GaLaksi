@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:galaksi/providers/travel_plan/create_travel_plan_notifier.dart';
 import 'package:galaksi/utils/input_decorations.dart';
-import 'package:galaksi/utils/snackbar.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -37,9 +34,9 @@ class _CreateTravelActivityPageState
     super.dispose();
   }
 
-  DateTime? activityDate = null;
-  TimeOfDay? startTime = null;
-  TimeOfDay? endTime = null;
+  DateTime? activityDate;
+  TimeOfDay? startTime;
+  TimeOfDay? endTime;
 
   String dateToString(DateTime date) {
     return "${DateFormat('MMMM').format(DateTime(0, date.month))} ${date.day.toString().padLeft(2, '0')}, ${date.year}";
@@ -172,7 +169,10 @@ class _CreateTravelActivityPageState
                             onTap: () async {
                               final pickedStartTime = await showTimePicker(
                                 context: context,
-                                initialTime: TimeOfDay(hour: 8, minute: 0),
+                                initialTime: const TimeOfDay(
+                                  hour: 8,
+                                  minute: 0,
+                                ),
                               );
 
                               setState(() {
@@ -206,7 +206,7 @@ class _CreateTravelActivityPageState
                             decoration: InputDecorations.outlineBorder(
                               context: context,
                               hintText: "Start time",
-                              prefixIcon: Icon(Symbols.alarm),
+                              prefixIcon: const Icon(Symbols.alarm),
                               borderRadius: 16,
                             ),
 
@@ -256,7 +256,7 @@ class _CreateTravelActivityPageState
                             decoration: InputDecorations.outlineBorder(
                               context: context,
                               hintText: "End time",
-                              prefixIcon: Icon(Symbols.alarm),
+                              prefixIcon: const Icon(Symbols.alarm),
                               borderRadius: 16,
                             ),
 
