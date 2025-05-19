@@ -108,7 +108,7 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            spacing: 16,
+            spacing: 20,
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -152,7 +152,7 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
               Form(
                 key: _formKey,
                 child: Column(
-                  spacing: 8,
+                  spacing: 0,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     TextFormField(
