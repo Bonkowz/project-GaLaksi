@@ -84,6 +84,7 @@ class _CreateTravelActivityPageState
             children: [
               Form(
                 key: _formKey,
+                autovalidateMode: AutovalidateMode.onUnfocus,
                 child: Column(
                   spacing: 0,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -174,9 +175,8 @@ class _CreateTravelActivityPageState
                                 initialTime: TimeOfDay(hour: 8, minute: 0),
                               );
 
-                              startTime = pickedStartTime;
-
                               setState(() {
+                                startTime = pickedStartTime;
                                 startTimeController.text = timeToString(
                                   startTime!,
                                 );
@@ -191,8 +191,8 @@ class _CreateTravelActivityPageState
 
                               if (endTime == null) {
                                 endTime = TimeOfDay(
-                                  hour: TimeOfDay.now().hour + 1,
-                                  minute: TimeOfDay.now().minute,
+                                  hour: startTime!.hour + 1,
+                                  minute: startTime!.minute,
                                 );
 
                                 setState(() {
@@ -209,6 +209,18 @@ class _CreateTravelActivityPageState
                               prefixIcon: Icon(Symbols.alarm),
                               borderRadius: 16,
                             ),
+
+                            validator: (value) {
+                              if (startTime == null || endTime == null) {
+                                return null; // can't validate yet
+                              }
+
+                              if (startTime!.compareTo(endTime!) >= 0) {
+                                return "Invalid time!";
+                              }
+
+                              return null;
+                            },
                           ),
                         ),
                         Flexible(
@@ -222,15 +234,14 @@ class _CreateTravelActivityPageState
                             onTap: () async {
                               final pickedEndTime = await showTimePicker(
                                 context: context,
-                                initialTime: TimeOfDay(hour: 8, minute: 0),
+                                initialTime:
+                                    startTime ??
+                                    const TimeOfDay(hour: 8, minute: 0),
                               );
 
-                              endTime = pickedEndTime;
-
                               setState(() {
-                                startTimeController.text = timeToString(
-                                  endTime!,
-                                );
+                                endTime = pickedEndTime;
+                                endTimeController.text = timeToString(endTime!);
                               });
 
                               if (activityDate == null) {
@@ -242,13 +253,24 @@ class _CreateTravelActivityPageState
                                 });
                               }
                             },
-
                             decoration: InputDecorations.outlineBorder(
                               context: context,
                               hintText: "End time",
                               prefixIcon: Icon(Symbols.alarm),
                               borderRadius: 16,
                             ),
+
+                            validator: (value) {
+                              if (startTime == null || endTime == null) {
+                                return null; // can't validate yet
+                              }
+
+                              if (startTime!.compareTo(endTime!) >= 0) {
+                                return "Invalid time!";
+                              }
+
+                              return null;
+                            },
                           ),
                         ),
                       ],
