@@ -235,6 +235,7 @@ class _ProfilePictureState extends ConsumerState<_ProfilePicture> {
   void _saveImageFromGallery() async {
     final imageFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
+      imageQuality: 75,
     );
     if (imageFile == null) {
       return;
@@ -244,7 +245,10 @@ class _ProfilePictureState extends ConsumerState<_ProfilePicture> {
   }
 
   void _saveImageFromCamera() async {
-    final imageFile = await ImagePicker().pickImage(source: ImageSource.camera);
+    final imageFile = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+      imageQuality: 75,
+    );
     if (imageFile == null) {
       return;
     }
