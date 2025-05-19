@@ -62,10 +62,7 @@ class EditTravelPlanPageState extends ConsumerState<EditTravelPlanPage> {
       }
     } else {
       if (mounted) {
-        showDismissableSnackbar(
-          context: context,
-          message: "Travel plan created!",
-        );
+        showDismissableSnackbar(context: context, message: "Changes saved!");
       }
       // Pop after the success message
       if (mounted) {

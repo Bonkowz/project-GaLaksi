@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:galaksi/screens/overlays/create_travel_activity_page.dart';
 import 'package:galaksi/widgets/create_details_button.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -38,6 +39,7 @@ class ItineraryTab extends StatelessWidget {
           text: "Add an activity...",
           leadingIcon: const Icon(Symbols.add),
           trailingIcon: const Icon(Symbols.map),
+          navigateTo: CreateTravelActivityPage(),
         ),
         Expanded(
           child: ListView.builder(

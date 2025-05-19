@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:galaksi/screens/overlays/create_travel_activity_page.dart';
 import 'package:galaksi/widgets/create_details_button.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -28,6 +29,7 @@ class NotesTab extends StatelessWidget {
             Symbols.add,
           ), // TODO: Convert to profile image...
           trailingIcon: const Icon(Symbols.edit),
+          navigateTo: CreateTravelActivityPage(),
         ),
         Expanded(
           child: ListView.builder(
