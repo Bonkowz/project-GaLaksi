@@ -262,6 +262,21 @@ class FirebaseFirestoreApi {
       );
     }
   }
+
+  FirestoreResult<Stream<DocumentSnapshot<Map<String, dynamic>>>>
+  fetchTravelPlan(String docID) {
+    try {
+      return FirestoreSuccess(
+        message: "Fetched travel plan successfully!",
+        data: db.collection("plans").doc(docID).snapshots(),
+      );
+    } catch (e) {
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
 }
 
 /// Represents a result of an attempted database access
