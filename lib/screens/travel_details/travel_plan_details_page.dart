@@ -155,7 +155,14 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
                       style: Theme.of(context).textTheme.headlineMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
+
                     const SizedBox(height: 4),
+                    Text(
+                      "Loading...", // Date range
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -196,14 +203,18 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
 
     return travelPlanAsync.when(
       data: (data) => buildTravelPlan(data!),
-      loading:
-          () => const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Center(child: Text('Loading...')),
-          ),
+      loading: () => loadingTravelPlan(),
       error: (err, stack) {
         debugPrint("$err");
-        return buildTravelPlan(widget.travelPlan);
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(
+            child: Text(
+              'Error: $err',
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+        );
       },
     );
   }
