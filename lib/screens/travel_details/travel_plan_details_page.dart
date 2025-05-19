@@ -129,15 +129,15 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            leading: IconButton(
-              icon: const Icon(Symbols.arrow_back),
+            leading: const IconButton(
+              icon: Icon(Symbols.arrow_back),
               onPressed: null,
             ),
             centerTitle: true,
             actions: [
-              IconButton(icon: const Icon(Symbols.ios_share), onPressed: null),
+              const IconButton(icon: Icon(Symbols.ios_share), onPressed: null),
               const SizedBox(width: 4.0),
-              IconButton(icon: const Icon(Symbols.settings), onPressed: null),
+              const IconButton(icon: Icon(Symbols.settings), onPressed: null),
             ],
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
             expandedHeight: appBarHeight,
@@ -184,7 +184,10 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
           SliverFillRemaining(
             child: TabBarView(
               controller: _tabController,
-              children: [Center(child: CircularProgressIndicator()), Center()],
+              children: [
+                const Center(child: CircularProgressIndicator()),
+                const Center(),
+              ],
             ),
           ),
         ],
