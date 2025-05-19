@@ -49,7 +49,6 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
             leading: IconButton(
               icon: const Icon(Symbols.arrow_back),
               onPressed: () {
-                ref.read(currentTravelPlanProvider.notifier).state = null;
                 Navigator.of(context).pop();
               },
             ),
