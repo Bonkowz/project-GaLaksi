@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:galaksi/screens/traveldetails/travel_plan_details_page.dart';
+import 'package:galaksi/screens/travel_details/travel_plan_details_page.dart';
 
 class TravelPlanCard extends StatelessWidget {
   const TravelPlanCard({required this.travelPlan, super.key});
@@ -99,7 +99,9 @@ class TravelPlanCard extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => const TravelPlanDetailsPage(),
+                      builder:
+                          (context) =>
+                              TravelPlanDetailsPage(travelPlan: travelPlan),
                     ),
                   );
                 },

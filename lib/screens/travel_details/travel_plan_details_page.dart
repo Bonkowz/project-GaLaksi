@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
+import 'package:galaksi/screens/overlays/create_travel_plan_page.dart';
+import 'package:galaksi/screens/travel_details/edit_travel_plan_page.dart';
 import 'package:galaksi/screens/travel_details/itinerary_tab.dart';
 import 'package:galaksi/screens/travel_details/notes_tab.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -7,7 +10,9 @@ import 'package:material_symbols_icons/symbols.dart';
 final tabIndex = StateProvider<int>((ref) => 0); // 0 for Itinerary, 1 for Notes
 
 class TravelPlanDetailsPage extends ConsumerStatefulWidget {
-  const TravelPlanDetailsPage({super.key});
+  const TravelPlanDetailsPage({required this.travelPlan, super.key});
+
+  final TravelPlan travelPlan;
 
   @override
   ConsumerState<TravelPlanDetailsPage> createState() =>
@@ -64,7 +69,12 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
               IconButton(
                 icon: const Icon(Symbols.settings),
                 onPressed: () {
-                  // TODO: Implement more options
+                  debugPrint("Pressed");
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const EditTravelPlanPage(),
+                    ),
+                  );
                 },
               ),
             ],
@@ -79,13 +89,13 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      "Everest Trek", // Title
+                      widget.travelPlan.title, // Title
                       style: Theme.of(context).textTheme.headlineMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "May 5 - June 5, 2025", // Date range
+                      "DATE RANGE", // Date range
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: Theme.of(context).colorScheme.outline,
                       ),
