@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
-class HomeLoadingPage extends StatelessWidget {
-  const HomeLoadingPage({super.key});
+class HomeLoading extends StatelessWidget {
+  const HomeLoading({super.key});
 
   @override
   Widget build(BuildContext context) {
