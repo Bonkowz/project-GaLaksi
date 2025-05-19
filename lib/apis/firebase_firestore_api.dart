@@ -224,7 +224,7 @@ class FirebaseFirestoreApi {
         data:
             db
                 .collection("plans")
-                .where('sharedWithMe', arrayContains: uid)
+                .where('sharedWith', arrayContains: uid)
                 .snapshots(),
       );
     } catch (e) {
