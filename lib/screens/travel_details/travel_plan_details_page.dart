@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
+import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
 import 'package:galaksi/screens/overlays/create_travel_plan_page.dart';
 import 'package:galaksi/screens/travel_details/edit_travel_plan_page.dart';
 import 'package:galaksi/screens/travel_details/itinerary_tab.dart';
@@ -42,11 +43,7 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final selectedTabIndex = ref.watch(tabIndex);
-    _tabController.index = selectedTabIndex;
-
+  Widget buildTravelPlan(TravelPlan plan) {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -73,8 +70,7 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder:
-                          (context) =>
-                              EditTravelPlanPage(travelPlan: widget.travelPlan),
+                          (context) => EditTravelPlanPage(travelPlan: plan),
                     ),
                   );
                 },
@@ -91,7 +87,7 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      widget.travelPlan.title, // Title
+                      plan.title, // Title
                       style: Theme.of(context).textTheme.headlineMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
@@ -126,6 +122,89 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
           ),
         ],
       ),
+    );
+  }
+
+  Widget loadingTravelPlan() {
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            leading: IconButton(
+              icon: const Icon(Symbols.arrow_back),
+              onPressed: null,
+            ),
+            centerTitle: true,
+            actions: [
+              IconButton(icon: const Icon(Symbols.ios_share), onPressed: null),
+              const SizedBox(width: 4.0),
+              IconButton(icon: const Icon(Symbols.settings), onPressed: null),
+            ],
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            expandedHeight: appBarHeight,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              centerTitle: true,
+              title: Padding(
+                padding: const EdgeInsets.only(bottom: 24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      "Loading...", // Title
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                  ],
+                ),
+              ),
+              background: Container(
+                color: Theme.of(context).colorScheme.primaryContainer,
+              ),
+            ),
+            bottom: TabBar(
+              controller: _tabController,
+              tabs: const [Tab(text: "Itinerary"), Tab(text: "Notes")],
+              labelColor: Theme.of(context).colorScheme.primary,
+              onTap: (int index) {
+                _tabController.index = 0;
+              },
+              unselectedLabelColor:
+                  Theme.of(context).colorScheme.onSurfaceVariant,
+              indicatorColor: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+          SliverFillRemaining(
+            child: TabBarView(
+              controller: _tabController,
+              children: [Center(child: CircularProgressIndicator()), Center()],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final selectedTabIndex = ref.watch(tabIndex);
+    _tabController.index = selectedTabIndex;
+    final travelPlanAsync = ref.watch(
+      travelPlanStreamProvider(widget.travelPlan.id),
+    );
+
+    return travelPlanAsync.when(
+      data: (data) => buildTravelPlan(data!),
+      loading:
+          () => const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Center(child: Text('Loading...')),
+          ),
+      error: (err, stack) {
+        debugPrint("$err");
+        return buildTravelPlan(widget.travelPlan);
+      },
     );
   }
 }
