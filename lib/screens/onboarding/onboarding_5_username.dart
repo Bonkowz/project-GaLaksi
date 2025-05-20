@@ -24,6 +24,8 @@ class _Onboarding5UsernameState extends ConsumerState<Onboarding5Username> {
   final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController _usernameTextController;
+  late final TextEditingController _biographyTextController;
+  late final TextEditingController _phoneNumberTextController;
 
   @override
   void initState() {
@@ -33,12 +35,20 @@ class _Onboarding5UsernameState extends ConsumerState<Onboarding5Username> {
     _usernameTextController = TextEditingController(
       text: onboardingState.username,
     );
+    _biographyTextController = TextEditingController(
+      text: onboardingState.biography,
+    );
+    _phoneNumberTextController = TextEditingController(
+      text: onboardingState.phoneNumber,
+    );
   }
 
   @override
   void dispose() {
     super.dispose();
     _usernameTextController.dispose();
+    _biographyTextController.dispose();
+    _phoneNumberTextController.dispose();
   }
 
   void prevPage() {
@@ -179,6 +189,41 @@ class _Onboarding5UsernameState extends ConsumerState<Onboarding5Username> {
                           errorText: "Please enter valid username",
                         ),
                       ]),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _biographyTextController,
+                      onTapOutside:
+                          (event) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      decoration: InputDecorations.outlineBorder(
+                        context: context,
+                        prefixIcon: const Icon(Symbols.abc_rounded),
+                        labelText: "Biography",
+                        borderColor: colorScheme.primary,
+                        borderRadius: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _phoneNumberTextController,
+                      onTapOutside:
+                          (event) =>
+                              FocusManager.instance.primaryFocus?.unfocus(),
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecorations.outlineBorder(
+                        context: context,
+                        prefixIcon: const Icon(Symbols.phone_rounded),
+                        labelText: "Phone Number",
+                        borderColor: colorScheme.primary,
+                        borderRadius: 16,
+                      ),
+                      validator: FormBuilderValidators.phoneNumber(
+                        errorText: "Please enter a valid phone number.",
+                        checkNullOrEmpty: false,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     const Center(

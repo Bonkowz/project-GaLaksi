@@ -65,6 +65,14 @@ class OnboardingNotifier extends _$OnboardingNotifier {
     state = state.copyWith(lastName: lastName);
   }
 
+  void updateBiography(String biography) {
+    state = state.copyWith(biography: biography);
+  }
+
+  void updatePhoneNumber(String phoneNumber) {
+    state = state.copyWith(phoneNumber: phoneNumber);
+  }
+
   void updatePassword(String password) {
     state = state.copyWith(password: password);
   }
@@ -153,6 +161,8 @@ class OnboardingState {
     this.lastName,
     this.email,
     this.username,
+    this.biography,
+    this.phoneNumber,
     this.password,
     this.confirmPassword,
     this.interests = const {},
@@ -176,6 +186,8 @@ class OnboardingState {
   String? lastName;
   String? email;
   String? username;
+  String? biography;
+  String? phoneNumber;
   String? password;
   String? confirmPassword;
   Set<Interest> interests;
@@ -190,6 +202,8 @@ class OnboardingState {
     String? lastName,
     String? email,
     String? username,
+    String? biography,
+    String? phoneNumber,
     String? password,
     String? confirmPassword,
     Set<Interest>? interests,
@@ -204,6 +218,8 @@ class OnboardingState {
       lastName: lastName ?? this.lastName,
       email: email ?? this.email,
       username: username ?? this.username,
+      biography: biography ?? this.biography,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
       password: password ?? this.password,
       confirmPassword: confirmPassword ?? this.confirmPassword,
       interests: interests ?? this.interests,
