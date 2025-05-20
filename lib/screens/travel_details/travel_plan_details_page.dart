@@ -10,6 +10,7 @@ import 'package:galaksi/utils/dialog.dart';
 import 'package:galaksi/widgets/travel_plan_qr_code.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:galaksi/screens/overlays/shared_users_modal.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 final tabIndex = StateProvider<int>((ref) => 0); // 0 for Itinerary, 1 for Notes
 
@@ -167,77 +168,6 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
     );
   }
 
-  Widget loadingTravelPlan() {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            leading: const IconButton(
-              icon: Icon(Symbols.arrow_back),
-              onPressed: null,
-            ),
-            centerTitle: true,
-            actions: [
-              const IconButton(icon: Icon(Symbols.ios_share), onPressed: null),
-              const SizedBox(width: 4.0),
-              const IconButton(icon: Icon(Symbols.settings), onPressed: null),
-            ],
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            expandedHeight: appBarHeight,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              title: Padding(
-                padding: const EdgeInsets.only(bottom: 24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      "Loading...", // Title
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-
-                    const SizedBox(height: 4),
-                    Text(
-                      "Loading...", // Date range
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              background: Container(
-                color: Theme.of(context).colorScheme.primaryContainer,
-              ),
-            ),
-            bottom: TabBar(
-              controller: _tabController,
-              tabs: const [Tab(text: "Itinerary"), Tab(text: "Notes")],
-              labelColor: Theme.of(context).colorScheme.primary,
-              onTap: (int index) {
-                _tabController.index = 0;
-              },
-              unselectedLabelColor:
-                  Theme.of(context).colorScheme.onSurfaceVariant,
-              indicatorColor: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-          SliverFillRemaining(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                const Center(child: CircularProgressIndicator()),
-                const Center(),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final travelPlan = ref.watch(currentTravelPlanProvider);
@@ -247,7 +177,23 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
 
     return travelPlanAsync.when(
       data: (data) => buildTravelPlan(data!),
-      loading: () => loadingTravelPlan(),
+      loading:
+          () => Skeletonizer(
+            enabled: true,
+            child: buildTravelPlan(
+              TravelPlan(
+                id: "id",
+                title: "title",
+                description: "description",
+                creatorID: "creatorID",
+                sharedWith: [],
+                notes: [],
+                activities: [],
+                flightDetails: [],
+                accommodations: [],
+              ),
+            ),
+          ),
       error: (err, stack) {
         debugPrint("$err");
         return Padding(
