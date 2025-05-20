@@ -119,7 +119,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Update your profile"),
+        title: Text("Update your profile", style: textTheme.bodyLarge),
         centerTitle: true,
         backgroundColor: colorScheme.primaryContainer,
       ),
