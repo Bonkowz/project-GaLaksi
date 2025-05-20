@@ -63,8 +63,8 @@ class UserProfileFormNotifier extends _$UserProfileFormNotifier {
 
     final updatedUser = user.copyWith(
       image: state.image ?? user.image,
-      firstName: state.firstName,
-      lastName: state.lastName,
+      firstName: state.firstName ?? user.firstName,
+      lastName: state.lastName ?? user.lastName,
       interests: state.interests,
       travelStyles: state.travelStyles,
       biography: state.biography ?? user.biography,

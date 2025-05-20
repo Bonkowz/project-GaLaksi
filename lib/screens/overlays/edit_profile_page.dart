@@ -28,6 +28,8 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _firstNameTextController;
   late final TextEditingController _lastNameTextController;
+  late final TextEditingController _biographyTextController;
+  late final TextEditingController _phoneNumberTextController;
   final interestSelection = <Interest>{};
   final travelStyleSelectionMap = <TravelStyle, bool>{};
   bool _hasSaved = false;
@@ -54,6 +56,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
     // Validate form
     if (!_formKey.currentState!.validate()) {
+      setState(() => _hasSaved = false);
       return;
     }
     // Show loading dialog
@@ -70,6 +73,13 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
       _firstNameTextController.text.trim(),
     );
     userProfileFormNotifier.updateLastName(_lastNameTextController.text.trim());
+    userProfileFormNotifier.updateBiography(
+      _biographyTextController.text.trim(),
+    );
+    userProfileFormNotifier.updatePhoneNumber(
+      _phoneNumberTextController.text.trim(),
+    );
+
     _saveInterests();
     _saveStyles();
     final result = await userProfileFormNotifier.updateProfile();
@@ -100,11 +110,22 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _firstNameTextController.dispose();
+    _lastNameTextController.dispose();
+    _biographyTextController.dispose();
+    _phoneNumberTextController.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     final user = ref.read(authNotifierProvider).user!;
     _firstNameTextController = TextEditingController(text: user.firstName);
     _lastNameTextController = TextEditingController(text: user.lastName);
+    _biographyTextController = TextEditingController(text: user.biography);
+    _phoneNumberTextController = TextEditingController(text: user.phoneNumber);
     interestSelection.addAll(user.interests ?? {});
     for (final style in TravelStyle.values) {
       travelStyleSelectionMap[style] =
@@ -134,6 +155,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
                 _Name(
                   firstNameTextController: _firstNameTextController,
                   lastNameTextController: _lastNameTextController,
+                ),
+                _Biography(biographyTextController: _biographyTextController),
+                _PhoneNumber(
+                  phoneNumberTextController: _phoneNumberTextController,
                 ),
                 Card.outlined(
                   child: Padding(
@@ -257,6 +282,99 @@ class _Name extends StatelessWidget {
               ),
               validator: FormBuilderValidators.required(
                 errorText: "Please enter your last name",
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Biography extends StatelessWidget {
+  const _Biography({required TextEditingController biographyTextController})
+    : _biographyTextController = biographyTextController;
+
+  final TextEditingController _biographyTextController;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Card.outlined(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Biography",
+              style: textTheme.headlineSmall!.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _biographyTextController,
+              onTapOutside:
+                  (event) => FocusManager.instance.primaryFocus?.unfocus(),
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              decoration: InputDecorations.outlineBorder(
+                context: context,
+                prefixIcon: const Icon(Symbols.abc_rounded),
+                labelText: "Biography",
+                borderColor: colorScheme.primary,
+                borderRadius: 16,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PhoneNumber extends StatelessWidget {
+  const _PhoneNumber({required TextEditingController phoneNumberTextController})
+    : _phoneNumberTextController = phoneNumberTextController;
+
+  final TextEditingController _phoneNumberTextController;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Card.outlined(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Phone Number",
+              style: textTheme.headlineSmall!.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _phoneNumberTextController,
+              onTapOutside:
+                  (event) => FocusManager.instance.primaryFocus?.unfocus(),
+              keyboardType: TextInputType.phone,
+              decoration: InputDecorations.outlineBorder(
+                context: context,
+                prefixIcon: const Icon(Symbols.phone_rounded),
+                labelText: "Phone Number",
+                borderColor: colorScheme.primary,
+                borderRadius: 16,
+              ),
+              validator: FormBuilderValidators.phoneNumber(
+                errorText: "Please enter a valid phone number.",
+                checkNullOrEmpty: false,
               ),
             ),
           ],
