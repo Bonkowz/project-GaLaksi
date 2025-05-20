@@ -63,32 +63,22 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     showLoadingDialog(context: context, message: "Saving profile...");
 
     // Update profile
-    final userProfileFormNotifier = ref.read(
-      userProfileFormNotifierProvider.notifier,
-    );
+    final formNotifier = ref.read(userProfileFormNotifierProvider.notifier);
     final authNotifier = ref.read(authNotifierProvider.notifier);
     final uid = ref.read(authNotifierProvider).user!.uid;
 
-    userProfileFormNotifier.updateFirstName(
-      _firstNameTextController.text.trim(),
-    );
-    userProfileFormNotifier.updateLastName(_lastNameTextController.text.trim());
-    userProfileFormNotifier.updateBiography(
-      _biographyTextController.text.trim(),
-    );
-    userProfileFormNotifier.updatePhoneNumber(
-      _phoneNumberTextController.text.trim(),
-    );
-    userProfileFormNotifier.updatePrivacy(isPrivate);
+    formNotifier.updateFirstName(_firstNameTextController.text.trim());
+    formNotifier.updateLastName(_lastNameTextController.text.trim());
+    formNotifier.updateBiography(_biographyTextController.text.trim());
+    formNotifier.updatePhoneNumber(_phoneNumberTextController.text.trim());
+    formNotifier.updatePrivacy(isPrivate);
 
     _saveInterests();
     _saveStyles();
-    final result = await userProfileFormNotifier.updateProfile();
+    final result = await formNotifier.updateProfile();
 
     // Close loading dialog
-    if (mounted) {
-      if (Navigator.of(context).canPop()) Navigator.of(context).pop();
-    }
+    if (mounted && Navigator.of(context).canPop()) Navigator.of(context).pop();
 
     // Check if update was successful
     if (!result) {
