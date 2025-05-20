@@ -75,7 +75,7 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
               ),
               const SizedBox(width: 4.0),
               IconButton(
-                icon: const Icon(Symbols.ios_share),
+                icon: const Icon(Symbols.people_rounded),
                 onPressed: () {
                   _showSharedUsersDialog(context, plan);
                 },
