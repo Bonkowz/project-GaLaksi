@@ -235,11 +235,14 @@ class _ProfilePictureState extends ConsumerState<_ProfilePicture> {
   void _saveImageFromGallery() async {
     final imageFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
-      imageQuality: 75,
+      maxHeight: 600,
+      maxWidth: 600,
     );
     if (imageFile == null) {
       return;
     }
+    final imageSize = await imageFile.length();
+    debugPrint("IMAGE SIZE: $imageSize bytes");
     setState(() => imageRemoved = false);
     ref.read(onboardingNotifierProvider.notifier).updateImage(imageFile);
   }
@@ -247,11 +250,14 @@ class _ProfilePictureState extends ConsumerState<_ProfilePicture> {
   void _saveImageFromCamera() async {
     final imageFile = await ImagePicker().pickImage(
       source: ImageSource.camera,
-      imageQuality: 75,
+      maxHeight: 600,
+      maxWidth: 600,
     );
     if (imageFile == null) {
       return;
     }
+    final imageSize = await imageFile.length();
+    debugPrint("IMAGE SIZE: $imageSize bytes");
     setState(() => imageRemoved = false);
     ref.read(onboardingNotifierProvider.notifier).updateImage(imageFile);
   }
