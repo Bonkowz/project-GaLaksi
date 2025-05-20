@@ -64,7 +64,7 @@ class EditTravelPlanPageState extends ConsumerState<EditTravelPlanPage> {
       if (mounted) {
         showDismissableSnackbar(
           context: context,
-          message: "Travel plan created!",
+          message: "Travel plan updated!",
         );
       }
       // Pop after the success message
