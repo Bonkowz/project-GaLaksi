@@ -6,6 +6,8 @@ import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
 import 'package:galaksi/screens/travel_details/edit_travel_plan_page.dart';
 import 'package:galaksi/screens/travel_details/itinerary_tab.dart';
 import 'package:galaksi/screens/travel_details/notes_tab.dart';
+import 'package:galaksi/utils/dialog.dart';
+import 'package:galaksi/widgets/travel_plan_qr_code.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:galaksi/screens/overlays/shared_users_modal.dart';
 
@@ -63,6 +65,15 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
               },
             ),
             actions: [
+              IconButton(
+                icon: const Icon(Symbols.qr_code_rounded),
+                onPressed:
+                    () => showCustomDialog(
+                      context: context,
+                      child: TravelPlanQrCode(travelPlan: plan),
+                    ),
+              ),
+              const SizedBox(width: 4.0),
               IconButton(
                 icon: const Icon(Symbols.ios_share),
                 onPressed: () {
@@ -143,7 +154,9 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
                 children: [
                   ItineraryTab(activities: plan.activities),
                   NotesTab(notes: plan.notes),
-                  ItineraryTab(activities: plan.activities), // TODO: replace with new tabs
+                  ItineraryTab(
+                    activities: plan.activities,
+                  ), // TODO: replace with new tabs
                   ItineraryTab(activities: plan.activities),
                 ],
               ),
