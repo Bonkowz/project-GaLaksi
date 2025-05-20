@@ -177,7 +177,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
           Row(
             children: [
               Expanded(child: infoCard("Email", user.email)),
-              Expanded(child: infoCard("Phone Number", "---")),
+              user.phoneNumber.isNotEmpty
+                  ? Expanded(child: infoCard("Phone Number", user.phoneNumber))
+                  : const SizedBox.shrink(),
             ],
           ),
         ],
@@ -186,6 +188,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   }
 
   Widget _biography() {
+    final user = ref.watch(authNotifierProvider).user!;
+
+    if (user.biography.trim().isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Card.filled(
       color: Theme.of(context).colorScheme.primaryContainer,
       child: Padding(
@@ -201,10 +209,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               ),
             ),
             const SizedBox(height: 8.0),
-            Text(
-              "According to all known laws of aviation, there is no way that a bee should be able to fly. Its wings are too small to get its fat little body off the ground. The bee, of course, flies anyway because bees don't care what humans think is impossible. Yellow, black. Yellow, black. Yellow, black. Yellow, black. Ooh, black and yellow!",
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            Text(user.biography, style: Theme.of(context).textTheme.bodyMedium),
           ],
         ),
       ),
