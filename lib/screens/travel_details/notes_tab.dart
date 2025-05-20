@@ -53,7 +53,7 @@ class NotesTab extends StatelessWidget {
                   ),
                   const SizedBox(height: 4.0),
                   Text(
-                    note.message, // Note content
+                    note.message, 
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
