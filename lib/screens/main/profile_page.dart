@@ -153,12 +153,23 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          Text(
-            "@${user.username}",
-            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-              color: Theme.of(context).colorScheme.outline,
-            ),
-            textAlign: TextAlign.center,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 8,
+            children: [
+              Text(
+                "@${user.username}",
+                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              if (user.isPrivate)
+                Icon(
+                  Symbols.visibility_off_rounded,
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+            ],
           ),
         ],
       ),

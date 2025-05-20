@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:galaksi/models/user/interest_model.dart';
 import 'package:galaksi/models/user/travel_style_model.dart';
-import 'package:galaksi/models/user/user_model.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/providers/user_profile/user_profile_form_notifier.dart';
 import 'package:galaksi/utils/dialog.dart';
@@ -32,6 +31,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   late final TextEditingController _phoneNumberTextController;
   final interestSelection = <Interest>{};
   final travelStyleSelectionMap = <TravelStyle, bool>{};
+  bool isPrivate = false;
   bool _hasSaved = false;
 
   void _saveInterests() {
@@ -79,6 +79,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     userProfileFormNotifier.updatePhoneNumber(
       _phoneNumberTextController.text.trim(),
     );
+    userProfileFormNotifier.updatePrivacy(isPrivate);
 
     _saveInterests();
     _saveStyles();
@@ -126,6 +127,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     _lastNameTextController = TextEditingController(text: user.lastName);
     _biographyTextController = TextEditingController(text: user.biography);
     _phoneNumberTextController = TextEditingController(text: user.phoneNumber);
+    isPrivate = user.isPrivate;
     interestSelection.addAll(user.interests ?? {});
     for (final style in TravelStyle.values) {
       travelStyleSelectionMap[style] =
@@ -152,6 +154,10 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             child: Column(
               children: [
                 _ProfilePicture(),
+                _Privacy(
+                  isPrivate: isPrivate,
+                  onChanged: (newValue) => setState(() => isPrivate = newValue),
+                ),
                 _Name(
                   firstNameTextController: _firstNameTextController,
                   lastNameTextController: _lastNameTextController,
@@ -391,6 +397,8 @@ class _ProfilePicture extends ConsumerStatefulWidget {
 
 class _ProfilePictureState extends ConsumerState<_ProfilePicture> {
   bool imageRemoved = false;
+  Widget? _cachedAvatar;
+  String? _lastImageData;
 
   void _saveImageFromGallery() async {
     final imageFile = await ImagePicker().pickImage(
@@ -439,14 +447,29 @@ class _ProfilePictureState extends ConsumerState<_ProfilePicture> {
     final newImage = userProfileFormState.image;
     final hasNewImage = newImage != null && newImage.isNotEmpty;
     final hasUserImage = user.image.isNotEmpty;
+    final userInitial = user.firstName.isNotEmpty ? user.firstName[0] : '';
 
-    final avatar = _selectAvatar(
-      context,
-      user,
-      newImage,
-      hasNewImage,
-      hasUserImage,
-    );
+    String? imageData;
+    if (imageRemoved || newImage == '' || (!hasNewImage && !hasUserImage)) {
+      imageData = null;
+    } else if (hasNewImage) {
+      imageData = newImage;
+    } else if (hasUserImage) {
+      imageData = user.image;
+    }
+
+    if (_cachedAvatar == null || _lastImageData != imageData) {
+      if (imageRemoved || newImage == '' || (!hasNewImage && !hasUserImage)) {
+        _cachedAvatar = _buildInitialAvatar(context, userInitial);
+      } else if (hasNewImage) {
+        _cachedAvatar = _buildImageAvatar(context, newImage);
+      } else if (hasUserImage) {
+        _cachedAvatar = _buildImageAvatar(context, user.image);
+      } else {
+        _cachedAvatar = _buildInitialAvatar(context, userInitial);
+      }
+      _lastImageData = imageData;
+    }
 
     return Card.outlined(
       child: Padding(
@@ -467,7 +490,7 @@ class _ProfilePictureState extends ConsumerState<_ProfilePicture> {
                   child: SizedBox(
                     width: constraints.maxWidth / 2,
                     height: constraints.maxWidth / 2,
-                    child: avatar,
+                    child: _cachedAvatar,
                   ),
                 );
               },
@@ -501,26 +524,6 @@ class _ProfilePictureState extends ConsumerState<_ProfilePicture> {
     );
   }
 
-  Widget _selectAvatar(
-    BuildContext context,
-    User user,
-    String? newImage,
-    bool hasNewImage,
-    bool hasUserImage,
-  ) {
-    if (imageRemoved) {
-      return _buildInitialAvatar(context, user.firstName[0]);
-    } else if (newImage == '') {
-      return _buildInitialAvatar(context, user.firstName[0]);
-    } else if (hasNewImage) {
-      return _buildImageAvatar(context, newImage!);
-    } else if (hasUserImage) {
-      return _buildImageAvatar(context, user.image);
-    } else {
-      return _buildInitialAvatar(context, user.firstName[0]);
-    }
-  }
-
   Widget _buildImageAvatar(BuildContext context, String base64Image) {
     return CircleAvatar(
       radius: double.infinity,
@@ -537,6 +540,52 @@ class _ProfilePictureState extends ConsumerState<_ProfilePicture> {
         style: Theme.of(context).textTheme.displayLarge!.copyWith(
           fontWeight: FontWeight.bold,
           color: Theme.of(context).colorScheme.onPrimaryContainer,
+        ),
+      ),
+    );
+  }
+}
+
+class _Privacy extends StatefulWidget {
+  const _Privacy({required this.isPrivate, required this.onChanged});
+
+  final bool isPrivate;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  State<_Privacy> createState() => _PrivacyState();
+}
+
+class _PrivacyState extends State<_Privacy> {
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Card.outlined(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Privacy",
+              style: textTheme.headlineSmall!.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Card.outlined(
+              clipBehavior: Clip.hardEdge,
+              child: SwitchListTile(
+                title: const Text("Private Profile"),
+                subtitle: const Text(
+                  "Your public profile will not be visible to other people.",
+                ),
+                value: widget.isPrivate,
+                onChanged: widget.onChanged,
+              ),
+            ),
+          ],
         ),
       ),
     );
