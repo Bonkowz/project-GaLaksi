@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
+import 'package:galaksi/providers/travel_plan/current_travel_plan_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:galaksi/screens/travel_details/travel_plan_details_page.dart';
 
-class TravelPlanCard extends StatelessWidget {
+class TravelPlanCard extends ConsumerWidget {
   const TravelPlanCard({required this.travelPlan, super.key});
 
   final TravelPlan travelPlan;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentTravelPlanNotifier = ref.read(
+      currentTravelPlanProvider.notifier,
+    );
+
     final textTheme = Theme.of(context).textTheme;
     return SizedBox(
       height: 170,
@@ -20,13 +26,13 @@ class TravelPlanCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Expanded(
-                  flex: 4,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(12),
-                      bottomLeft: Radius.circular(12),
-                    ),
+                const ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    bottomLeft: Radius.circular(12),
+                  ),
+                  child: AspectRatio(
+                    aspectRatio: 16 / 19,
                     child: Image(
                       image: AssetImage(
                         'assets/images/galaksi-placeholder.jpg',
@@ -94,14 +100,17 @@ class TravelPlanCard extends StatelessWidget {
           ),
           Positioned.fill(
             child: Material(
+              clipBehavior: Clip.hardEdge,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               color: Colors.transparent,
               child: InkWell(
                 onTap: () {
+                  currentTravelPlanNotifier.state = travelPlan;
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder:
-                          (context) =>
-                              TravelPlanDetailsPage(travelPlan: travelPlan),
+                      builder: (context) => TravelPlanDetailsPage(),
                     ),
                   );
                 },
