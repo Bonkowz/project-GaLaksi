@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:galaksi/screens/overlays/create_travel_activity_page.dart';
+import 'package:galaksi/widgets/create_details_button.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class NotesTab extends StatelessWidget {
   NotesTab({super.key});
@@ -18,50 +21,70 @@ class NotesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: noteItems.length,
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Card(
-            elevation: 0.5,
-            color: Theme.of(context).colorScheme.secondaryContainer,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.grey, width: 16.0),
+    return Column(
+      children: [
+        CreateDetailsButton(
+          text: "Add a note...",
+          leadingIcon: const Icon(
+            Symbols.add,
+          ), // TODO: Convert to profile image...
+          trailingIcon: const Icon(Symbols.edit),
+          navigateTo: CreateTravelActivityPage(),
+        ),
+        Expanded(
+          child: ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: noteItems.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 8.0,
+                ),
+                child: Card(
+                  elevation: 0.5,
+                  color: Theme.of(context).colorScheme.secondaryContainer,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.grey,
+                                  width: 16.0,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6.0),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("${noteItems[index][0]} added a note:"),
+                                Text(noteItems[index][1]),
+                              ],
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(width: 6.0),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("${noteItems[index][0]} added a note:"),
-                          Text(noteItems[index][1]),
-                        ],
-                      ),
-                    ],
+                        const SizedBox(height: 4.0),
+                        Text(
+                          noteItems[index][2], // Note content
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 4.0),
-                  Text(
-                    noteItems[index][2], // Note content
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           ),
-        );
-      },
+        ),
+      ],
     );
   }
 }

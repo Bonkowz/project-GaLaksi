@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
+import 'package:galaksi/providers/travel_plan/current_travel_plan_provider.dart';
 import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
 import 'package:galaksi/screens/travel_details/edit_travel_plan_page.dart';
 import 'package:galaksi/screens/travel_details/itinerary_tab.dart';
@@ -10,9 +11,7 @@ import 'package:material_symbols_icons/symbols.dart';
 final tabIndex = StateProvider<int>((ref) => 0); // 0 for Itinerary, 1 for Notes
 
 class TravelPlanDetailsPage extends ConsumerStatefulWidget {
-  const TravelPlanDetailsPage({required this.travelPlan, super.key});
-
-  final TravelPlan travelPlan;
+  const TravelPlanDetailsPage({super.key});
 
   @override
   ConsumerState<TravelPlanDetailsPage> createState() =>
@@ -114,9 +113,13 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
             ),
           ),
           SliverFillRemaining(
-            child: TabBarView(
-              controller: _tabController,
-              children: [ItineraryTab(), NotesTab()],
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TabBarView(
+                physics: NeverScrollableScrollPhysics(),
+                controller: _tabController,
+                children: [ItineraryTab(), NotesTab()],
+              ),
             ),
           ),
         ],
@@ -154,7 +157,14 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
                       style: Theme.of(context).textTheme.headlineMedium
                           ?.copyWith(fontWeight: FontWeight.bold),
                     ),
+
                     const SizedBox(height: 4),
+                    Text(
+                      "Loading...", // Date range
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -190,22 +200,25 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
 
   @override
   Widget build(BuildContext context) {
+    final travelPlan = ref.watch(currentTravelPlanProvider);
     final selectedTabIndex = ref.watch(tabIndex);
     _tabController.index = selectedTabIndex;
-    final travelPlanAsync = ref.watch(
-      travelPlanStreamProvider(widget.travelPlan.id),
-    );
+    final travelPlanAsync = ref.watch(travelPlanStreamProvider(travelPlan!.id));
 
     return travelPlanAsync.when(
       data: (data) => buildTravelPlan(data!),
-      loading:
-          () => const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Center(child: Text('Loading...')),
-          ),
+      loading: () => loadingTravelPlan(),
       error: (err, stack) {
         debugPrint("$err");
-        return buildTravelPlan(widget.travelPlan);
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(
+            child: Text(
+              'Error: $err',
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+        );
       },
     );
   }

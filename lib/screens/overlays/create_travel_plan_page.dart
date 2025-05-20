@@ -81,6 +81,7 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final accent = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
       appBar: AppBar(
@@ -107,7 +108,7 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            spacing: 16,
+            spacing: 20,
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -117,10 +118,41 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              GestureDetector(
+                onTap: () {}, // TODO: Implement image picker
+                child: DottedBorder(
+                  fillColor: Theme.of(context).colorScheme.surface,
+                  color: accent,
+                  borderType: BorderType.RRect,
+                  radius: const Radius.circular(16),
+                  dashPattern: const [8, 4],
+                  strokeWidth: 1,
+                  child: Container(
+                    height: 120,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.camera_alt_outlined,
+                          color: accent,
+                          size: 32,
+                        ),
+                        const SizedBox(height: 8),
+                        Text('Insert image', style: TextStyle(color: accent)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
               Form(
                 key: _formKey,
                 child: Column(
-                  spacing: 8,
+                  spacing: 0,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     TextFormField(
@@ -203,3 +235,43 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
     );
   }
 }
+
+class DottedBorder extends StatelessWidget {
+  final Widget child;
+  final Color color;
+  final BorderType borderType;
+  final Radius radius;
+  final List<double> dashPattern;
+  final double strokeWidth;
+  final Color fillColor;
+
+  const DottedBorder({
+    required this.child,
+    required this.color,
+    required this.borderType,
+    required this.radius,
+    required this.dashPattern,
+    required this.strokeWidth,
+    required this.fillColor,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // For simplicity, just use a Container with a border for now
+    return Container(
+      decoration: BoxDecoration(
+        color: fillColor,
+        border: Border.all(
+          color: color,
+          width: strokeWidth,
+          style: BorderStyle.solid,
+        ),
+        borderRadius: BorderRadius.all(radius),
+      ),
+      child: child,
+    );
+  }
+}
+
+enum BorderType { RRect }
