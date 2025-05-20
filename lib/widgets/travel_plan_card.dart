@@ -94,6 +94,10 @@ class TravelPlanCard extends StatelessWidget {
           ),
           Positioned.fill(
             child: Material(
+              clipBehavior: Clip.hardEdge,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               color: Colors.transparent,
               child: InkWell(
                 onTap: () {
