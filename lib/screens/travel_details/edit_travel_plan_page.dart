@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
-import 'package:galaksi/providers/travel_plan/create_travel_plan_notifier.dart';
 import 'package:galaksi/providers/travel_plan/edit_travel_plan_notifier.dart';
 import 'package:galaksi/utils/input_decorations.dart';
 import 'package:galaksi/utils/snackbar.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class EditTravelPlanPage extends ConsumerStatefulWidget {
-  const EditTravelPlanPage({super.key, required this.travelPlan});
+  const EditTravelPlanPage({required this.travelPlan, super.key});
 
   final TravelPlan travelPlan;
 
