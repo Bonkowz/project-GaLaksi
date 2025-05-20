@@ -7,6 +7,7 @@ import 'package:galaksi/screens/travel_details/edit_travel_plan_page.dart';
 import 'package:galaksi/screens/travel_details/itinerary_tab.dart';
 import 'package:galaksi/screens/travel_details/notes_tab.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:galaksi/screens/overlays/shared_users_modal.dart';
 
 final tabIndex = StateProvider<int>((ref) => 0); // 0 for Itinerary, 1 for Notes
 
@@ -25,10 +26,19 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
   late TabController _tabController;
   final double appBarHeight = 280;
 
+  void _showSharedUsersDialog(BuildContext context, TravelPlan plan) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(child: SharedUsersModal(users: plan.sharedWith));
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
 
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
@@ -54,12 +64,11 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
                 Navigator.of(context).pop();
               },
             ),
-            centerTitle: true,
             actions: [
               IconButton(
                 icon: const Icon(Symbols.ios_share),
                 onPressed: () {
-                  // TODO: Implement share
+                  _showSharedUsersDialog(context, plan);
                 },
               ),
               const SizedBox(width: 4.0),
@@ -80,34 +89,47 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
             expandedHeight: appBarHeight,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              title: Padding(
-                padding: const EdgeInsets.only(bottom: 24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      plan.title, // Title
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      "DATE RANGE", // Date range
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
               background: Container(
                 color: Theme.of(context).colorScheme.primaryContainer,
+                child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16.0,
+                      bottom: 64.0,
+                    ), // Adjusted padding
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          plan.title,
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "DATE RANGE",
+                          style: Theme.of(
+                            context,
+                          ).textTheme.titleSmall?.copyWith(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
             bottom: TabBar(
               controller: _tabController,
-              tabs: const [Tab(text: "Itinerary"), Tab(text: "Notes")],
+              tabs: const [
+                Tab(text: "Itinerary"),
+                Tab(text: "Notes"),
+                Tab(text: "Flights"),
+                Tab(text: "Lodge"),
+              ],
               labelColor: Theme.of(context).colorScheme.primary,
               unselectedLabelColor:
                   Theme.of(context).colorScheme.onSurfaceVariant,
@@ -117,7 +139,12 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
           SliverFillRemaining(
             child: TabBarView(
               controller: _tabController,
-              children: [ItineraryTab(), NotesTab()],
+              children: [
+                ItineraryTab(activities: plan.activities),
+                NotesTab(notes: plan.notes),
+                ItineraryTab(activities: plan.activities), // TODO: replace with new tabs
+                ItineraryTab(activities: plan.activities),
+              ],
             ),
           ),
         ],
@@ -130,15 +157,15 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            leading: IconButton(
-              icon: const Icon(Symbols.arrow_back),
+            leading: const IconButton(
+              icon: Icon(Symbols.arrow_back),
               onPressed: null,
             ),
             centerTitle: true,
             actions: [
-              IconButton(icon: const Icon(Symbols.ios_share), onPressed: null),
+              const IconButton(icon: Icon(Symbols.ios_share), onPressed: null),
               const SizedBox(width: 4.0),
-              IconButton(icon: const Icon(Symbols.settings), onPressed: null),
+              const IconButton(icon: Icon(Symbols.settings), onPressed: null),
             ],
             backgroundColor: Theme.of(context).colorScheme.primaryContainer,
             expandedHeight: appBarHeight,
@@ -178,7 +205,10 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
           SliverFillRemaining(
             child: TabBarView(
               controller: _tabController,
-              children: [Center(child: CircularProgressIndicator()), Center()],
+              children: [
+                const Center(child: CircularProgressIndicator()),
+                const Center(),
+              ],
             ),
           ),
         ],

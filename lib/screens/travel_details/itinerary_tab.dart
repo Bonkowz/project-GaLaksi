@@ -1,30 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 
 class ItineraryTab extends StatelessWidget {
-  ItineraryTab({super.key});
-
-  final tempItineraryItems = <List<String>>[
-    [
-      "7:15 AM to 8:15 AM",
-      "Mount Everest Basecamp",
-      "Quick camping and breakfast at basecamp",
-    ],
-    [
-      "8:15 AM to 10:00 AM",
-      "Mount Everest Camp IV",
-      "Go to camp IV and prepare for summit",
-    ],
-    ["10:00 AM to 7:00 PM", "Mount Everest Summit", "Ideal push"],
-    ["7:00 PM to 6:00 AM", "Mount Everest Summit", "Sleep"],
-  ];
+  ItineraryTab({required this.activities, super.key});
+  List<TravelActivity> activities;
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: tempItineraryItems.length,
+      itemCount: activities.length,
       itemBuilder: (context, index) {
+        // TODO: add documentation here
+        final activity = activities[index]; 
+        final startTime = "${activity.startAt.toLocal().hour}:${activity.startAt.toLocal().minute.toString().padLeft(2, '0')}";
+        final endTime = "${activity.endAt.toLocal().hour}:${activity.endAt.toLocal().minute.toString().padLeft(2, '0')}";
+        final timeRange = "$startTime to $endTime";
+
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Row(
@@ -35,16 +28,16 @@ class ItineraryTab extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      tempItineraryItems[index][0], // Itinerary item text
+                      timeRange, 
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      tempItineraryItems[index][1], // Itinerary item text
+                      activity.title, 
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     Text(
-                      tempItineraryItems[index][2], // Itinerary item text
+                      activity.location,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
