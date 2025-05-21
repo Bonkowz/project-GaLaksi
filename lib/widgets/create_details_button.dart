@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
 
 class CreateDetailsButton extends StatelessWidget {
   CreateDetailsButton({
-    super.key,
     required this.text,
     required this.leadingIcon,
     required this.trailingIcon,
     required this.navigateTo,
+    super.key,
   });
 
   String text;
