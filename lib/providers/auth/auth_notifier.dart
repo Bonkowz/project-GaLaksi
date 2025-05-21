@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/apis/firebase_auth_api.dart';
 import 'package:galaksi/apis/firebase_firestore_api.dart';
 import 'package:galaksi/models/user/user_model.dart';
+import 'package:galaksi/providers/user_profile/user_profile_notifier.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:galaksi/screens/auth/auth_screen.dart';
 import 'package:galaksi/screens/auth/sign_in_page.dart';
@@ -29,6 +30,14 @@ class AuthNotifier extends _$AuthNotifier {
         state = AuthState();
       }
     }, fireImmediately: true);
+
+    // Automatically fetch the user profile from the database
+    // if it changes
+    ref.listen(currentUserProfileStreamProvider, (previous, next) {
+      debugPrint("USER DOCUMENT CHANGED");
+      final userProfile = next.valueOrNull;
+      state = state.copyWith(user: userProfile, isLoading: false);
+    });
 
     return state;
   }

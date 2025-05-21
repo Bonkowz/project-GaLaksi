@@ -78,10 +78,10 @@ class FirebaseFirestoreApi {
   }
 
   /// Returns a [Stream] of an existing user given its uid
-  FirestoreResult<Stream<DocumentSnapshot>> getUserStream(String uid) {
+  FirestoreResult<Stream<DocumentSnapshot>> getUserDocumentStream(String uid) {
     try {
       return FirestoreSuccess(
-        message: "Fetched user's travel plans successfully.",
+        message: "Fetched user document successfully.",
         data: db.collection("users").doc(uid).snapshots(),
       );
     } catch (e) {
@@ -301,6 +301,14 @@ abstract class FirestoreResult<T extends Object> {
     } else {
       throw StateError("Invalid firestore result.");
     }
+  }
+
+  T? get valueOrNull {
+    return switch (this) {
+      final FirestoreSuccess<T> success => success.data,
+      final FirestoreFailure<T> _ => null,
+      _ => throw StateError("Invalid firestore result."),
+    };
   }
 }
 

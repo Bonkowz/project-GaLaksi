@@ -29,7 +29,7 @@ final currentUserStreamProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CurrentUserStreamRef = AutoDisposeStreamProviderRef<auth.User?>;
-String _$authNotifierHash() => r'0fe1436ff2ab9fb2ca9424d73106da8b3e5e1732';
+String _$authNotifierHash() => r'937de31999b10f5c88e8a343b0d5e0730117e02c';
 
 /// A [Notifier] that manages the state of the [AuthScreen]
 ///

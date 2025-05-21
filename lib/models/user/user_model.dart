@@ -15,6 +15,7 @@ class User {
     this.image = '',
     this.biography = '',
     this.phoneNumber = '',
+    this.isPrivate = false,
   });
 
   /// Factory constructor to instantiate object from a [DocumentSnapshot]
@@ -39,6 +40,7 @@ class User {
               .toSet(),
       biography: map['biography'] ?? '',
       phoneNumber: map['phoneNumber'] ?? '',
+      isPrivate: map['isPrivate'] ?? false,
     );
   }
 
@@ -53,6 +55,7 @@ class User {
   Set<TravelStyle>? travelStyles;
   String biography;
   String phoneNumber;
+  bool isPrivate;
 
   Map<String, dynamic> toMap() {
     return {
@@ -64,8 +67,9 @@ class User {
       'interests': interests?.map((i) => i.name).toList(),
       'travelStyles': travelStyles?.map((t) => t.name).toList(),
       'image': image,
-      'biography':biography,
-      'phoneNumber': phoneNumber
+      'biography': biography,
+      'phoneNumber': phoneNumber,
+      'isPrivate': isPrivate,
     };
   }
 
@@ -79,7 +83,8 @@ class User {
     Set<TravelStyle>? travelStyles,
     String? image,
     String? biography,
-    String? phoneNumber
+    String? phoneNumber,
+    bool? isPrivate,
   }) {
     return User(
       firstName: firstName ?? this.firstName,
@@ -92,7 +97,8 @@ class User {
       travelStyles: travelStyles ?? this.travelStyles,
       image: image ?? this.image,
       biography: biography ?? this.biography,
-      phoneNumber: phoneNumber ?? this.phoneNumber
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      isPrivate: isPrivate ?? this.isPrivate,
     );
   }
 }
