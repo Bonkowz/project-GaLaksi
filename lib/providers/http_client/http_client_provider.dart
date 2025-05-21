@@ -7,6 +7,5 @@ part 'http_client_provider.g.dart'; // required for code generation
 @riverpod
 http.Client httpClient(Ref ref) {
   final client = http.Client();
-  ref.onDispose(client.close);
   return client;
 }
