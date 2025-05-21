@@ -6,7 +6,7 @@ part of 'place_search_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$placeSearchHash() => r'91052e636f2a8ae76c3a078d3860dc52c290a7e7';
+String _$placeSearchHash() => r'f5adbeb1d65f2cc316cd51ac3dfceb5b482c4668';
 
 /// See also [PlaceSearch].
 @ProviderFor(PlaceSearch)

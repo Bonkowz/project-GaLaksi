@@ -281,6 +281,7 @@ class _CreateTravelActivityPageState
                       ],
                     ),
                     PlaceAutocomplete(),
+                    PlaceAutocomplete(),
                   ],
                 ),
               ),

@@ -46,14 +46,17 @@ class PlaceSearch extends _$PlaceSearch {
         throw Exception('Failed: ${response.statusCode}');
       }
 
+      // Parse String response into JSON
       final decoded = jsonDecode(response.body);
 
+      // If not List, throw an error
       if (decoded is! List) {
         throw Exception('Expected a List, got: ${decoded.runtimeType}');
       }
 
+      // Convert to Place
       final places =
-          (decoded as List)
+          (decoded)
               .map((json) => Place.fromJson(json as Map<String, dynamic>))
               .toList();
 
