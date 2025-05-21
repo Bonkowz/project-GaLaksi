@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:material_symbols_icons/symbols.dart';
 
 class CreateDetailsButton extends StatelessWidget {
-  CreateDetailsButton({
-    super.key,
+  const CreateDetailsButton({
     required this.text,
     required this.leadingIcon,
     required this.trailingIcon,
     required this.navigateTo,
+    super.key,
   });
 
-  String text;
-  Icon leadingIcon;
-  Icon trailingIcon;
-  Widget navigateTo;
+  final String text;
+  final Icon leadingIcon;
+  final Icon trailingIcon;
+  final Widget navigateTo;
 
   @override
   Widget build(BuildContext context) {
