@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/providers/place_search/place_search_notifier.dart';
 import 'package:galaksi/utils/input_decorations.dart';
 import 'package:material_symbols_icons/symbols.dart';
