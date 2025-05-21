@@ -7,7 +7,7 @@ part of 'user_profile_form_notifier.dart';
 // **************************************************************************
 
 String _$userProfileFormNotifierHash() =>
-    r'c7848acf915542116b798a3ed9dfe81aeb2e1cde';
+    r'0055dfd67b19792be1882714fb8af5ae02062d9b';
 
 /// See also [UserProfileFormNotifier].
 @ProviderFor(UserProfileFormNotifier)

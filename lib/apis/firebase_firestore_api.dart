@@ -201,10 +201,7 @@ class FirebaseFirestoreApi {
       await db
           .collection("plans")
           .doc(travelPlan.id)
-          .update({
-            "title": travelPlan.title,
-            "description": travelPlan.description,
-          })
+          .update(travelPlan.toMap())
           .timeout(const Duration(seconds: 10));
       return const FirestoreSuccess(
         message: "Plan edited succesfully.",
@@ -216,7 +213,7 @@ class FirebaseFirestoreApi {
         error: FirestoreFailureError.networkError,
       );
     } catch (e) {
-      debugPrint("Error creating travel plan: $e");
+      debugPrint("Error editing travel plan: $e");
       return const FirestoreFailure(
         message: "An unknown error occurred.",
         error: FirestoreFailureError.unknown,
