@@ -1,30 +1,30 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'create_travel_plan_notifier.dart';
+part of 'user_profile_form_notifier.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$createTravelPlanNotifierHash() =>
-    r'12722c82169256bded95d2e647e7a2bd5e45c48b';
+String _$userProfileFormNotifierHash() =>
+    r'0055dfd67b19792be1882714fb8af5ae02062d9b';
 
-/// See also [CreateTravelPlanNotifier].
-@ProviderFor(CreateTravelPlanNotifier)
-final createTravelPlanNotifierProvider = AutoDisposeNotifierProvider<
-  CreateTravelPlanNotifier,
-  TravelPlanState
+/// See also [UserProfileFormNotifier].
+@ProviderFor(UserProfileFormNotifier)
+final userProfileFormNotifierProvider = AutoDisposeNotifierProvider<
+  UserProfileFormNotifier,
+  UserProfileFormState
 >.internal(
-  CreateTravelPlanNotifier.new,
-  name: r'createTravelPlanNotifierProvider',
+  UserProfileFormNotifier.new,
+  name: r'userProfileFormNotifierProvider',
   debugGetCreateSourceHash:
       const bool.fromEnvironment('dart.vm.product')
           ? null
-          : _$createTravelPlanNotifierHash,
+          : _$userProfileFormNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$CreateTravelPlanNotifier = AutoDisposeNotifier<TravelPlanState>;
+typedef _$UserProfileFormNotifier = AutoDisposeNotifier<UserProfileFormState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

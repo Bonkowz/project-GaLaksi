@@ -65,23 +65,32 @@ class _Onboarding4AccountState extends ConsumerState<Onboarding4Account> {
     final email = ref.read(onboardingNotifierProvider).email;
 
     // Check if matching email already exists in Firestore
-    final emailExists = await FirebaseFirestoreApi()
-        .getUserDocumentByCanonicalEmail(StringUtils.normalizeEmail(email!));
+    final result = await FirebaseFirestoreApi().getUserDocumentByCanonicalEmail(
+      StringUtils.normalizeEmail(email!),
+    );
 
-    if (mounted) {
-      if (emailExists != null) {
+    result.when(
+      onSuccess: (success) {
         showDismissableSnackbar(
           context: context,
           message: "A user with that email already exists.",
         );
         onboardingNotifier.stopLoading();
-        return;
-      }
-    }
-
-    onboardingNotifier.stopLoading();
-
-    onboardingNotifier.nextPage();
+      },
+      onFailure: (failure) {
+        switch (failure.error) {
+          case FirestoreFailureError.networkError:
+            showDismissableSnackbar(context: context, message: failure.message);
+            break;
+          case FirestoreFailureError.notFound:
+            onboardingNotifier.stopLoading();
+            onboardingNotifier.nextPage();
+          default:
+            showDismissableSnackbar(context: context, message: failure.message);
+        }
+        onboardingNotifier.stopLoading();
+      },
+    );
   }
 
   @override

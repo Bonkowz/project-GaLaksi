@@ -12,6 +12,10 @@ class User {
     required this.uid,
     required this.interests,
     required this.travelStyles,
+    this.image = '',
+    this.biography = '',
+    this.phoneNumber = '',
+    this.isPrivate = false,
   });
 
   /// Factory constructor to instantiate object from a [DocumentSnapshot]
@@ -20,6 +24,7 @@ class User {
     return User(
       // The uid is directly obtainable from the document id, since they match
       uid: doc.id,
+      image: map['image'] ?? '',
       firstName: map['firstName'],
       lastName: map['lastName'],
       username: map['username'],
@@ -33,10 +38,14 @@ class User {
           (List<String>.from(map['travelStyles']))
               .map((s) => TravelStyle.values.firstWhere((t) => s == t.name))
               .toSet(),
+      biography: map['biography'] ?? '',
+      phoneNumber: map['phoneNumber'] ?? '',
+      isPrivate: map['isPrivate'] ?? false,
     );
   }
 
   String uid;
+  String image;
   String firstName;
   String lastName;
   String username;
@@ -44,6 +53,9 @@ class User {
   String emailCanonical;
   Set<Interest>? interests;
   Set<TravelStyle>? travelStyles;
+  String biography;
+  String phoneNumber;
+  bool isPrivate;
 
   Map<String, dynamic> toMap() {
     return {
@@ -54,6 +66,39 @@ class User {
       'emailCanonical': emailCanonical,
       'interests': interests?.map((i) => i.name).toList(),
       'travelStyles': travelStyles?.map((t) => t.name).toList(),
+      'image': image,
+      'biography': biography,
+      'phoneNumber': phoneNumber,
+      'isPrivate': isPrivate,
     };
+  }
+
+  User copyWith({
+    String? firstName,
+    String? lastName,
+    String? username,
+    String? email,
+    String? emailCanonical,
+    Set<Interest>? interests,
+    Set<TravelStyle>? travelStyles,
+    String? image,
+    String? biography,
+    String? phoneNumber,
+    bool? isPrivate,
+  }) {
+    return User(
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      username: username ?? this.username,
+      email: email ?? this.email,
+      emailCanonical: emailCanonical ?? this.emailCanonical,
+      uid: uid,
+      interests: interests ?? this.interests,
+      travelStyles: travelStyles ?? this.travelStyles,
+      image: image ?? this.image,
+      biography: biography ?? this.biography,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      isPrivate: isPrivate ?? this.isPrivate,
+    );
   }
 }
