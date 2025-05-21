@@ -42,34 +42,20 @@ class TravelActivity {
 }
 
 class Place {
-  Place({
-    required this.name,
-    required this.displayName,
-    required this.lat,
-    required this.lon,
-  });
+  Place({required this.name, required this.displayName});
 
   // Factory constructor to create Place from JSON map
   factory Place.fromMap(Map<String, dynamic> json) {
     return Place(
       name: json['name'] as String? ?? '',
       displayName: json['display_name'] as String? ?? '',
-      lat: double.parse(json['lat'] as String),
-      lon: double.parse(json['lon'] as String),
     );
   }
 
   final String name;
   final String displayName;
-  final double lat;
-  final double lon;
 
   Map<String, dynamic> toMap() {
-    return {
-      'name': name,
-      'display_name': displayName,
-      'lat': lat.toString(),
-      'lon': lon.toString(),
-    };
+    return {'name': name, 'display_name': displayName};
   }
 }
