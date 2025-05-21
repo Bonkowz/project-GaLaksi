@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:galaksi/providers/place_search/place_search_notifier.dart';
 import 'package:galaksi/utils/input_decorations.dart';
+import 'package:galaksi/widgets/place_autocomplete.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
@@ -48,6 +50,9 @@ class _CreateTravelActivityPageState
 
   @override
   Widget build(BuildContext context) {
+    final placeSearch = ref.watch(placeSearchProvider);
+    final placeSearchNotifier = ref.read(placeSearchProvider.notifier);
+
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -275,39 +280,7 @@ class _CreateTravelActivityPageState
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-              const Row(
-                spacing: 16,
-                children: [
-                  Expanded(child: Divider()),
-                  Text("or"),
-                  Expanded(child: Divider()),
-                ],
-              ),
-              Text(
-                "Join a friend's travel plan",
-                style: textTheme.headlineMedium!.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  spacing: 8,
-                  children: [
-                    IconButton.filled(
-                      onPressed: () {},
-                      icon: const Icon(Symbols.camera_alt_rounded),
-                      iconSize: 48,
-                      padding: const EdgeInsets.all(24.0),
-                    ),
-                    Text(
-                      "Ask your friend for their QR code!",
-                      style: textTheme.bodyMedium,
-                    ),
+                    PlaceAutocomplete(),
                   ],
                 ),
               ),
