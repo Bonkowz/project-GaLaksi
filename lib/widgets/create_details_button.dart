@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CreateDetailsButton extends StatelessWidget {
-  CreateDetailsButton({
+  const CreateDetailsButton({
     required this.text,
     required this.leadingIcon,
     required this.trailingIcon,
@@ -9,10 +9,10 @@ class CreateDetailsButton extends StatelessWidget {
     super.key,
   });
 
-  String text;
-  Icon leadingIcon;
-  Icon trailingIcon;
-  Widget navigateTo;
+  final String text;
+  final Icon leadingIcon;
+  final Icon trailingIcon;
+  final Widget navigateTo;
 
   @override
   Widget build(BuildContext context) {

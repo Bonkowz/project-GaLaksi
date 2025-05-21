@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:galaksi/providers/place_search/place_search_notifier.dart';
 import 'package:galaksi/utils/input_decorations.dart';
 import 'package:galaksi/widgets/place_autocomplete.dart';
 import 'package:intl/intl.dart';
@@ -40,19 +39,20 @@ class _CreateTravelActivityPageState
   TimeOfDay? startTime;
   TimeOfDay? endTime;
 
+  /// Utility function for FormField
   String dateToString(DateTime date) {
     return "${DateFormat('MMMM').format(DateTime(0, date.month))} ${date.day.toString().padLeft(2, '0')}, ${date.year}";
   }
 
+  /// Utility function for FormField
   String timeToString(TimeOfDay time) {
     return "${time.hourOfPeriod}:${time.minute.toString().padLeft(2, '0')} ${time.period.name.toUpperCase()}";
   }
 
+  final reminders = ["5 minutes before", "10 minutes before", "1 hour before"];
+
   @override
   Widget build(BuildContext context) {
-    final placeSearch = ref.watch(placeSearchProvider);
-    final placeSearchNotifier = ref.read(placeSearchProvider.notifier);
-
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -281,7 +281,24 @@ class _CreateTravelActivityPageState
                       ],
                     ),
                     PlaceAutocomplete(),
-                    PlaceAutocomplete(),
+                    DropdownButtonFormField(
+                      items:
+                          ['1 hour before', '6 hours before', '1 day before']
+                              .map(
+                                (option) => DropdownMenuItem(
+                                  value: option,
+                                  child: Text(option),
+                                ),
+                              )
+                              .toList(),
+                      onChanged: (value) {},
+                      decoration: InputDecorations.outlineBorder(
+                        context: context,
+                        prefixIcon: Icon(Symbols.alarm),
+                        borderRadius: 16,
+                        hintText: "Remind me...",
+                      ),
+                    ),
                   ],
                 ),
               ),
