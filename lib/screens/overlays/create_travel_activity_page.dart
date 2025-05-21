@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
+import 'package:galaksi/providers/travel_activity/create_travel_activity_notifier.dart';
 import 'package:galaksi/utils/input_decorations.dart';
+import 'package:galaksi/utils/snackbar.dart';
 import 'package:galaksi/widgets/place_autocomplete.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -21,10 +24,58 @@ class _CreateTravelActivityPageState
   final activityDateController = TextEditingController();
   final startTimeController = TextEditingController();
   final endTimeController = TextEditingController();
+  final locationController = TextEditingController();
+  final locationFocusNode = FocusNode();
 
   bool _isLoading = false;
 
-  Future<void> submit() async {}
+  Future<void> submit() async {
+    final formIsValid = _formKey.currentState?.validate() ?? false;
+    if (!formIsValid) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final createTravelActivityNotifier = ref.read(
+      createTravelActivityNotifierProvider.notifier,
+    );
+
+    createTravelActivityNotifier.updateTitle(titleTextController.text);
+    createTravelActivityNotifier.updateStartAt(activityDate!, startTime!);
+    createTravelActivityNotifier.updateEndAt(activityDate!, endTime!);
+    createTravelActivityNotifier.updateReminders([]);
+    createTravelActivityNotifier.updateLocation(placeSelected!);
+
+    final result = await createTravelActivityNotifier.addTravelActivity();
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (!result) {
+      if (mounted) {
+        showDismissableSnackbar(
+          context: context,
+          message:
+              "You are offline. This travel activity is currently pending. "
+              "Please connect to the internet before quitting the app to "
+              "succesfully create this activity.",
+          duration: const Duration(minutes: 1),
+        );
+      }
+    } else {
+      if (mounted) {
+        showDismissableSnackbar(context: context, message: "Activity created!");
+      }
+      // Pop after the success message
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -32,12 +83,15 @@ class _CreateTravelActivityPageState
     activityDateController.dispose();
     startTimeController.dispose();
     endTimeController.dispose();
+    locationController.dispose();
     super.dispose();
   }
 
   DateTime? activityDate;
   TimeOfDay? startTime;
   TimeOfDay? endTime;
+  List<String> durations = [];
+  Place? placeSelected;
 
   /// Utility function for FormField
   String dateToString(DateTime date) {
@@ -53,6 +107,9 @@ class _CreateTravelActivityPageState
 
   @override
   Widget build(BuildContext context) {
+    final notifier = ref.read(createTravelActivityNotifierProvider.notifier);
+    debugPrint('notifier hash in parent: ${notifier.hashCode}');
+
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -159,6 +216,10 @@ class _CreateTravelActivityPageState
                         hintText: "Start date",
                         borderRadius: 16,
                       ),
+
+                      validator: FormBuilderValidators.required(
+                        errorText: "Please enter a day",
+                      ),
                     ),
                     Row(
                       spacing: 16,
@@ -216,12 +277,12 @@ class _CreateTravelActivityPageState
                             ),
 
                             validator: (value) {
-                              if (startTime == null || endTime == null) {
-                                return null; // can't validate yet
+                              if (startTime == null) {
+                                return "Enter a time."; // can't validate yet
                               }
 
                               if (startTime!.compareTo(endTime!) >= 0) {
-                                return "Invalid time!";
+                                return "Invalid time.";
                               }
 
                               return null;
@@ -266,8 +327,8 @@ class _CreateTravelActivityPageState
                             ),
 
                             validator: (value) {
-                              if (startTime == null || endTime == null) {
-                                return null; // can't validate yet
+                              if (endTime == null) {
+                                return 'Enter a time.'; // can't validate yet
                               }
 
                               if (startTime!.compareTo(endTime!) >= 0) {
@@ -280,10 +341,17 @@ class _CreateTravelActivityPageState
                         ),
                       ],
                     ),
-                    PlaceAutocomplete(),
+                    PlaceAutocomplete(
+                      onPlaceSelected: (place) {
+                        setState(() {
+                          placeSelected = place;
+                        });
+                      },
+                      controller: locationController,
+                    ),
                     DropdownButtonFormField(
                       items:
-                          ['1 hour before', '6 hours before', '1 day before']
+                          reminders
                               .map(
                                 (option) => DropdownMenuItem(
                                   value: option,
@@ -291,7 +359,9 @@ class _CreateTravelActivityPageState
                                 ),
                               )
                               .toList(),
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        durations.add(value!);
+                      },
                       decoration: InputDecorations.outlineBorder(
                         context: context,
                         prefixIcon: Icon(Symbols.alarm),

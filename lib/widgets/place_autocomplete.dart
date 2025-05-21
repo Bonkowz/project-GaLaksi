@@ -4,16 +4,45 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/providers/place_search/place_search_notifier.dart';
+import 'package:galaksi/providers/travel_activity/create_travel_activity_notifier.dart';
 import 'package:galaksi/utils/input_decorations.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 
 class PlaceAutocomplete extends ConsumerStatefulWidget {
+  final TextEditingController controller;
+  final void Function(Place) onPlaceSelected;
+
+  const PlaceAutocomplete({
+    super.key,
+    required this.onPlaceSelected,
+    required this.controller,
+  });
   @override
   _PlaceAutocompleteState createState() => _PlaceAutocompleteState();
 }
 
 class _PlaceAutocompleteState extends ConsumerState<PlaceAutocomplete> {
   Timer? _debounce;
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = widget.controller;
+  }
+
+  void _handleCustomPlace() {
+    final text = _controller.text.trim();
+    if (text.isNotEmpty) {
+      final selected = ref.read(createTravelActivityNotifierProvider).location;
+
+      if (selected == null || selected.displayName != text) {
+        final customPlace = Place(name: text, displayName: text);
+        widget.onPlaceSelected(customPlace);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +56,7 @@ class _PlaceAutocompleteState extends ConsumerState<PlaceAutocomplete> {
         }
         _debounce?.cancel();
         _debounce = Timer(const Duration(milliseconds: 300), () {
+          debugPrint("I go here");
           ref.read(placeSearchProvider.notifier).search(textEditingValue.text);
         });
 
@@ -41,22 +71,43 @@ class _PlaceAutocompleteState extends ConsumerState<PlaceAutocomplete> {
           orElse: () => const Iterable<Place>.empty(),
         );
       },
-      onSelected: (selection) {
-        print('You selected $selection');
+      onSelected: (Place selection) {
+        _controller.text = selection.displayName;
+        widget.onPlaceSelected(selection);
       },
 
-      fieldViewBuilder:
-          (context, textEditingController, focusNode, onFieldSubmitted) =>
-              TextFormField(
-                controller: textEditingController,
-                focusNode: focusNode,
-                decoration: InputDecorations.outlineBorder(
-                  context: context,
-                  borderRadius: 16,
-                  hintText: "Enter location",
-                  prefixIcon: const Icon(Symbols.location_on),
-                ),
-              ),
+      fieldViewBuilder: (
+        context,
+        textEditingController,
+        focusNode,
+        onFieldSubmitted,
+      ) {
+        textEditingController.addListener(() {
+          if (_controller.text != textEditingController.text) {
+            _controller.text = textEditingController.text;
+          }
+        });
+
+        focusNode.addListener(() {
+          if (!focusNode.hasFocus) {
+            _handleCustomPlace();
+          }
+        });
+
+        return TextFormField(
+          controller: textEditingController,
+          focusNode: focusNode,
+          decoration: InputDecorations.outlineBorder(
+            context: context,
+            borderRadius: 16,
+            hintText: "Enter location",
+            prefixIcon: const Icon(Symbols.location_on),
+          ),
+          validator: FormBuilderValidators.required(
+            errorText: "Please enter a location",
+          ),
+        );
+      },
       optionsViewBuilder:
           (context, onSelected, options) =>
               optionsViewBuilder(context, onSelected, options),

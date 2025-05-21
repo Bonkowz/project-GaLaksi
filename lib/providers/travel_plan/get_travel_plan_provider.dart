@@ -64,7 +64,7 @@ Stream<TravelPlan?> travelPlanStream(Ref ref, String travelPlanId) {
     return const Stream.empty();
   }
 
-  final result = FirebaseFirestoreApi().fetchTravelPlan(travelPlanId);
+  final result = FirebaseFirestoreApi().fetchTravelPlanStream(travelPlanId);
 
   return result.when(
     onSuccess: (success) {

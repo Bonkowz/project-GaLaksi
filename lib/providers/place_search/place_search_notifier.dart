@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/providers/http_client/http_client_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -21,6 +20,7 @@ class PlaceSearch extends _$PlaceSearch {
   }
 
   FutureOr<List<Place>> search(String query) async {
+    debugPrint("Hello");
     if (query.trim().isEmpty) return List<Place>.empty();
 
     var returnPlaces = List<Place>.empty();
@@ -64,6 +64,7 @@ class PlaceSearch extends _$PlaceSearch {
       lastPlaces = places;
 
       state = AsyncValue.data(places);
+      debugPrint("Helly: ${places.toString()}");
       returnPlaces = places;
     } catch (e, st) {
       debugPrint('Caught error: $e\n$st');
