@@ -36,7 +36,7 @@ class UserProfileFormNotifier extends _$UserProfileFormNotifier {
 
   void updateImage(XFile? imageFile) {
     if (imageFile == null) {
-      state = state.copyWith(image: ''); // Explicitly remove image
+      state = state.copyWith(image: '');
     } else {
       final serializedImage = base64Encode(
         File(imageFile.path).readAsBytesSync(),
@@ -53,6 +53,10 @@ class UserProfileFormNotifier extends _$UserProfileFormNotifier {
     state = state.copyWith(phoneNumber: phoneNumber);
   }
 
+  void updatePrivacy(bool isPrivate) {
+    state = state.copyWith(isPrivate: isPrivate);
+  }
+
   Future<bool> updateProfile() async {
     final user = ref.watch(authNotifierProvider).user;
 
@@ -63,12 +67,13 @@ class UserProfileFormNotifier extends _$UserProfileFormNotifier {
 
     final updatedUser = user.copyWith(
       image: state.image ?? user.image,
-      firstName: state.firstName,
-      lastName: state.lastName,
+      firstName: state.firstName ?? user.firstName,
+      lastName: state.lastName ?? user.lastName,
       interests: state.interests,
       travelStyles: state.travelStyles,
       biography: state.biography ?? user.biography,
       phoneNumber: state.phoneNumber ?? user.phoneNumber,
+      isPrivate: state.isPrivate ?? user.isPrivate,
     );
 
     final result = await FirebaseFirestoreApi().updateUser(user, updatedUser);
@@ -94,6 +99,7 @@ class UserProfileFormState {
     this.image, // nullable by default
     this.biography,
     this.phoneNumber,
+    this.isPrivate,
   });
 
   final String? uid;
@@ -104,6 +110,7 @@ class UserProfileFormState {
   final Set<TravelStyle> travelStyles;
   final String? biography;
   final String? phoneNumber;
+  final bool? isPrivate;
 
   UserProfileFormState copyWith({
     String? uid,
@@ -114,6 +121,7 @@ class UserProfileFormState {
     String? image,
     String? biography,
     String? phoneNumber,
+    bool? isPrivate,
   }) {
     return UserProfileFormState(
       image: image ?? this.image,
@@ -124,6 +132,7 @@ class UserProfileFormState {
       travelStyles: travelStyles ?? this.travelStyles,
       biography: biography ?? this.biography,
       phoneNumber: phoneNumber ?? this.phoneNumber,
+      isPrivate: isPrivate ?? this.isPrivate,
     );
   }
 }

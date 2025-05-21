@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:galaksi/models/user/interest_model.dart';
 import 'package:galaksi/models/user/travel_style_model.dart';
-import 'package:galaksi/models/user/user_model.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/providers/user_profile/user_profile_form_notifier.dart';
 import 'package:galaksi/utils/dialog.dart';
@@ -28,8 +27,11 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _firstNameTextController;
   late final TextEditingController _lastNameTextController;
+  late final TextEditingController _biographyTextController;
+  late final TextEditingController _phoneNumberTextController;
   final interestSelection = <Interest>{};
   final travelStyleSelectionMap = <TravelStyle, bool>{};
+  bool isPrivate = false;
   bool _hasSaved = false;
 
   void _saveInterests() {
@@ -54,30 +56,29 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
     // Validate form
     if (!_formKey.currentState!.validate()) {
+      setState(() => _hasSaved = false);
       return;
     }
     // Show loading dialog
     showLoadingDialog(context: context, message: "Saving profile...");
 
     // Update profile
-    final userProfileFormNotifier = ref.read(
-      userProfileFormNotifierProvider.notifier,
-    );
+    final formNotifier = ref.read(userProfileFormNotifierProvider.notifier);
     final authNotifier = ref.read(authNotifierProvider.notifier);
     final uid = ref.read(authNotifierProvider).user!.uid;
 
-    userProfileFormNotifier.updateFirstName(
-      _firstNameTextController.text.trim(),
-    );
-    userProfileFormNotifier.updateLastName(_lastNameTextController.text.trim());
+    formNotifier.updateFirstName(_firstNameTextController.text.trim());
+    formNotifier.updateLastName(_lastNameTextController.text.trim());
+    formNotifier.updateBiography(_biographyTextController.text.trim());
+    formNotifier.updatePhoneNumber(_phoneNumberTextController.text.trim());
+    formNotifier.updatePrivacy(isPrivate);
+
     _saveInterests();
     _saveStyles();
-    final result = await userProfileFormNotifier.updateProfile();
+    final result = await formNotifier.updateProfile();
 
     // Close loading dialog
-    if (mounted) {
-      if (Navigator.of(context).canPop()) Navigator.of(context).pop();
-    }
+    if (mounted && Navigator.of(context).canPop()) Navigator.of(context).pop();
 
     // Check if update was successful
     if (!result) {
@@ -100,11 +101,23 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _firstNameTextController.dispose();
+    _lastNameTextController.dispose();
+    _biographyTextController.dispose();
+    _phoneNumberTextController.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     final user = ref.read(authNotifierProvider).user!;
     _firstNameTextController = TextEditingController(text: user.firstName);
     _lastNameTextController = TextEditingController(text: user.lastName);
+    _biographyTextController = TextEditingController(text: user.biography);
+    _phoneNumberTextController = TextEditingController(text: user.phoneNumber);
+    isPrivate = user.isPrivate;
     interestSelection.addAll(user.interests ?? {});
     for (final style in TravelStyle.values) {
       travelStyleSelectionMap[style] =
@@ -119,7 +132,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Update your profile"),
+        title: Text("Update your profile", style: textTheme.bodyLarge),
         centerTitle: true,
         backgroundColor: colorScheme.primaryContainer,
       ),
@@ -131,9 +144,17 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
             child: Column(
               children: [
                 _ProfilePicture(),
+                _Privacy(
+                  isPrivate: isPrivate,
+                  onChanged: (newValue) => setState(() => isPrivate = newValue),
+                ),
                 _Name(
                   firstNameTextController: _firstNameTextController,
                   lastNameTextController: _lastNameTextController,
+                ),
+                _Biography(biographyTextController: _biographyTextController),
+                _PhoneNumber(
+                  phoneNumberTextController: _phoneNumberTextController,
                 ),
                 Card.outlined(
                   child: Padding(
@@ -266,6 +287,99 @@ class _Name extends StatelessWidget {
   }
 }
 
+class _Biography extends StatelessWidget {
+  const _Biography({required TextEditingController biographyTextController})
+    : _biographyTextController = biographyTextController;
+
+  final TextEditingController _biographyTextController;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Card.outlined(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Biography",
+              style: textTheme.headlineSmall!.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _biographyTextController,
+              onTapOutside:
+                  (event) => FocusManager.instance.primaryFocus?.unfocus(),
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              decoration: InputDecorations.outlineBorder(
+                context: context,
+                prefixIcon: const Icon(Symbols.abc_rounded),
+                labelText: "Biography",
+                borderColor: colorScheme.primary,
+                borderRadius: 16,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PhoneNumber extends StatelessWidget {
+  const _PhoneNumber({required TextEditingController phoneNumberTextController})
+    : _phoneNumberTextController = phoneNumberTextController;
+
+  final TextEditingController _phoneNumberTextController;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Card.outlined(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Phone Number",
+              style: textTheme.headlineSmall!.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _phoneNumberTextController,
+              onTapOutside:
+                  (event) => FocusManager.instance.primaryFocus?.unfocus(),
+              keyboardType: TextInputType.phone,
+              decoration: InputDecorations.outlineBorder(
+                context: context,
+                prefixIcon: const Icon(Symbols.phone_rounded),
+                labelText: "Phone Number",
+                borderColor: colorScheme.primary,
+                borderRadius: 16,
+              ),
+              validator: FormBuilderValidators.phoneNumber(
+                errorText: "Please enter a valid phone number.",
+                checkNullOrEmpty: false,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _ProfilePicture extends ConsumerStatefulWidget {
   @override
   ConsumerState<_ProfilePicture> createState() => _ProfilePictureState();
@@ -273,23 +387,35 @@ class _ProfilePicture extends ConsumerStatefulWidget {
 
 class _ProfilePictureState extends ConsumerState<_ProfilePicture> {
   bool imageRemoved = false;
+  Widget? _cachedAvatar;
+  String? _lastImageData;
 
   void _saveImageFromGallery() async {
     final imageFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
+      maxHeight: 600,
+      maxWidth: 600,
     );
     if (imageFile == null) {
       return;
     }
+    final imageSize = await imageFile.length();
+    debugPrint("IMAGE SIZE: $imageSize bytes");
     setState(() => imageRemoved = false);
     ref.read(userProfileFormNotifierProvider.notifier).updateImage(imageFile);
   }
 
   void _saveImageFromCamera() async {
-    final imageFile = await ImagePicker().pickImage(source: ImageSource.camera);
+    final imageFile = await ImagePicker().pickImage(
+      source: ImageSource.camera,
+      maxWidth: 600,
+      maxHeight: 600,
+    );
     if (imageFile == null) {
       return;
     }
+    final imageSize = await imageFile.length();
+    debugPrint("IMAGE SIZE: $imageSize bytes");
     setState(() => imageRemoved = false);
     ref.read(userProfileFormNotifierProvider.notifier).updateImage(imageFile);
   }
@@ -311,14 +437,29 @@ class _ProfilePictureState extends ConsumerState<_ProfilePicture> {
     final newImage = userProfileFormState.image;
     final hasNewImage = newImage != null && newImage.isNotEmpty;
     final hasUserImage = user.image.isNotEmpty;
+    final userInitial = user.firstName.isNotEmpty ? user.firstName[0] : '';
 
-    final avatar = _selectAvatar(
-      context,
-      user,
-      newImage,
-      hasNewImage,
-      hasUserImage,
-    );
+    String? imageData;
+    if (imageRemoved || newImage == '' || (!hasNewImage && !hasUserImage)) {
+      imageData = null;
+    } else if (hasNewImage) {
+      imageData = newImage;
+    } else if (hasUserImage) {
+      imageData = user.image;
+    }
+
+    if (_cachedAvatar == null || _lastImageData != imageData) {
+      if (imageRemoved || newImage == '' || (!hasNewImage && !hasUserImage)) {
+        _cachedAvatar = _buildInitialAvatar(context, userInitial);
+      } else if (hasNewImage) {
+        _cachedAvatar = _buildImageAvatar(context, newImage);
+      } else if (hasUserImage) {
+        _cachedAvatar = _buildImageAvatar(context, user.image);
+      } else {
+        _cachedAvatar = _buildInitialAvatar(context, userInitial);
+      }
+      _lastImageData = imageData;
+    }
 
     return Card.outlined(
       child: Padding(
@@ -339,7 +480,7 @@ class _ProfilePictureState extends ConsumerState<_ProfilePicture> {
                   child: SizedBox(
                     width: constraints.maxWidth / 2,
                     height: constraints.maxWidth / 2,
-                    child: avatar,
+                    child: _cachedAvatar,
                   ),
                 );
               },
@@ -373,26 +514,6 @@ class _ProfilePictureState extends ConsumerState<_ProfilePicture> {
     );
   }
 
-  Widget _selectAvatar(
-    BuildContext context,
-    User user,
-    String? newImage,
-    bool hasNewImage,
-    bool hasUserImage,
-  ) {
-    if (imageRemoved) {
-      return _buildInitialAvatar(context, user.firstName[0]);
-    } else if (newImage == '') {
-      return _buildInitialAvatar(context, user.firstName[0]);
-    } else if (hasNewImage) {
-      return _buildImageAvatar(context, newImage!);
-    } else if (hasUserImage) {
-      return _buildImageAvatar(context, user.image);
-    } else {
-      return _buildInitialAvatar(context, user.firstName[0]);
-    }
-  }
-
   Widget _buildImageAvatar(BuildContext context, String base64Image) {
     return CircleAvatar(
       radius: double.infinity,
@@ -409,6 +530,52 @@ class _ProfilePictureState extends ConsumerState<_ProfilePicture> {
         style: Theme.of(context).textTheme.displayLarge!.copyWith(
           fontWeight: FontWeight.bold,
           color: Theme.of(context).colorScheme.onPrimaryContainer,
+        ),
+      ),
+    );
+  }
+}
+
+class _Privacy extends StatefulWidget {
+  const _Privacy({required this.isPrivate, required this.onChanged});
+
+  final bool isPrivate;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  State<_Privacy> createState() => _PrivacyState();
+}
+
+class _PrivacyState extends State<_Privacy> {
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Card.outlined(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Privacy",
+              style: textTheme.headlineSmall!.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Card.outlined(
+              clipBehavior: Clip.hardEdge,
+              child: SwitchListTile(
+                title: const Text("Private Profile"),
+                subtitle: const Text(
+                  "Your public profile will not be visible to other people.",
+                ),
+                value: widget.isPrivate,
+                onChanged: widget.onChanged,
+              ),
+            ),
+          ],
         ),
       ),
     );
