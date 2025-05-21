@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/providers/http_client/http_client_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -57,7 +58,7 @@ class PlaceSearch extends _$PlaceSearch {
       // Convert to Place
       final places =
           (decoded)
-              .map((json) => Place.fromJson(json as Map<String, dynamic>))
+              .map((json) => Place.fromMap(json as Map<String, dynamic>))
               .toList();
 
       lastPlaces = places;
@@ -76,19 +77,4 @@ class PlaceSearch extends _$PlaceSearch {
   void clear() {
     state = const AsyncValue.data([]);
   }
-}
-
-class Place {
-  Place({required this.name, required this.displayName});
-
-  // Factory constructor to create Place from JSON map
-  factory Place.fromJson(Map<String, dynamic> json) {
-    return Place(
-      name: json['name'] as String? ?? '',
-      displayName: json['display_name'] as String? ?? '',
-    );
-  }
-
-  final String name;
-  final String displayName;
 }

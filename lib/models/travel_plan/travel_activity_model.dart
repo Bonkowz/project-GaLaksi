@@ -15,7 +15,7 @@ class TravelActivity {
       startAt: (json['startAt'] as Timestamp).toDate(),
       endAt: (json['endAt'] as Timestamp).toDate(),
       title: json['title'],
-      location: json['location'],
+      location: Place.fromMap(json['location']),
       reminders:
           (json['reminders'] as List)
               .map((e) => Duration(minutes: e['minutes']))
@@ -26,7 +26,7 @@ class TravelActivity {
   DateTime startAt;
   DateTime endAt;
   String title;
-  String location;
+  Place location;
   List<Duration> reminders;
 
   /// Function to convert [TravelActivity] to a [Map]
@@ -35,8 +35,41 @@ class TravelActivity {
       'startAt': Timestamp.fromDate(startAt),
       'endAt': Timestamp.fromDate(endAt),
       'title': title,
-      'location': location,
+      'location': location.toMap(),
       'reminders': reminders.map((e) => {'minutes': e.inMinutes}).toList(),
+    };
+  }
+}
+
+class Place {
+  Place({
+    required this.name,
+    required this.displayName,
+    required this.lat,
+    required this.lon,
+  });
+
+  // Factory constructor to create Place from JSON map
+  factory Place.fromMap(Map<String, dynamic> json) {
+    return Place(
+      name: json['name'] as String? ?? '',
+      displayName: json['display_name'] as String? ?? '',
+      lat: double.parse(json['lat'] as String),
+      lon: double.parse(json['lon'] as String),
+    );
+  }
+
+  final String name;
+  final String displayName;
+  final double lat;
+  final double lon;
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'display_name': displayName,
+      'lat': lat.toString(),
+      'lon': lon.toString(),
     };
   }
 }
