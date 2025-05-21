@@ -11,6 +11,8 @@ import 'package:galaksi/widgets/travel_plan_qr_code.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:galaksi/screens/overlays/shared_users_modal.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:galaksi/screens/travel_details/accomomdations_tab.dart';
+import 'package:galaksi/screens/travel_details/flights_tab.dart';
 
 final tabIndex = StateProvider<int>((ref) => 0); // 0 for Itinerary, 1 for Notes
 
@@ -155,10 +157,8 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
                 children: [
                   ItineraryTab(activities: plan.activities),
                   NotesTab(notes: plan.notes),
-                  ItineraryTab(
-                    activities: plan.activities,
-                  ), // TODO: replace with new tabs
-                  ItineraryTab(activities: plan.activities),
+                  FlightsTab(flights: plan.flightDetails),
+                  AccommodationsTab(accommodations: plan.accommodations),
                 ],
               ),
             ),
