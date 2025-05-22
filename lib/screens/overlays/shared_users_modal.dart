@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
-import 'package:galaksi/models/user/user_model.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class SharedUsersModal extends StatefulWidget {
@@ -12,12 +10,12 @@ class SharedUsersModal extends StatefulWidget {
 }
 
 class _SharedUsersModalState extends State<SharedUsersModal> {
- @override
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.8, 
-      child: Material( 
-        borderRadius: const BorderRadius.all(Radius.circular(16.0)), 
+      width: MediaQuery.of(context).size.width * 0.8,
+      child: Material(
+        borderRadius: const BorderRadius.all(Radius.circular(16.0)),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -52,7 +50,7 @@ class _SharedUsersModalState extends State<SharedUsersModal> {
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: ListTile(
                         leading: const CircleAvatar(
-                          child: Icon(Symbols.person)
+                          child: Icon(Symbols.person),
                         ),
                         title: Text(username),
                         // TODO: add role validation
@@ -62,7 +60,7 @@ class _SharedUsersModalState extends State<SharedUsersModal> {
                           onPressed: () {
                             // TODO: add remove here
                           },
-                        )
+                        ),
                       ),
                     ),
                   );

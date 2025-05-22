@@ -5,32 +5,39 @@ import 'package:galaksi/widgets/create_details_button.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class NotesTab extends StatelessWidget {
-  NotesTab({required this.notes, super.key});
+  NotesTab({required this.travelPlanId, required this.notes, super.key});
+
+  final String travelPlanId;
   final List<Note> notes;
   final List<Note> notesTemp = [
     Note(
       authorID: "William",
-      message: "I just want to remind everyone to be careful when descending down the mountain. Anyways, food is on me when we get down. :) Happy hiking!",
+      message:
+          "I just want to remind everyone to be careful when descending down the mountain. Anyways, food is on me when we get down. :) Happy hiking!",
       createdAt: DateTime(2025, 5, 5, 9, 1),
     ),
     Note(
       authorID: "Claire",
-      message: "Things to bring for Everest Summit: \n1. Hiking bag, \n2. Individual tents, \n3. Food and water not exceeding 25 kg",
+      message:
+          "Things to bring for Everest Summit: \n1. Hiking bag, \n2. Individual tents, \n3. Food and water not exceeding 25 kg",
       createdAt: DateTime(2025, 5, 8, 14, 12),
     ),
     Note(
       authorID: "David",
-      message: "Don't forget the extra batteries for headlamps! It gets dark quickly up there.",
+      message:
+          "Don't forget the extra batteries for headlamps! It gets dark quickly up there.",
       createdAt: DateTime(2025, 5, 6, 18, 30),
     ),
     Note(
       authorID: "Sarah",
-      message: "I've packed some high-energy snacks. Let me know if anyone has dietary restrictions.",
+      message:
+          "I've packed some high-energy snacks. Let me know if anyone has dietary restrictions.",
       createdAt: DateTime(2025, 5, 7, 10, 0),
     ),
     Note(
       authorID: "Michael",
-      message: "Confirming the satellite phone is fully charged and tested. Safety first!",
+      message:
+          "Confirming the satellite phone is fully charged and tested. Safety first!",
       createdAt: DateTime(2025, 5, 4, 22, 0),
     ),
   ];
@@ -38,13 +45,13 @@ class NotesTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const CreateDetailsButton(
+        CreateDetailsButton(
           text: "Add a note...",
-          leadingIcon:Icon(
+          leadingIcon: const Icon(
             Symbols.add,
           ), // TODO: Convert to profile image...
-          trailingIcon: Icon(Symbols.edit),
-          navigateTo: CreateTravelActivityPage(),
+          trailingIcon: const Icon(Symbols.edit),
+          navigateTo: CreateTravelActivityPage(travelPlanId: travelPlanId),
         ),
         Expanded(
           child: ListView.builder(
@@ -53,8 +60,10 @@ class NotesTab extends StatelessWidget {
             itemCount: notesTemp.length,
             itemBuilder: (context, index) {
               final note = notesTemp[index];
-              final formattedDate = "${note.createdAt.toLocal().month}/${note.createdAt.toLocal().day}/${note.createdAt.toLocal().year}";
-              final formattedTime = "${note.createdAt.toLocal().hour}:${note.createdAt.toLocal().minute.toString().padLeft(2, '0')}";
+              final formattedDate =
+                  "${note.createdAt.toLocal().month}/${note.createdAt.toLocal().day}/${note.createdAt.toLocal().year}";
+              final formattedTime =
+                  "${note.createdAt.toLocal().hour}:${note.createdAt.toLocal().minute.toString().padLeft(2, '0')}";
 
               return Padding(
                 padding: const EdgeInsets.symmetric(

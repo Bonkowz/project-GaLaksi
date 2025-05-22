@@ -124,7 +124,7 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
                 child: DottedBorder(
                   fillColor: Theme.of(context).colorScheme.surface,
                   color: accent,
-                  borderType: BorderType.RRect,
+                  borderType: BorderType.roundedRectangle,
                   radius: const Radius.circular(16),
                   dashPattern: const [8, 4],
                   strokeWidth: 1,
@@ -244,14 +244,6 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
 }
 
 class DottedBorder extends StatelessWidget {
-  final Widget child;
-  final Color color;
-  final BorderType borderType;
-  final Radius radius;
-  final List<double> dashPattern;
-  final double strokeWidth;
-  final Color fillColor;
-
   const DottedBorder({
     required this.child,
     required this.color,
@@ -262,6 +254,14 @@ class DottedBorder extends StatelessWidget {
     required this.fillColor,
     super.key,
   });
+
+  final Widget child;
+  final Color color;
+  final BorderType borderType;
+  final Radius radius;
+  final List<double> dashPattern;
+  final double strokeWidth;
+  final Color fillColor;
 
   @override
   Widget build(BuildContext context) {
@@ -281,4 +281,4 @@ class DottedBorder extends StatelessWidget {
   }
 }
 
-enum BorderType { RRect }
+enum BorderType { roundedRectangle }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
-import 'package:galaksi/providers/travel_plan/current_travel_plan_provider.dart';
 import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
 import 'package:galaksi/screens/travel_details/edit_travel_plan_page.dart';
 import 'package:galaksi/screens/travel_details/itinerary_tab.dart';
@@ -18,7 +17,9 @@ import 'package:galaksi/screens/travel_details/flights_tab.dart';
 final tabIndex = StateProvider<int>((ref) => 0); // 0 for Itinerary, 1 for Notes
 
 class TravelPlanDetailsPage extends ConsumerStatefulWidget {
-  const TravelPlanDetailsPage({super.key});
+  const TravelPlanDetailsPage({required this.travelPlanId, super.key});
+
+  final String travelPlanId;
 
   @override
   ConsumerState<TravelPlanDetailsPage> createState() =>
@@ -102,36 +103,13 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
             expandedHeight: appBarHeight,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              title: Padding(
-                padding: const EdgeInsets.only(bottom: 24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      plan.title, // Title
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      StringUtils.getTravelPlanDateRange(plan), // Date range
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              collapseMode: CollapseMode.pin,
               background: Container(
                 color: Theme.of(context).colorScheme.primaryContainer,
                 child: Align(
                   alignment: Alignment.bottomLeft,
                   child: Padding(
-                    padding: const EdgeInsets.only(
-                      left: 16.0,
-                      bottom: 64.0,
-                    ), // Adjusted padding
+                    padding: const EdgeInsets.only(left: 16.0, bottom: 64.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,7 +121,7 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          "DATE RANGE",
+                          StringUtils.getTravelPlanDateRange(plan),
                           style: Theme.of(
                             context,
                           ).textTheme.titleSmall?.copyWith(
@@ -174,13 +152,25 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: TabBarView(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 controller: _tabController,
                 children: [
-                  ItineraryTab(activities: plan.activities),
-                  NotesTab(notes: plan.notes),
-                  FlightsTab(flights: plan.flightDetails),
-                  AccommodationsTab(accommodations: plan.accommodations),
+                  ItineraryTab(
+                    travelPlanId: widget.travelPlanId,
+                    activities: plan.activities,
+                  ),
+                  NotesTab(
+                    travelPlanId: widget.travelPlanId,
+                    notes: plan.notes,
+                  ),
+                  FlightsTab(
+                    travelPlanId: widget.travelPlanId,
+                    flights: plan.flightDetails,
+                  ),
+                  AccommodationsTab(
+                    travelPlanId: widget.travelPlanId,
+                    accommodations: plan.accommodations,
+                  ),
                 ],
               ),
             ),
@@ -192,12 +182,11 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
 
   @override
   Widget build(BuildContext context) {
-    final travelPlan = ref.watch(currentTravelPlanProvider);
     final selectedTabIndex = ref.watch(tabIndex);
     _tabController.index = selectedTabIndex;
-    final travelPlanAsync = ref.watch(travelPlanStreamProvider(travelPlan!.id));
+    final travelPlan = ref.watch(travelPlanStreamProvider(widget.travelPlanId));
 
-    return travelPlanAsync.when(
+    return travelPlan.when(
       data: (data) => buildTravelPlan(data!),
       loading:
           () => Skeletonizer(

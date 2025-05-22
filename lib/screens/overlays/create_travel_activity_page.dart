@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/providers/travel_activity/create_travel_activity_notifier.dart';
+import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
 import 'package:galaksi/utils/input_decorations.dart';
 import 'package:galaksi/utils/snackbar.dart';
 import 'package:galaksi/widgets/place_autocomplete.dart';
@@ -10,7 +11,9 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
 class CreateTravelActivityPage extends ConsumerStatefulWidget {
-  const CreateTravelActivityPage({super.key});
+  const CreateTravelActivityPage({required this.travelPlanId, super.key});
+
+  final String travelPlanId;
 
   @override
   ConsumerState<CreateTravelActivityPage> createState() =>
@@ -49,7 +52,20 @@ class _CreateTravelActivityPageState
     createTravelActivityNotifier.updateReminders([]);
     createTravelActivityNotifier.updateLocation(placeSelected!);
 
-    final result = await createTravelActivityNotifier.addTravelActivity();
+    final travelPlan =
+        ref.watch(travelPlanStreamProvider(widget.travelPlanId)).valueOrNull;
+    if (travelPlan == null) {
+      showDismissableSnackbar(
+        context: context,
+        message: "An unexpected error occurred.",
+      );
+      setState(() => _isLoading = false);
+      return;
+    }
+
+    final result = await createTravelActivityNotifier.addTravelActivity(
+      travelPlanId: travelPlan.id,
+    );
 
     setState(() {
       _isLoading = false;
@@ -364,7 +380,7 @@ class _CreateTravelActivityPageState
                       },
                       decoration: InputDecorations.outlineBorder(
                         context: context,
-                        prefixIcon: Icon(Symbols.alarm),
+                        prefixIcon: const Icon(Symbols.alarm),
                         borderRadius: 16,
                         hintText: "Remind me...",
                       ),

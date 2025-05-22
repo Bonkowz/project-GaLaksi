@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:galaksi/apis/firebase_firestore_api.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
-import 'package:galaksi/providers/travel_plan/current_travel_plan_provider.dart';
+import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'create_travel_activity_notifier.g.dart';
@@ -56,7 +56,13 @@ class CreateTravelActivityNotifier extends _$CreateTravelActivityNotifier {
     state = state.copyWith(reminders: reminders);
   }
 
-  Future<bool> addTravelActivity() async {
+  Future<bool> addTravelActivity({required String travelPlanId}) async {
+    final travelPlan =
+        ref.read(travelPlanStreamProvider(travelPlanId)).valueOrNull;
+    if (travelPlan == null) {
+      return false;
+    }
+
     debugPrint("Confirming PT 2: ${state.location}");
 
     final travelActivity = TravelActivity(
@@ -66,8 +72,6 @@ class CreateTravelActivityNotifier extends _$CreateTravelActivityNotifier {
       location: state.location ?? Place(displayName: 'Error', name: 'Error'),
       reminders: state.reminders!,
     );
-
-    final travelPlan = ref.read(currentTravelPlanProvider)!;
 
     // Check if clashing time schedules
     for (final existingActivity in travelPlan.activities) {

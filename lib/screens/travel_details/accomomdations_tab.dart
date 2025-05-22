@@ -5,7 +5,12 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:galaksi/models/travel_plan/accommodation_model.dart';
 
 class AccommodationsTab extends StatelessWidget {
-  AccommodationsTab({required this.accommodations, super.key});
+  AccommodationsTab({
+    required this.travelPlanId,
+    required this.accommodations,
+    super.key,
+  });
+  final String travelPlanId;
   final List<Accommodation> accommodations;
 
   final List<Accommodation> dummyAccommodations = [
@@ -45,13 +50,11 @@ class AccommodationsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const CreateDetailsButton(
+        CreateDetailsButton(
           text: "Add an accommodation...",
-          leadingIcon: Icon(
-            Symbols.add,
-          ),
-          trailingIcon: Icon(Symbols.hotel),
-          navigateTo: CreateTravelActivityPage(),
+          leadingIcon: const Icon(Symbols.add),
+          trailingIcon: const Icon(Symbols.hotel),
+          navigateTo: CreateTravelActivityPage(travelPlanId: travelPlanId),
         ),
         Expanded(
           child: ListView.builder(
@@ -79,92 +82,116 @@ class AccommodationsTab extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center, 
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start, 
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 accommodation.name,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge 
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).colorScheme.onSurface,
-                                    ),
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
                               ),
-                              const SizedBox(height: 4.0), 
-                              Row( 
+                              const SizedBox(height: 4.0),
+                              Row(
                                 children: [
                                   Icon(
                                     Symbols.location_on,
                                     size: 18,
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    color:
+                                        Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                   ),
                                   const SizedBox(width: 8.0),
                                   Expanded(
                                     child: Text(
                                       accommodation.location,
-                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                            color: Theme.of(context).colorScheme.onSurface,
-                                          ),
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium?.copyWith(
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.onSurface,
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 8.0), 
-                              Row( 
+                              const SizedBox(height: 8.0),
+                              Row(
                                 children: [
                                   Icon(
-                                    Symbols.calendar_month, 
+                                    Symbols.calendar_month,
                                     size: 18,
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    color:
+                                        Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                   ),
                                   const SizedBox(width: 8.0),
                                   Text(
                                     "$formattedCheckInDate at $formattedCheckInTime",
-                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                          color: Theme.of(context).colorScheme.outline,
-                                        ),
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium?.copyWith(
+                                      color:
+                                          Theme.of(context).colorScheme.outline,
+                                    ),
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 4.0), 
-                              Row( 
+                              const SizedBox(height: 4.0),
+                              Row(
                                 children: [
                                   Icon(
-                                    Symbols.calendar_month, 
+                                    Symbols.calendar_month,
                                     size: 18,
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    color:
+                                        Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                   ),
                                   const SizedBox(width: 8.0),
                                   Text(
                                     "$formattedCheckOutDate at $formattedCheckOutTime",
-                                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                          color: Theme.of(context).colorScheme.outline,
-                                        ),
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium?.copyWith(
+                                      color:
+                                          Theme.of(context).colorScheme.outline,
+                                    ),
                                   ),
                                 ],
                               ),
                             ],
                           ),
                         ),
-                        Row( 
+                        Row(
                           children: [
                             IconButton(
                               icon: const Icon(Symbols.edit, size: 20),
                               onPressed: () {
                                 // TODO: Implement edit functionality
-                                print('Edit accommodation: ${accommodation.name}');
+                                debugPrint(
+                                  'Edit accommodation: ${accommodation.name}',
+                                );
                               },
                             ),
                             IconButton(
                               icon: const Icon(Symbols.delete, size: 20),
                               onPressed: () {
                                 // TODO: Implement delete functionality
-                                print('Delete accommodation: ${accommodation.name}');
+                                debugPrint(
+                                  'Delete accommodation: ${accommodation.name}',
+                                );
                               },
                             ),
                           ],

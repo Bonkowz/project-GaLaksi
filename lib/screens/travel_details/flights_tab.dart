@@ -5,7 +5,9 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:galaksi/models/travel_plan/flight_detail_model.dart';
 
 class FlightsTab extends StatelessWidget {
-  FlightsTab({required this.flights, super.key});
+  FlightsTab({required this.travelPlanId, required this.flights, super.key});
+
+  final String travelPlanId;
   final List<FlightDetail> flights;
 
   final List<FlightDetail> dummyFlights = [
@@ -57,13 +59,11 @@ class FlightsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const CreateDetailsButton(
+        CreateDetailsButton(
           text: "Add a flight...",
-          leadingIcon: Icon(
-            Symbols.add,
-          ),
-          trailingIcon: Icon(Symbols.flight),
-          navigateTo: CreateTravelActivityPage(),
+          leadingIcon: const Icon(Symbols.add),
+          trailingIcon: const Icon(Symbols.flight),
+          navigateTo: CreateTravelActivityPage(travelPlanId: travelPlanId),
         ),
         Expanded(
           child: ListView.builder(
@@ -72,10 +72,16 @@ class FlightsTab extends StatelessWidget {
             itemCount: dummyFlights.length,
             itemBuilder: (context, index) {
               final flight = dummyFlights[index];
-              final originCode = flight.location.substring(flight.location.indexOf('(') + 1, flight.location.indexOf(')'));
-              final destinationCode = flight.destination.substring(flight.destination.indexOf('(') + 1, flight.destination.indexOf(')'));
+              final originCode = flight.location.substring(
+                flight.location.indexOf('(') + 1,
+                flight.location.indexOf(')'),
+              );
+              final destinationCode = flight.destination.substring(
+                flight.destination.indexOf('(') + 1,
+                flight.destination.indexOf(')'),
+              );
 
-              String terminalLocation = '';
+              var terminalLocation = '';
               if (flight.location.contains("MNL")) {
                 terminalLocation = "NAIA Terminal 3";
               } else {
@@ -101,13 +107,13 @@ class FlightsTab extends StatelessWidget {
                             children: [
                               Text(
                                 "$originCode to $destinationCode",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).colorScheme.onSurface,
-                                    ),
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
                               ),
                               const SizedBox(height: 4.0),
                               Row(
@@ -115,15 +121,23 @@ class FlightsTab extends StatelessWidget {
                                   Icon(
                                     Symbols.location_on,
                                     size: 18,
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    color:
+                                        Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                   ),
                                   const SizedBox(width: 8.0),
                                   Expanded(
                                     child: Text(
                                       terminalLocation,
-                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                            color: Theme.of(context).colorScheme.onSurface,
-                                          ),
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium?.copyWith(
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.onSurface,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -134,15 +148,23 @@ class FlightsTab extends StatelessWidget {
                                   Icon(
                                     Symbols.description,
                                     size: 18,
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    color:
+                                        Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                   ),
                                   const SizedBox(width: 8.0),
                                   Expanded(
                                     child: Text(
                                       "${flight.flightNumber}, ${flight.airline}",
-                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                            color: Theme.of(context).colorScheme.onSurface,
-                                          ),
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium?.copyWith(
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.onSurface,
+                                      ),
                                     ),
                                   ),
                                 ],

@@ -7,8 +7,14 @@ import 'package:intl/intl.dart';
 import 'package:timelines_plus/timelines_plus.dart';
 
 class ItineraryTab extends StatelessWidget {
-  ItineraryTab({required this.activities, super.key});
-  List<TravelActivity> activities;
+  const ItineraryTab({
+    required this.travelPlanId,
+    required this.activities,
+    super.key,
+  });
+
+  final String travelPlanId;
+  final List<TravelActivity> activities;
   // List<TravelActivity> activitiesTemp = [
   //   TravelActivity(
   //     startAt: DateTime(2025, 5, 5, 7, 15),
@@ -86,9 +92,9 @@ class ItineraryTab extends StatelessWidget {
   Widget build(BuildContext context) {
     activities.sort((a, b) => a.startAt.compareTo(b.startAt));
 
-    Map<DateTime, List<TravelActivity>> groupedActivities = {};
-    for (var activity in activities) {
-      DateTime dateKey = DateTime(
+    final groupedActivities = <DateTime, List<TravelActivity>>{};
+    for (final activity in activities) {
+      final dateKey = DateTime(
         activity.startAt.year,
         activity.startAt.month,
         activity.startAt.day,
@@ -99,17 +105,17 @@ class ItineraryTab extends StatelessWidget {
       groupedActivities[dateKey]!.add(activity);
     }
 
-    List<MapEntry<DateTime, List<TravelActivity>>> sortedGroupedEntries =
+    final sortedGroupedEntries =
         groupedActivities.entries.toList()
           ..sort((a, b) => a.key.compareTo(b.key));
 
     return Column(
       children: [
-        const CreateDetailsButton(
+        CreateDetailsButton(
           text: "Add an activity...",
-          leadingIcon: Icon(Symbols.add),
-          trailingIcon: Icon(Symbols.map),
-          navigateTo: CreateTravelActivityPage(),
+          leadingIcon: const Icon(Symbols.add),
+          trailingIcon: const Icon(Symbols.map),
+          navigateTo: CreateTravelActivityPage(travelPlanId: travelPlanId),
         ),
         Expanded(
           child: ListView.builder(
@@ -149,7 +155,7 @@ class ItineraryTab extends StatelessWidget {
                             icon: const Icon(Symbols.edit, size: 24),
                             onPressed: () {
                               // TODO: Implement navigation to an edit page for the entire day's activities or add new activity for this day
-                              print(
+                              debugPrint(
                                 'Edit button pressed for date: $formattedDateHeader',
                               );
                             },
@@ -198,7 +204,7 @@ class ItineraryTab extends StatelessWidget {
                                         Theme.of(context).textTheme.bodyMedium,
                                   ),
                                   Text(
-                                    activity.location,
+                                    activity.location.displayName,
                                     style: Theme.of(
                                       context,
                                     ).textTheme.bodySmall?.copyWith(

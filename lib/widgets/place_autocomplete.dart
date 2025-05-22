@@ -10,19 +10,20 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
 class PlaceAutocomplete extends ConsumerStatefulWidget {
+  const PlaceAutocomplete({
+    required this.onPlaceSelected,
+    required this.controller,
+    super.key,
+  });
+
   final TextEditingController controller;
   final void Function(Place) onPlaceSelected;
 
-  const PlaceAutocomplete({
-    super.key,
-    required this.onPlaceSelected,
-    required this.controller,
-  });
   @override
-  _PlaceAutocompleteState createState() => _PlaceAutocompleteState();
+  PlaceAutocompleteState createState() => PlaceAutocompleteState();
 }
 
-class _PlaceAutocompleteState extends ConsumerState<PlaceAutocomplete> {
+class PlaceAutocompleteState extends ConsumerState<PlaceAutocomplete> {
   Timer? _debounce;
   late final TextEditingController _controller;
 
@@ -59,16 +60,9 @@ class _PlaceAutocompleteState extends ConsumerState<PlaceAutocomplete> {
           ref.read(placeSearchProvider.notifier).search(textEditingValue.text);
         });
 
-        return placeSearchState.maybeWhen(
-          data: (places) => places,
-          loading:
-              () =>
-                  ref.read(placeSearchProvider.notifier).lastPlaces ?? const [],
-          error:
-              (e, error) =>
-                  ref.read(placeSearchProvider.notifier).lastPlaces ?? const [],
-          orElse: () => const Iterable<Place>.empty(),
-        );
+        return placeSearchState.places.isNotEmpty
+            ? placeSearchState.places
+            : placeSearchState.lastPlaces ?? [];
       },
       onSelected: (Place selection) {
         _controller.text = selection.displayName;
@@ -140,7 +134,7 @@ Widget optionsViewBuilder(
             child: ListView.separated(
               padding: EdgeInsets.zero,
               shrinkWrap: true,
-              separatorBuilder: (context, index) => Divider(height: 1),
+              separatorBuilder: (context, index) => const Divider(height: 1),
               itemCount: options.length,
               itemBuilder: (context, index) {
                 final option = options.elementAt(index);

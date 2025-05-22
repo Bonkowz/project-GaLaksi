@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/widgets/home_loading.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
 import 'package:galaksi/widgets/travel_plan_card.dart';

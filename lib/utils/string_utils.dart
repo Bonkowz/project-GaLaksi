@@ -116,7 +116,7 @@ abstract class StringUtils {
         case 1:
           return "Happening tomorrow";
         case < 30:
-          return "Happening in ${daysUntil} days";
+          return "Happening in $daysUntil days";
         case >= 30:
           return "Happening more than a month from now.";
       }

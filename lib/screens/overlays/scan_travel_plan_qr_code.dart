@@ -51,7 +51,8 @@ class _ScanTravelPlanQrCodeState extends ConsumerState<ScanTravelPlanQrCode> {
     final value = barcodes.barcodes.last.rawValue;
 
     // Check if the decoded value is a valid travel plan
-    final result = FirebaseFirestoreApi().fetchTravelPlan(value!).valueOrNull;
+    final result =
+        FirebaseFirestoreApi().fetchTravelPlanStream(value!).valueOrNull;
     debugPrint("$result");
     if (mounted && result == null) {
       setState(() => error = "Invalid QR code!");
