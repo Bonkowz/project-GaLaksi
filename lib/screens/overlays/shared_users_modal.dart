@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:galaksi/models/user/user_model.dart';
+import 'package:galaksi/providers/user_profile/user_profile_notifier.dart';
+import 'package:galaksi/utils/dummy_data.dart';
+import 'package:galaksi/widgets/user_avatar.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-class SharedUsersModal extends StatefulWidget {
+class SharedUsersModal extends ConsumerStatefulWidget {
   const SharedUsersModal({required this.users, super.key});
   final List<String> users;
 
   @override
-  State<SharedUsersModal> createState() => _SharedUsersModalState();
+  ConsumerState<SharedUsersModal> createState() => _SharedUsersModalState();
 }
 
-class _SharedUsersModalState extends State<SharedUsersModal> {
+class _SharedUsersModalState extends ConsumerState<SharedUsersModal> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -42,33 +48,60 @@ class _SharedUsersModalState extends State<SharedUsersModal> {
                 shrinkWrap: true,
                 itemCount: widget.users.length,
                 itemBuilder: (context, index) {
-                  final username = widget.users[index];
+                  final userId = widget.users[index];
+                  final user = ref.watch(userProfileStreamProvider(userId));
 
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: ListTile(
-                        leading: const CircleAvatar(
-                          child: Icon(Symbols.person),
-                        ),
-                        title: Text(username),
-                        // TODO: add role validation
-                        // subtitle: Text(testSharedUser[index]['role']!),
-                        trailing: IconButton(
-                          icon: const Icon(Symbols.remove),
-                          onPressed: () {
-                            // TODO: add remove here
-                          },
-                        ),
-                      ),
-                    ),
+                  return user.when(
+                    data: (user) {
+                      return _UserTile(user: user);
+                    },
+                    error: (error, stackTrace) {
+                      return ListTile(
+                        leading: const Icon(Icons.error, color: Colors.red),
+                        title: const Text('Failed to load user'),
+                        subtitle: Text(error.toString()),
+                      );
+                    },
+                    loading: () {
+                      return Skeletonizer(child: _UserTile(user: dummyUser));
+                    },
                   );
                 },
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _UserTile extends StatelessWidget {
+  const _UserTile({required this.user});
+
+  final User user;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: UserAvatar(
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        textColor: Theme.of(context).colorScheme.onPrimaryContainer,
+        firstName: user.firstName,
+        image: user.image,
+      ),
+      title: Text(
+        "${user.firstName} ${user.lastName}",
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+      subtitle: Text(user.username),
+      // TODO: add role validation
+      // subtitle: Text(testSharedUser[index]['role']!),
+      trailing: IconButton(
+        icon: const Icon(Symbols.remove),
+        onPressed: () {
+          // TODO: add remove here
+        },
       ),
     );
   }

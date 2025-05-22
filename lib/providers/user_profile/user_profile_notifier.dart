@@ -18,9 +18,21 @@ Stream<User?> currentUserProfileStream(Ref ref) {
           .getUserDocumentStream(currentAuthUser.uid)
           .valueOrNull;
 
-  if (docStream == null) return Stream.value(null);
+  if (docStream == null) {
+    throw Exception('User document stream not found for current user');
+  }
 
-  return docStream.map((snapshot) {
-    return User.fromDocument(snapshot);
-  });
+  return docStream.map((snapshot) => User.fromDocument(snapshot));
+}
+
+@riverpod
+Stream<User> userProfileStream(Ref ref, String userId) {
+  final docStream =
+      FirebaseFirestoreApi().getUserDocumentStream(userId).valueOrNull;
+
+  if (docStream == null) {
+    throw Exception('User document stream not found for userId: $userId');
+  }
+
+  return docStream.map((snapshot) => User.fromDocument(snapshot));
 }
