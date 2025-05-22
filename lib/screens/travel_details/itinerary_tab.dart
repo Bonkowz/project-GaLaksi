@@ -109,124 +109,117 @@ class ItineraryTab extends StatelessWidget {
         groupedActivities.entries.toList()
           ..sort((a, b) => a.key.compareTo(b.key));
 
-    return Column(
-      children: [
-        CreateDetailsButton(
-          text: "Add an activity...",
-          leadingIcon: const Icon(Symbols.add),
-          trailingIcon: const Icon(Symbols.map),
-          navigateTo: CreateTravelActivityPage(travelPlanId: travelPlanId),
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: CreateDetailsButton(
+            text: "Add an activity...",
+            leadingIcon: const Icon(Symbols.add),
+            trailingIcon: const Icon(Symbols.map),
+            navigateTo: CreateTravelActivityPage(travelPlanId: travelPlanId),
+          ),
         ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: sortedGroupedEntries.length,
-            itemBuilder: (context, dateIndex) {
-              final date = sortedGroupedEntries[dateIndex].key;
-              final activitiesForDay = sortedGroupedEntries[dateIndex].value;
-
-              final formattedDateHeader = DateFormat('MMM d,yyyy').format(date);
-
-              return Card.outlined(
-                color: Theme.of(context).colorScheme.onPrimary,
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 8.0,
-                ),
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16.0, 16.0, 8.0, 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              formattedDateHeader,
-                              style: Theme.of(context).textTheme.titleLarge
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
+        SliverList.builder(
+          itemCount: sortedGroupedEntries.length,
+          itemBuilder: (context, index) {
+            final date = sortedGroupedEntries[index].key;
+            final activitiesForDay = sortedGroupedEntries[index].value;
+            final formattedDateHeader = DateFormat('MMM d,yyyy').format(date);
+            return Card.outlined(
+              color: Theme.of(context).colorScheme.surfaceContainerLowest,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            formattedDateHeader,
+                            style: Theme.of(context).textTheme.bodyLarge
+                                ?.copyWith(fontWeight: FontWeight.bold),
                           ),
-                          IconButton(
-                            icon: const Icon(Symbols.edit, size: 24),
-                            onPressed: () {
-                              // TODO: Implement navigation to an edit page for the entire day's activities or add new activity for this day
-                              debugPrint(
-                                'Edit button pressed for date: $formattedDateHeader',
-                              );
-                            },
-                            visualDensity: VisualDensity.compact,
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Divider(height: 10, thickness: 1),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: FixedTimeline.tileBuilder(
-                        theme: TimelineTheme.of(
-                          context,
-                        ).copyWith(nodePosition: 0),
-                        builder: TimelineTileBuilder.fromStyle(
-                          contentsAlign: ContentsAlign.basic,
-                          oppositeContentsBuilder:
-                              (context, index) => const SizedBox.shrink(),
-                          contentsBuilder: (context, index) {
-                            final activity = activitiesForDay[index];
-                            final startTime =
-                                "${activity.startAt.toLocal().hour}:${activity.startAt.toLocal().minute.toString().padLeft(2, '0')}";
-                            final endTime =
-                                "${activity.endAt.toLocal().hour}:${activity.endAt.toLocal().minute.toString().padLeft(2, '0')}";
-                            final timeRange = "$startTime to $endTime";
-
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    timeRange,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(fontWeight: FontWeight.bold),
-                                    textAlign: TextAlign.right,
-                                  ),
-                                  Text(
-                                    activity.title,
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
-                                  ),
-                                  Text(
-                                    activity.location.displayName,
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.bodySmall?.copyWith(
-                                      color:
-                                          Theme.of(
-                                            context,
-                                          ).colorScheme.onSurfaceVariant,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Symbols.edit, size: 24),
+                          onPressed: () {
+                            // TODO: Implement navigation to an edit page for the entire day's activities or add new activity for this day
+                            debugPrint(
+                              'Edit button pressed for date: $formattedDateHeader',
                             );
                           },
-                          itemCount: activitiesForDay.length,
+                          constraints: const BoxConstraints(),
                         ),
+                      ],
+                    ),
+                  ),
+                  const Divider(height: 10, thickness: 1),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    child: FixedTimeline.tileBuilder(
+                      theme: TimelineTheme.of(context).copyWith(
+                        nodePosition: 0,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      builder: TimelineTileBuilder.connectedFromStyle(
+                        connectorStyleBuilder:
+                            (context, index) => ConnectorStyle.solidLine,
+                        firstConnectorStyle: ConnectorStyle.transparent,
+                        lastConnectorStyle: ConnectorStyle.transparent,
+                        contentsAlign: ContentsAlign.basic,
+                        indicatorStyleBuilder:
+                            (context, index) => IndicatorStyle.dot,
+                        contentsBuilder: (context, index) {
+                          final activity = activitiesForDay[index];
+                          final startTime =
+                              "${activity.startAt.toLocal().hour}:${activity.startAt.toLocal().minute.toString().padLeft(2, '0')}";
+                          final endTime =
+                              "${activity.endAt.toLocal().hour}:${activity.endAt.toLocal().minute.toString().padLeft(2, '0')}";
+                          final timeRange = "$startTime to $endTime";
+
+                          return Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  timeRange,
+                                  style: Theme.of(context).textTheme.bodyMedium
+                                      ?.copyWith(fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.right,
+                                ),
+                                Text(
+                                  activity.title,
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                Text(
+                                  activity.location.displayName,
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodySmall?.copyWith(
+                                    color:
+                                        Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        itemCount: activitiesForDay.length,
                       ),
                     ),
-                  ],
-                ),
-              );
-            },
-          ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ],
     );

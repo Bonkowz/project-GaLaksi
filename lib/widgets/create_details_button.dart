@@ -16,13 +16,15 @@ class CreateDetailsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute(builder: (context) => navigateTo));
-      },
-      child: Card.outlined(
+    return Card.outlined(
+      color: Theme.of(context).colorScheme.surfaceContainerLow,
+      child: InkWell(
+        onTap: () {
+          Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (context) => navigateTo));
+        },
+        borderRadius: BorderRadius.circular(12),
         child: SizedBox(
           width: double.infinity,
           child: Row(

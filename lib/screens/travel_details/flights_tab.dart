@@ -57,145 +57,132 @@ class FlightsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CreateDetailsButton(
-          text: "Add a flight...",
-          leadingIcon: const Icon(Symbols.add),
-          trailingIcon: const Icon(Symbols.flight),
-          navigateTo: CreateTravelActivityPage(travelPlanId: travelPlanId),
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: CreateDetailsButton(
+            text: "Add a flight...",
+            leadingIcon: const Icon(Symbols.add),
+            trailingIcon: const Icon(Symbols.flight),
+            navigateTo: CreateTravelActivityPage(travelPlanId: travelPlanId),
+          ),
         ),
-        Expanded(
-          child: ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: dummyFlights.length,
-            itemBuilder: (context, index) {
-              final flight = dummyFlights[index];
-              final originCode = flight.location.substring(
-                flight.location.indexOf('(') + 1,
-                flight.location.indexOf(')'),
-              );
-              final destinationCode = flight.destination.substring(
-                flight.destination.indexOf('(') + 1,
-                flight.destination.indexOf(')'),
-              );
+        SliverList.builder(
+          itemCount: dummyFlights.length,
+          itemBuilder: (context, index) {
+            final flight = dummyFlights[index];
+            final originCode = flight.location.substring(
+              flight.location.indexOf('(') + 1,
+              flight.location.indexOf(')'),
+            );
+            final destinationCode = flight.destination.substring(
+              flight.destination.indexOf('(') + 1,
+              flight.destination.indexOf(')'),
+            );
 
-              var terminalLocation = '';
-              if (flight.location.contains("MNL")) {
-                terminalLocation = "NAIA Terminal 3";
-              } else {
-                terminalLocation = flight.location;
-              }
+            var terminalLocation = '';
+            if (flight.location.contains("MNL")) {
+              terminalLocation = "NAIA Terminal 3";
+            } else {
+              terminalLocation = flight.location;
+            }
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 8.0,
-                ),
-                child: Card.outlined(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
+            return Card.outlined(
+              color: Theme.of(context).colorScheme.surfaceContainerLowest,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "$originCode to $destinationCode",
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(height: 4.0),
+                          Row(
                             children: [
-                              Text(
-                                "$originCode to $destinationCode",
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
+                              Icon(
+                                Symbols.location_on,
+                                size: 18,
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                              ),
+                              const SizedBox(width: 8.0),
+                              Expanded(
+                                child: Text(
+                                  terminalLocation,
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 4.0),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Symbols.location_on,
-                                    size: 18,
-                                    color:
-                                        Theme.of(
-                                          context,
-                                        ).colorScheme.onSurfaceVariant,
-                                  ),
-                                  const SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: Text(
-                                      terminalLocation,
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodyMedium?.copyWith(
-                                        color:
-                                            Theme.of(
-                                              context,
-                                            ).colorScheme.onSurface,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8.0),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Symbols.description,
-                                    size: 18,
-                                    color:
-                                        Theme.of(
-                                          context,
-                                        ).colorScheme.onSurfaceVariant,
-                                  ),
-                                  const SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: Text(
-                                      "${flight.flightNumber}, ${flight.airline}",
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodyMedium?.copyWith(
-                                        color:
-                                            Theme.of(
-                                              context,
-                                            ).colorScheme.onSurface,
-                                      ),
-                                    ),
-                                  ),
-                                ],
                               ),
                             ],
                           ),
+                          const SizedBox(height: 8.0),
+                          Row(
+                            children: [
+                              Icon(
+                                Symbols.description,
+                                size: 18,
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                              ),
+                              const SizedBox(width: 8.0),
+                              Expanded(
+                                child: Text(
+                                  "${flight.flightNumber}, ${flight.airline}",
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyMedium?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Symbols.edit, size: 20),
+                          onPressed: () {
+                            // TODO: Implement edit functionality for flight
+                          },
                         ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              icon: const Icon(Symbols.edit, size: 20),
-                              onPressed: () {
-                                // TODO: Implement edit functionality for flight
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(Symbols.delete, size: 20),
-                              onPressed: () {
-                                // TODO: Implement delete functionality for flight
-                              },
-                            ),
-                          ],
+                        IconButton(
+                          icon: const Icon(Symbols.delete, size: 20),
+                          onPressed: () {
+                            // TODO: Implement delete functionality for flight
+                          },
                         ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-              );
-            },
-          ),
+              ),
+            );
+          },
         ),
       ],
     );

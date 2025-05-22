@@ -11,7 +11,7 @@ import 'package:galaksi/widgets/travel_plan_qr_code.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:galaksi/screens/overlays/shared_users_modal.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:galaksi/screens/travel_details/accomomdations_tab.dart';
+import 'package:galaksi/screens/travel_details/accomodations_tab.dart';
 import 'package:galaksi/screens/travel_details/flights_tab.dart';
 
 final tabIndex = StateProvider<int>((ref) => 0); // 0 for Itinerary, 1 for Notes
@@ -60,122 +60,121 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
 
   Widget buildTravelPlan(TravelPlan plan) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            leading: IconButton(
-              icon: const Icon(Symbols.arrow_back),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            actions: [
-              IconButton(
-                icon: const Icon(Symbols.qr_code_rounded),
-                onPressed:
-                    () => showCustomDialog(
-                      context: context,
-                      child: TravelPlanQrCode(travelPlan: plan),
-                    ),
-              ),
-              const SizedBox(width: 4.0),
-              IconButton(
-                icon: const Icon(Symbols.people_rounded),
-                onPressed: () {
-                  _showSharedUsersDialog(context, plan);
-                },
-              ),
-              const SizedBox(width: 4.0),
-              IconButton(
-                icon: const Icon(Symbols.settings),
-                onPressed: () {
-                  debugPrint("Pressed");
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder:
-                          (context) => EditTravelPlanPage(travelPlan: plan),
-                    ),
-                  );
-                },
-              ),
-            ],
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            expandedHeight: appBarHeight,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              collapseMode: CollapseMode.pin,
-              background: Container(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                child: Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16.0, bottom: 64.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          plan.title,
-                          style: Theme.of(context).textTheme.headlineMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
+      body: NestedScrollView(
+        headerSliverBuilder:
+            (context, innerBoxIsScrolled) => [
+              SliverAppBar(
+                leading: IconButton(
+                  icon: const Icon(Symbols.arrow_back),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Symbols.qr_code_rounded),
+                    onPressed:
+                        () => showCustomDialog(
+                          context: context,
+                          child: TravelPlanQrCode(travelPlan: plan),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          StringUtils.getTravelPlanDateRange(plan),
-                          style: Theme.of(
-                            context,
-                          ).textTheme.titleSmall?.copyWith(
-                            color: Theme.of(context).colorScheme.outline,
-                          ),
+                  ),
+                  const SizedBox(width: 4.0),
+                  IconButton(
+                    icon: const Icon(Symbols.people_rounded),
+                    onPressed: () {
+                      _showSharedUsersDialog(context, plan);
+                    },
+                  ),
+                  const SizedBox(width: 4.0),
+                  IconButton(
+                    icon: const Icon(Symbols.settings),
+                    onPressed: () {
+                      debugPrint("Pressed");
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder:
+                              (context) => EditTravelPlanPage(travelPlan: plan),
                         ),
-                      ],
+                      );
+                    },
+                  ),
+                ],
+                backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                expandedHeight: appBarHeight,
+                pinned: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  collapseMode: CollapseMode.pin,
+                  background: Container(
+                    color: Theme.of(context).colorScheme.primaryContainer,
+                    child: Align(
+                      alignment: Alignment.bottomLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: 16.0,
+                          bottom: 64.0,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              plan.title,
+                              style: Theme.of(context).textTheme.headlineMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              StringUtils.getTravelPlanDateRange(plan),
+                              style: Theme.of(
+                                context,
+                              ).textTheme.titleSmall?.copyWith(
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
+                bottom: TabBar(
+                  controller: _tabController,
+                  tabs: const [
+                    Tab(text: "Itinerary"),
+                    Tab(text: "Notes"),
+                    Tab(text: "Flights"),
+                    Tab(text: "Lodge"),
+                  ],
+                  labelColor: Theme.of(context).colorScheme.primary,
+                  unselectedLabelColor:
+                      Theme.of(context).colorScheme.onSurfaceVariant,
+                  indicatorColor: Theme.of(context).colorScheme.primary,
+                ),
               ),
-            ),
-            bottom: TabBar(
-              controller: _tabController,
-              tabs: const [
-                Tab(text: "Itinerary"),
-                Tab(text: "Notes"),
-                Tab(text: "Flights"),
-                Tab(text: "Lodge"),
-              ],
-              labelColor: Theme.of(context).colorScheme.primary,
-              unselectedLabelColor:
-                  Theme.of(context).colorScheme.onSurfaceVariant,
-              indicatorColor: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-          SliverFillRemaining(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TabBarView(
-                physics: const NeverScrollableScrollPhysics(),
-                controller: _tabController,
-                children: [
-                  ItineraryTab(
-                    travelPlanId: widget.travelPlanId,
-                    activities: plan.activities,
-                  ),
-                  NotesTab(
-                    travelPlanId: widget.travelPlanId,
-                    notes: plan.notes,
-                  ),
-                  FlightsTab(
-                    travelPlanId: widget.travelPlanId,
-                    flights: plan.flightDetails,
-                  ),
-                  AccommodationsTab(
-                    travelPlanId: widget.travelPlanId,
-                    accommodations: plan.accommodations,
-                  ),
-                ],
+            ],
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TabBarView(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: _tabController,
+            children: [
+              ItineraryTab(
+                travelPlanId: widget.travelPlanId,
+                activities: plan.activities,
               ),
-            ),
+              NotesTab(travelPlanId: widget.travelPlanId, notes: plan.notes),
+              FlightsTab(
+                travelPlanId: widget.travelPlanId,
+                flights: plan.flightDetails,
+              ),
+              AccommodationsTab(
+                travelPlanId: widget.travelPlanId,
+                accommodations: plan.accommodations,
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
