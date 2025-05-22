@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
 import 'package:galaksi/models/user/user_model.dart';
 
@@ -261,13 +262,42 @@ class FirebaseFirestoreApi {
   }
 
   FirestoreResult<Stream<DocumentSnapshot<Map<String, dynamic>>>>
-  fetchTravelPlan(String docID) {
+  fetchTravelPlanStream(String docID) {
     try {
       return FirestoreSuccess(
         message: "Fetched travel plan successfully!",
         data: db.collection("plans").doc(docID).snapshots(),
       );
     } catch (e) {
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  Future<FirestoreResult<bool>> addTravelActivity(
+    String planID,
+    TravelActivity activity,
+  ) async {
+    try {
+      final docRef = FirebaseFirestore.instance.collection("plans").doc(planID);
+
+      await docRef.update({
+        'activities': FieldValue.arrayUnion([activity.toMap()]),
+      });
+
+      return const FirestoreSuccess(
+        message: "Successfully added travel activity!",
+        data: true,
+      );
+    } on TimeoutException catch (_) {
+      return const FirestoreFailure(
+        message: "Request timed out. Please check your internet connection.",
+        error: FirestoreFailureError.networkError,
+      );
+    } catch (e) {
+      debugPrint("Error adding travel activity: $e");
       return const FirestoreFailure(
         message: "An unknown error occurred.",
         error: FirestoreFailureError.unknown,

@@ -1,29 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'onboarding_notifier.dart';
+part of 'place_search_notifier.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$onboardingNotifierHash() =>
-    r'df201e5f246f85354563d773560b981d44825c81';
+String _$placeSearchHash() => r'8597ab9b7fb3af1cc2c870444bfd1345c0374426';
 
-
-/// See also [OnboardingNotifier].
-@ProviderFor(OnboardingNotifier)
-final onboardingNotifierProvider =
-    AutoDisposeNotifierProvider<OnboardingNotifier, OnboardingState>.internal(
-      OnboardingNotifier.new,
-      name: r'onboardingNotifierProvider',
+/// See also [PlaceSearch].
+@ProviderFor(PlaceSearch)
+final placeSearchProvider =
+    AutoDisposeAsyncNotifierProvider<PlaceSearch, List<Place>>.internal(
+      PlaceSearch.new,
+      name: r'placeSearchProvider',
       debugGetCreateSourceHash:
           const bool.fromEnvironment('dart.vm.product')
               ? null
-              : _$onboardingNotifierHash,
+              : _$placeSearchHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
 
-typedef _$OnboardingNotifier = AutoDisposeNotifier<OnboardingState>;
+typedef _$PlaceSearch = AutoDisposeAsyncNotifier<List<Place>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

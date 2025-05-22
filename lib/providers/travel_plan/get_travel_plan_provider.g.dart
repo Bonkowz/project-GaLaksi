@@ -25,7 +25,7 @@ final myTravelPlansStreamProvider = StreamProvider<List<TravelPlan>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MyTravelPlansStreamRef = StreamProviderRef<List<TravelPlan>>;
-String _$travelPlanStreamHash() => r'500062c3e5355edaaad12a800ea98bcad59fbc4f';
+String _$travelPlanStreamHash() => r'76781cbf92b1e0ab117926188eb320b2343d4ee8';
 
 /// Copied from Dart SDK
 class _SystemHash {
