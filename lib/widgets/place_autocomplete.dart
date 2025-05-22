@@ -56,7 +56,6 @@ class _PlaceAutocompleteState extends ConsumerState<PlaceAutocomplete> {
         }
         _debounce?.cancel();
         _debounce = Timer(const Duration(milliseconds: 300), () {
-          debugPrint("I go here");
           ref.read(placeSearchProvider.notifier).search(textEditingValue.text);
         });
 
@@ -121,6 +120,7 @@ class _PlaceAutocompleteState extends ConsumerState<PlaceAutocomplete> {
   }
 }
 
+// Builds the "dropdown"
 Widget optionsViewBuilder(
   BuildContext context,
   AutocompleteOnSelected<Place> onSelected,

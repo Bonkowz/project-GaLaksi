@@ -4,6 +4,7 @@ import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
 import 'package:galaksi/providers/travel_plan/current_travel_plan_provider.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:galaksi/screens/travel_details/travel_plan_details_page.dart';
+import 'package:galaksi/utils/string_utils.dart';
 
 class TravelPlanCard extends ConsumerWidget {
   const TravelPlanCard({required this.travelPlan, super.key});
@@ -63,9 +64,12 @@ class TravelPlanCard extends ConsumerWidget {
                           spacing: 4,
                           children: [
                             const Icon(Symbols.alarm),
-                            Text(
-                              "Happening in 2 days",
-                              style: textTheme.bodyMedium,
+                            Flexible(
+                              child: Text(
+                                StringUtils.getTravelPlanStatusText(travelPlan),
+                                overflow: TextOverflow.ellipsis,
+                                style: textTheme.bodyMedium,
+                              ),
                             ),
                           ],
                         ),
@@ -74,7 +78,7 @@ class TravelPlanCard extends ConsumerWidget {
                           children: [
                             const Icon(Symbols.calendar_month),
                             Text(
-                              "May 5 - June 3, 2025",
+                              StringUtils.getTravelPlanDateRange(travelPlan),
                               style: textTheme.bodyMedium,
                             ),
                           ],
@@ -86,7 +90,7 @@ class TravelPlanCard extends ConsumerWidget {
                             Text(
                               travelPlan.activities.isEmpty
                                   ? "No activities yet"
-                                  : "${travelPlan.activities.length} activities",
+                                  : "${travelPlan.activities.length} activit${travelPlan.activities.length > 1 ? "ies" : "y"}",
                               style: textTheme.bodyMedium,
                             ),
                           ],

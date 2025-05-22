@@ -6,6 +6,7 @@ import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
 import 'package:galaksi/screens/travel_details/edit_travel_plan_page.dart';
 import 'package:galaksi/screens/travel_details/itinerary_tab.dart';
 import 'package:galaksi/screens/travel_details/notes_tab.dart';
+import 'package:galaksi/utils/string_utils.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 final tabIndex = StateProvider<int>((ref) => 0); // 0 for Itinerary, 1 for Notes
@@ -91,7 +92,7 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      "DATE RANGE", // Date range
+                      StringUtils.getTravelPlanDateRange(plan), // Date range
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: Theme.of(context).colorScheme.outline,
                       ),
