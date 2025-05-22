@@ -38,12 +38,12 @@ class NotesTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        CreateDetailsButton(
+        const CreateDetailsButton(
           text: "Add a note...",
-          leadingIcon: const Icon(
+          leadingIcon:Icon(
             Symbols.add,
           ), // TODO: Convert to profile image...
-          trailingIcon: const Icon(Symbols.edit),
+          trailingIcon: Icon(Symbols.edit),
           navigateTo: CreateTravelActivityPage(),
         ),
         Expanded(

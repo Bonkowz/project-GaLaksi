@@ -57,12 +57,12 @@ class FlightsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        CreateDetailsButton(
+        const CreateDetailsButton(
           text: "Add a flight...",
-          leadingIcon: const Icon(
+          leadingIcon: Icon(
             Symbols.add,
           ),
-          trailingIcon: const Icon(Symbols.flight),
+          trailingIcon: Icon(Symbols.flight),
           navigateTo: CreateTravelActivityPage(),
         ),
         Expanded(

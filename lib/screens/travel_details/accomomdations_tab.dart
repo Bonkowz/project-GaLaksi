@@ -45,12 +45,12 @@ class AccommodationsTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        CreateDetailsButton(
+        const CreateDetailsButton(
           text: "Add an accommodation...",
-          leadingIcon: const Icon(
+          leadingIcon: Icon(
             Symbols.add,
           ),
-          trailingIcon: const Icon(Symbols.hotel),
+          trailingIcon: Icon(Symbols.hotel),
           navigateTo: CreateTravelActivityPage(),
         ),
         Expanded(
