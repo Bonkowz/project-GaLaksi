@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:galaksi/providers/travel_plan/create_travel_plan_notifier.dart';
+import 'package:galaksi/screens/overlays/scan_travel_plan_qr_code.dart';
 import 'package:galaksi/utils/input_decorations.dart';
 import 'package:galaksi/utils/snackbar.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -216,7 +217,7 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
                   spacing: 8,
                   children: [
                     IconButton.filled(
-                      onPressed: () {},
+                      onPressed: _openScanner,
                       icon: const Icon(Symbols.camera_alt_rounded),
                       iconSize: 48,
                       padding: const EdgeInsets.all(24.0),
@@ -232,6 +233,12 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
           ),
         ),
       ),
+    );
+  }
+
+  void _openScanner() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const ScanTravelPlanQrCode()),
     );
   }
 }

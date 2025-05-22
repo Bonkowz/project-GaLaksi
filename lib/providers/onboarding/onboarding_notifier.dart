@@ -133,6 +133,8 @@ class OnboardingNotifier extends _$OnboardingNotifier {
       firstName: state.firstName!.trim(),
       lastName: state.lastName!.trim(),
       username: state.username!.trim(),
+      biography: state.biography ?? '',
+      phoneNumber: state.phoneNumber ?? '',
       email: StringUtils.normalizeEmailKeepAlias(state.email!),
       emailCanonical: StringUtils.normalizeEmail(state.email!),
       interests: state.interests,

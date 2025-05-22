@@ -193,6 +193,13 @@ class _Onboarding5UsernameState extends ConsumerState<Onboarding5Username> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _biographyTextController,
+                      onSaved: (biography) {
+                        if (biography == null || biography.trim().isEmpty) {
+                          return;
+                        } else {
+                          onboardingNotifier.updateBiography(biography.trim());
+                        }
+                      },
                       onTapOutside:
                           (event) =>
                               FocusManager.instance.primaryFocus?.unfocus(),
@@ -209,6 +216,15 @@ class _Onboarding5UsernameState extends ConsumerState<Onboarding5Username> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _phoneNumberTextController,
+                      onSaved: (phoneNumber) {
+                        if (phoneNumber == null || phoneNumber.trim().isEmpty) {
+                          return;
+                        } else {
+                          onboardingNotifier.updatePhoneNumber(
+                            phoneNumber.trim(),
+                          );
+                        }
+                      },
                       onTapOutside:
                           (event) =>
                               FocusManager.instance.primaryFocus?.unfocus(),

@@ -8,7 +8,7 @@ import 'package:galaksi/utils/snackbar.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class EditTravelPlanPage extends ConsumerStatefulWidget {
-  const EditTravelPlanPage({super.key, required this.travelPlan});
+  const EditTravelPlanPage({required this.travelPlan, super.key});
 
   final TravelPlan travelPlan;
 
@@ -62,7 +62,10 @@ class EditTravelPlanPageState extends ConsumerState<EditTravelPlanPage> {
       }
     } else {
       if (mounted) {
-        showDismissableSnackbar(context: context, message: "Changes saved!");
+        showDismissableSnackbar(
+          context: context,
+          message: "Travel plan updated!",
+        );
       }
       // Pop after the success message
       if (mounted) {

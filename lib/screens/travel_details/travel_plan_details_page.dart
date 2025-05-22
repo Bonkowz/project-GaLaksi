@@ -7,7 +7,13 @@ import 'package:galaksi/screens/travel_details/edit_travel_plan_page.dart';
 import 'package:galaksi/screens/travel_details/itinerary_tab.dart';
 import 'package:galaksi/screens/travel_details/notes_tab.dart';
 import 'package:galaksi/utils/string_utils.dart';
+import 'package:galaksi/utils/dialog.dart';
+import 'package:galaksi/widgets/travel_plan_qr_code.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:galaksi/screens/overlays/shared_users_modal.dart';
+import 'package:skeletonizer/skeletonizer.dart';
+import 'package:galaksi/screens/travel_details/accomomdations_tab.dart';
+import 'package:galaksi/screens/travel_details/flights_tab.dart';
 
 final tabIndex = StateProvider<int>((ref) => 0); // 0 for Itinerary, 1 for Notes
 
@@ -24,10 +30,19 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
   late TabController _tabController;
   final double appBarHeight = 280;
 
+  void _showSharedUsersDialog(BuildContext context, TravelPlan plan) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Center(child: SharedUsersModal(users: plan.sharedWith));
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
 
     _tabController.addListener(() {
       if (!_tabController.indexIsChanging) {
@@ -53,12 +68,20 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
                 Navigator.of(context).pop();
               },
             ),
-            centerTitle: true,
             actions: [
               IconButton(
-                icon: const Icon(Symbols.ios_share),
+                icon: const Icon(Symbols.qr_code_rounded),
+                onPressed:
+                    () => showCustomDialog(
+                      context: context,
+                      child: TravelPlanQrCode(travelPlan: plan),
+                    ),
+              ),
+              const SizedBox(width: 4.0),
+              IconButton(
+                icon: const Icon(Symbols.people_rounded),
                 onPressed: () {
-                  // TODO: Implement share
+                  _showSharedUsersDialog(context, plan);
                 },
               ),
               const SizedBox(width: 4.0),
@@ -102,11 +125,45 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
               ),
               background: Container(
                 color: Theme.of(context).colorScheme.primaryContainer,
+                child: Align(
+                  alignment: Alignment.bottomLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: 16.0,
+                      bottom: 64.0,
+                    ), // Adjusted padding
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          plan.title,
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "DATE RANGE",
+                          style: Theme.of(
+                            context,
+                          ).textTheme.titleSmall?.copyWith(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
             bottom: TabBar(
               controller: _tabController,
-              tabs: const [Tab(text: "Itinerary"), Tab(text: "Notes")],
+              tabs: const [
+                Tab(text: "Itinerary"),
+                Tab(text: "Notes"),
+                Tab(text: "Flights"),
+                Tab(text: "Lodge"),
+              ],
               labelColor: Theme.of(context).colorScheme.primary,
               unselectedLabelColor:
                   Theme.of(context).colorScheme.onSurfaceVariant,
@@ -119,79 +176,13 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
               child: TabBarView(
                 physics: NeverScrollableScrollPhysics(),
                 controller: _tabController,
-                children: [ItineraryTab(), NotesTab()],
+                children: [
+                  ItineraryTab(activities: plan.activities),
+                  NotesTab(notes: plan.notes),
+                  FlightsTab(flights: plan.flightDetails),
+                  AccommodationsTab(accommodations: plan.accommodations),
+                ],
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget loadingTravelPlan() {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            leading: const IconButton(
-              icon: Icon(Symbols.arrow_back),
-              onPressed: null,
-            ),
-            centerTitle: true,
-            actions: [
-              const IconButton(icon: Icon(Symbols.ios_share), onPressed: null),
-              const SizedBox(width: 4.0),
-              const IconButton(icon: Icon(Symbols.settings), onPressed: null),
-            ],
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            expandedHeight: appBarHeight,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              centerTitle: true,
-              title: Padding(
-                padding: const EdgeInsets.only(bottom: 24.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      "Loading...", // Title
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-
-                    const SizedBox(height: 4),
-                    Text(
-                      "Loading...", // Date range
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              background: Container(
-                color: Theme.of(context).colorScheme.primaryContainer,
-              ),
-            ),
-            bottom: TabBar(
-              controller: _tabController,
-              tabs: const [Tab(text: "Itinerary"), Tab(text: "Notes")],
-              labelColor: Theme.of(context).colorScheme.primary,
-              onTap: (int index) {
-                _tabController.index = 0;
-              },
-              unselectedLabelColor:
-                  Theme.of(context).colorScheme.onSurfaceVariant,
-              indicatorColor: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-          SliverFillRemaining(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                const Center(child: CircularProgressIndicator()),
-                const Center(),
-              ],
             ),
           ),
         ],
@@ -208,7 +199,23 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
 
     return travelPlanAsync.when(
       data: (data) => buildTravelPlan(data!),
-      loading: () => loadingTravelPlan(),
+      loading:
+          () => Skeletonizer(
+            enabled: true,
+            child: buildTravelPlan(
+              TravelPlan(
+                id: "id",
+                title: "title",
+                description: "description",
+                creatorID: "creatorID",
+                sharedWith: [],
+                notes: [],
+                activities: [],
+                flightDetails: [],
+                accommodations: [],
+              ),
+            ),
+          ),
       error: (err, stack) {
         debugPrint("$err");
         return Padding(
