@@ -200,7 +200,9 @@ class ItineraryTab extends StatelessWidget {
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                                 Text(
-                                  activity.location.displayName,
+                                  activity.location.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: Theme.of(
                                     context,
                                   ).textTheme.bodySmall?.copyWith(
