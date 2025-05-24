@@ -88,6 +88,10 @@ class ItineraryTab extends StatelessWidget {
   //   ),
   // ];
 
+  bool isFuture(DateTime time) {
+    return time.isAfter(DateTime.now());
+  }
+
   @override
   Widget build(BuildContext context) {
     activities.sort((a, b) => a.startAt.compareTo(b.startAt));
@@ -124,7 +128,7 @@ class ItineraryTab extends StatelessWidget {
           itemBuilder: (context, index) {
             final date = sortedGroupedEntries[index].key;
             final activitiesForDay = sortedGroupedEntries[index].value;
-            final formattedDateHeader = DateFormat('MMM d,yyyy').format(date);
+            final formattedDateHeader = DateFormat('MMM d, yyyy').format(date);
             return Card.outlined(
               color: Theme.of(context).colorScheme.surfaceContainerLowest,
               child: Column(
@@ -173,7 +177,10 @@ class ItineraryTab extends StatelessWidget {
                         lastConnectorStyle: ConnectorStyle.transparent,
                         contentsAlign: ContentsAlign.basic,
                         indicatorStyleBuilder:
-                            (context, index) => IndicatorStyle.dot,
+                            (context, index) =>
+                                isFuture(activitiesForDay[index].startAt)
+                                    ? IndicatorStyle.outlined
+                                    : IndicatorStyle.dot,
                         contentsBuilder: (context, index) {
                           final activity = activitiesForDay[index];
                           final startTime = DateFormat(
@@ -187,13 +194,13 @@ class ItineraryTab extends StatelessWidget {
                           return Padding(
                             padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 Text(
                                   timeRange,
                                   style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.right,
+                                  textAlign: TextAlign.left,
                                 ),
                                 Text(
                                   activity.title,
