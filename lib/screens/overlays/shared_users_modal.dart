@@ -44,30 +44,34 @@ class _SharedUsersModalState extends ConsumerState<SharedUsersModal> {
                 ],
               ),
               const SizedBox(height: 16.0),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: widget.users.length,
-                itemBuilder: (context, index) {
-                  final userId = widget.users[index];
-                  final user = ref.watch(userProfileStreamProvider(userId));
+              widget.users.isEmpty
+                  ? const Center(child: Text("No shared users yet."))
+                  : ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: widget.users.length,
+                    itemBuilder: (context, index) {
+                      final userId = widget.users[index];
+                      final user = ref.watch(userProfileStreamProvider(userId));
 
-                  return user.when(
-                    data: (user) {
-                      return _UserTile(user: user);
-                    },
-                    error: (error, stackTrace) {
-                      return ListTile(
-                        leading: const Icon(Icons.error, color: Colors.red),
-                        title: const Text('Failed to load user'),
-                        subtitle: Text(error.toString()),
+                      return user.when(
+                        data: (user) {
+                          return _UserTile(user: user);
+                        },
+                        error: (error, stackTrace) {
+                          return ListTile(
+                            leading: const Icon(Icons.error, color: Colors.red),
+                            title: const Text('Failed to load user'),
+                            subtitle: Text(error.toString()),
+                          );
+                        },
+                        loading: () {
+                          return Skeletonizer(
+                            child: _UserTile(user: dummyUser),
+                          );
+                        },
                       );
                     },
-                    loading: () {
-                      return Skeletonizer(child: _UserTile(user: dummyUser));
-                    },
-                  );
-                },
-              ),
+                  ),
             ],
           ),
         ),
