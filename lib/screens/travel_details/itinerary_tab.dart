@@ -176,10 +176,12 @@ class ItineraryTab extends StatelessWidget {
                             (context, index) => IndicatorStyle.dot,
                         contentsBuilder: (context, index) {
                           final activity = activitiesForDay[index];
-                          final startTime =
-                              "${activity.startAt.toLocal().hour}:${activity.startAt.toLocal().minute.toString().padLeft(2, '0')}";
-                          final endTime =
-                              "${activity.endAt.toLocal().hour}:${activity.endAt.toLocal().minute.toString().padLeft(2, '0')}";
+                          final startTime = DateFormat(
+                            'h:mm a',
+                          ).format(activity.startAt.toLocal());
+                          final endTime = DateFormat(
+                            'h:mm a',
+                          ).format(activity.endAt.toLocal());
                           final timeRange = "$startTime to $endTime";
 
                           return Padding(
