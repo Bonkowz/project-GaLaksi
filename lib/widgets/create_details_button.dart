@@ -17,7 +17,7 @@ class CreateDetailsButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card.outlined(
-      color: Theme.of(context).colorScheme.surfaceContainerLow,
+      color: Theme.of(context).colorScheme.surfaceContainerLowest,
       child: InkWell(
         onTap: () {
           Navigator.of(
