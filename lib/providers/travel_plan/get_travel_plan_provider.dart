@@ -43,6 +43,42 @@ Stream<List<TravelPlan>> myTravelPlansStream(Ref ref) {
   );
 }
 
+@Riverpod(keepAlive: true)
+Stream<List<TravelPlan>> sharedTravelPlansStream(Ref ref) {
+  final currentAuthUser = ref.watch(currentUserStreamProvider);
+  final authUid = currentAuthUser.when(
+    data: (user) => user?.uid,
+    error: (error, stackTrace) {
+      debugPrint("Error fetching current user: $stackTrace");
+      return null;
+    },
+    loading: () {
+      debugPrint("Auth data is loading.");
+      return null;
+    },
+  );
+
+  // If the UID is null, we cannot create a profile
+  if (authUid == null) {
+    debugPrint("Error fetching travel plans");
+    return const Stream.empty();
+  }
+
+  final result = FirebaseFirestoreApi().fetchPlansSharedWithUser(authUid);
+  return result.when(
+    onSuccess: (success) {
+      return success.data.map(
+        (qShot) =>
+            qShot.docs.map((doc) => TravelPlan.fromDocument(doc)).toList(),
+      );
+    },
+    onFailure: (failure) {
+      debugPrint("Error fetching data: ${failure.message}");
+      return const Stream.empty();
+    },
+  );
+}
+
 @riverpod
 Stream<TravelPlan?> travelPlanStream(Ref ref, String travelPlanId) {
   final currentAuthUser = ref.watch(currentUserStreamProvider);
