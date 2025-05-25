@@ -37,7 +37,7 @@ class UserMatch {
 }
 
 // RIVERPOD PROVIDER (find matching users)
-@riverpod
+@Riverpod(keepAlive: true)
 Stream<List<UserMatch>> userMatching(Ref ref) {
   final currentUser = FirebaseAuth.instance.currentUser;
   if (currentUser == null) return Stream.value([]);
