@@ -9,7 +9,6 @@ import 'package:galaksi/theme/theme.dart';
 import 'package:galaksi/theme/util.dart';
 import 'package:galaksi/firebase_options.dart';
 import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
 
 final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
     GlobalKey<ScaffoldMessengerState>();
