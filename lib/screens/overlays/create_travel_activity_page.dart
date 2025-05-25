@@ -1,3 +1,5 @@
+import 'package:animated_list_plus/animated_list_plus.dart';
+import 'package:animated_list_plus/transitions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,6 +27,9 @@ class CreateTravelActivityPage extends ConsumerStatefulWidget {
 class _CreateTravelActivityPageState
     extends ConsumerState<CreateTravelActivityPage> {
   final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormFieldState> dropdownKey = GlobalKey<FormFieldState>();
+  final GlobalKey<AnimatedListState> _animatedListKey =
+      GlobalKey<AnimatedListState>();
   final titleTextController = TextEditingController();
   final activityDateController = TextEditingController();
   final startTimeController = TextEditingController();
@@ -105,7 +110,7 @@ class _CreateTravelActivityPageState
   DateTime? activityDate;
   TimeOfDay? startTime;
   TimeOfDay? endTime;
-  List<String> durations = [];
+  List<Reminder> userReminders = [];
   Place? placeSelected;
 
   /// Utility function for FormField
@@ -118,13 +123,18 @@ class _CreateTravelActivityPageState
     return "${time.hourOfPeriod}:${time.minute.toString().padLeft(2, '0')} ${time.period.name.toUpperCase()}";
   }
 
-  final reminders = ["5 minutes before", "10 minutes before", "1 hour before"];
+  final reminders = [
+    Reminder(
+      duration: const Duration(minutes: 10),
+      message: "10 minutes before",
+    ),
+    Reminder(duration: const Duration(days: 1), message: "1 day before"),
+    Reminder(duration: const Duration(days: 7), message: "1 week before"),
+    Reminder(duration: const Duration(hours: 1), message: "1 hour before"),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    final notifier = ref.read(createTravelActivityNotifierProvider.notifier);
-    debugPrint('notifier hash in parent: ${notifier.hashCode}');
-
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
@@ -371,26 +381,73 @@ class _CreateTravelActivityPageState
                       },
                       controller: locationController,
                     ),
-                    DropdownButtonFormField(
-                      items:
-                          reminders
-                              .map(
-                                (option) => DropdownMenuItem(
-                                  value: option,
-                                  child: Text(option),
-                                ),
-                              )
-                              .toList(),
-                      onChanged: (value) {
-                        durations.add(value!);
+
+                    ImplicitlyAnimatedList<Reminder>(
+                      insertDuration: const Duration(milliseconds: 200),
+                      removeDuration: const Duration(milliseconds: 200),
+                      shrinkWrap: true,
+                      items: userReminders,
+                      areItemsTheSame: (a, b) => a.message == b.message,
+                      itemBuilder: (context, animation, item, index) {
+                        return SizeFadeTransition(
+                          animation: animation,
+
+                          child: TextFormField(
+                            readOnly: true,
+                            initialValue: item.message,
+                            decoration: InputDecorations.outlineBorder(
+                              context: context,
+                              prefixIcon: const Icon(Symbols.alarm),
+                              borderRadius: 16,
+                              suffixIcon: IconButton(
+                                icon: Icon(Symbols.close),
+                                onPressed: () {
+                                  setState(() {
+                                    userReminders.removeAt(index);
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        );
                       },
-                      decoration: InputDecorations.outlineBorder(
-                        context: context,
-                        prefixIcon: const Icon(Symbols.alarm),
-                        borderRadius: 16,
-                        hintText: "Remind me...",
-                      ),
                     ),
+                    userReminders.length < 3
+                        ? DropdownButtonFormField(
+                          value: null,
+                          items:
+                              reminders
+                                  .map(
+                                    (option) => DropdownMenuItem(
+                                      value: option,
+                                      child: Text(option.message),
+                                    ),
+                                  )
+                                  .toList(),
+                          onChanged: (value) {
+                            if (userReminders.contains(value)) {
+                              Future.microtask(
+                                () => dropdownKey.currentState?.reset(),
+                              );
+                              return;
+                            }
+                            setState(() {
+                              userReminders.add(value!);
+                            });
+
+                            Future.microtask(
+                              () => dropdownKey.currentState?.reset(),
+                            );
+                          },
+                          decoration: InputDecorations.outlineBorder(
+                            context: context,
+                            prefixIcon: const Icon(Symbols.alarm),
+                            borderRadius: 16,
+                            hintText: "Add a reminders...",
+                          ),
+                          key: dropdownKey,
+                        )
+                        : const SizedBox.shrink(),
                   ],
                 ),
               ),
@@ -400,4 +457,11 @@ class _CreateTravelActivityPageState
       ),
     );
   }
+}
+
+class Reminder {
+  Reminder({required this.message, required this.duration});
+
+  Duration duration;
+  String message;
 }
