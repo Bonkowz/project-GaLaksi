@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/models/user/interest_model.dart';
 import 'package:galaksi/models/user/travel_style_model.dart';
-import 'package:galaksi/providers/user_matching_provider.dart';
+import 'package:galaksi/providers/user_profile/user_matching_provider.dart';
 import 'package:galaksi/widgets/user_avatar.dart';
 
 class SuggestionsTab extends ConsumerWidget {
