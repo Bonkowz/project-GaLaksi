@@ -28,8 +28,6 @@ class _CreateTravelActivityPageState
     extends ConsumerState<CreateTravelActivityPage> {
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<FormFieldState> dropdownKey = GlobalKey<FormFieldState>();
-  final GlobalKey<AnimatedListState> _animatedListKey =
-      GlobalKey<AnimatedListState>();
   final titleTextController = TextEditingController();
   final activityDateController = TextEditingController();
   final startTimeController = TextEditingController();
@@ -56,7 +54,9 @@ class _CreateTravelActivityPageState
     createTravelActivityNotifier.updateTitle(titleTextController.text);
     createTravelActivityNotifier.updateStartAt(activityDate!, startTime!);
     createTravelActivityNotifier.updateEndAt(activityDate!, endTime!);
-    createTravelActivityNotifier.updateReminders([]);
+    createTravelActivityNotifier.updateReminders(
+      userReminders.map((r) => r.duration).toList(),
+    );
     createTravelActivityNotifier.updateLocation(placeSelected!);
 
     final travelPlan =
