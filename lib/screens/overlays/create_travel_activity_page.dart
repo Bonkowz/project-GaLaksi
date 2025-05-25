@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/providers/travel_activity/create_travel_activity_notifier.dart';
@@ -164,28 +165,35 @@ class _CreateTravelActivityPageState
                   spacing: 0,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    TextFormField(
-                      controller: titleTextController,
-                      onTapOutside:
-                          (event) =>
-                              FocusManager.instance.primaryFocus?.unfocus(),
-                      decoration: InputDecorations.outlineBorder(
-                        context: context,
-                        prefixIcon: const Icon(Symbols.title),
-                        hintText: "Trip Title",
-                        borderRadius: 16,
-                      ).copyWith(
-                        counterText: "${titleTextController.text.length}",
-                      ),
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(
-                          errorText: "Please enter a title",
-                        ),
-                        FormBuilderValidators.maxLength(
-                          15,
-                          errorText: "Title must be less than 15 characters.",
-                        ),
-                      ]),
+                    ValueListenableBuilder(
+                      valueListenable: titleTextController,
+                      builder: (context, value, _) {
+                        return TextFormField(
+                          controller: titleTextController,
+                          onTapOutside:
+                              (event) =>
+                                  FocusManager.instance.primaryFocus?.unfocus(),
+                          decoration: InputDecorations.outlineBorder(
+                            context: context,
+                            prefixIcon: const Icon(Symbols.title),
+                            hintText: "Trip Title",
+                            borderRadius: 16,
+                          ).copyWith(counterText: "${value.text.length} / 30"),
+                          validator: FormBuilderValidators.compose([
+                            FormBuilderValidators.required(
+                              errorText: "Please enter a title",
+                            ),
+                            FormBuilderValidators.maxLength(
+                              20,
+                              errorText:
+                                  "Title must be less than 30 characters.",
+                            ),
+                          ]),
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(30),
+                          ],
+                        );
+                      },
                     ),
                     TextFormField(
                       readOnly: true,
