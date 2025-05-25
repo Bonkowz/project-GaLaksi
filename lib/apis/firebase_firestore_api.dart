@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:galaksi/models/travel_plan/accommodation_model.dart';
+import 'package:galaksi/models/travel_plan/flight_detail_model.dart';
+import 'package:galaksi/models/travel_plan/note_model.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
 import 'package:galaksi/models/user/user_model.dart';
@@ -289,6 +292,84 @@ class FirebaseFirestoreApi {
 
       return const FirestoreSuccess(
         message: "Successfully added travel activity!",
+        data: true,
+      );
+    } on TimeoutException catch (_) {
+      return const FirestoreFailure(
+        message: "Request timed out. Please check your internet connection.",
+        error: FirestoreFailureError.networkError,
+      );
+    } catch (e) {
+      debugPrint("Error adding travel activity: $e");
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  Future<FirestoreResult<bool>> addNote(String planID, Note note) async {
+    try {
+      final docRef = FirebaseFirestore.instance.collection("plans").doc(planID);
+
+      await docRef.update({
+        'notes': FieldValue.arrayUnion([note.toMap()]),
+      });
+
+      return const FirestoreSuccess(
+        message: "Successfully added note!",
+        data: true,
+      );
+    } on TimeoutException catch (_) {
+      return const FirestoreFailure(
+        message: "Request timed out. Please check your internet connection.",
+        error: FirestoreFailureError.networkError,
+      );
+    } catch (e) {
+      debugPrint("Error adding travel activity: $e");
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  Future<FirestoreResult<bool>> addFlight(String planID, FlightDetail flight) async {
+    try {
+      final docRef = FirebaseFirestore.instance.collection("plans").doc(planID);
+
+      await docRef.update({
+        'flightDetails': FieldValue.arrayUnion([flight.toMap()]),
+      });
+
+      return const FirestoreSuccess(
+        message: "Successfully added flight!",
+        data: true,
+      );
+    } on TimeoutException catch (_) {
+      return const FirestoreFailure(
+        message: "Request timed out. Please check your internet connection.",
+        error: FirestoreFailureError.networkError,
+      );
+    } catch (e) {
+      debugPrint("Error adding travel activity: $e");
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+  
+  Future<FirestoreResult<bool>> addAccommodation(String planID, Accommodation accommodation) async {
+    try {
+      final docRef = FirebaseFirestore.instance.collection("plans").doc(planID);
+
+      await docRef.update({
+        'accommodations': FieldValue.arrayUnion([accommodation.toMap()]),
+      });
+
+      return const FirestoreSuccess(
+        message: "Successfully added accommodation!",
         data: true,
       );
     } on TimeoutException catch (_) {
