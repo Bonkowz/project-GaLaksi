@@ -44,9 +44,15 @@ Stream<List<UserMatch>> userMatching(Ref ref) {
 
   return FirebaseFirestore.instance
       .collection('users')
-      .doc(currentUser.uid)
+      .where('isPrivate', isEqualTo: false)
       .snapshots()
-      .asyncMap((currentUserDoc) async {
+      .asyncMap((allUsersSnapshot) async {
+        final currentUserDoc =
+            await FirebaseFirestore.instance
+                .collection('users')
+                .doc(currentUser.uid)
+                .get();
+
         if (!currentUserDoc.exists) return [];
 
         // gets the current/logged in user's interests and travel styles
@@ -58,13 +64,8 @@ Stream<List<UserMatch>> userMatching(Ref ref) {
           currentUserData['travelStyles'] ?? [],
         );
 
-        //retrieve all other users from firestore
-        final allUsersSnapshot =
-            await FirebaseFirestore.instance.collection('users').get();
-
         return allUsersSnapshot.docs
             .where((doc) => doc.id != currentUser.uid)
-            .where((doc) => !doc["isPrivate"])
             .map(
               (doc) => _createUserMatch(
                 doc,
