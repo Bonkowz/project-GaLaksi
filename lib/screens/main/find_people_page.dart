@@ -55,6 +55,7 @@ class _SuggestionsTab extends ConsumerWidget {
 
         // display profiles of matching users
         return ListView.builder(
+          padding: const EdgeInsets.all(8),
           itemCount: matches.length,
           itemBuilder: (context, index) {
             final match = matches[index];
@@ -100,8 +101,8 @@ class _UserProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+    return Card.outlined(
+      color: Theme.of(context).colorScheme.surfaceContainerLowest,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
