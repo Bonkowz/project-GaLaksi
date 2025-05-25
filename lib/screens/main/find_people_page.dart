@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/user_matching_provider.dart';
+import '../../models/user/interest_model.dart';
+import '../../models/user/travel_style_model.dart';
 
 // TODOS:
 // "add friends" functionality
@@ -129,7 +131,9 @@ class _UserProfileCard extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      interests.join(", "),
+                      interests.map((interest) => 
+                        Interest.values.firstWhere((i) => i.name == interest).title
+                      ).join(", "),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
@@ -141,7 +145,9 @@ class _UserProfileCard extends StatelessWidget {
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      travelStyles.join(", "),
+                      travelStyles.map((style) => 
+                        TravelStyle.values.firstWhere((t) => t.name == style).title
+                      ).join(", "),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
