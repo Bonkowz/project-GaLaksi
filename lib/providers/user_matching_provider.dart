@@ -64,6 +64,7 @@ Stream<List<UserMatch>> userMatching(Ref ref) {
 
         return allUsersSnapshot.docs
             .where((doc) => doc.id != currentUser.uid)
+            .where((doc) => !doc["isPrivate"])
             .map(
               (doc) => _createUserMatch(
                 doc,
