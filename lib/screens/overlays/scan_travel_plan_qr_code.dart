@@ -247,10 +247,13 @@ class ErrorCard extends StatelessWidget {
           spacing: 8,
           children: [
             const Icon(Symbols.error_rounded),
-            Text(
-              error!,
-              style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onErrorContainer,
+            Expanded(
+              child: Text(
+                error!,
+                style: textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onErrorContainer,
+                ),
+                overflow: TextOverflow.clip,
               ),
             ),
           ],
