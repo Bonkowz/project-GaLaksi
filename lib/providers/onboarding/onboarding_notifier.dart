@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:galaksi/apis/firebase_auth_api.dart';
 import 'package:galaksi/apis/firebase_firestore_api.dart';
@@ -12,7 +14,9 @@ import 'package:galaksi/screens/onboarding/onboarding_2_interests.dart';
 import 'package:galaksi/screens/onboarding/onboarding_3_styles.dart';
 import 'package:galaksi/screens/onboarding/onboarding_6_complete.dart';
 import 'package:galaksi/utils/string_utils.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'dart:convert';
 
 part 'onboarding_notifier.g.dart';
 
@@ -61,6 +65,14 @@ class OnboardingNotifier extends _$OnboardingNotifier {
     state = state.copyWith(lastName: lastName);
   }
 
+  void updateBiography(String biography) {
+    state = state.copyWith(biography: biography);
+  }
+
+  void updatePhoneNumber(String phoneNumber) {
+    state = state.copyWith(phoneNumber: phoneNumber);
+  }
+
   void updatePassword(String password) {
     state = state.copyWith(password: password);
   }
@@ -75,6 +87,17 @@ class OnboardingNotifier extends _$OnboardingNotifier {
 
   void updateConfirmPassword(String confirmPassword) {
     state = state.copyWith(confirmPassword: confirmPassword);
+  }
+
+  void updateImage(XFile? imageFile) {
+    if (imageFile == null) {
+      state = state.copyWith(image: ''); // Explicitly remove image
+    } else {
+      final serializedImage = base64Encode(
+        File(imageFile.path).readAsBytesSync(),
+      );
+      state = state.copyWith(image: serializedImage);
+    }
   }
 
   Future<AuthResult> createAccount() async {
@@ -105,34 +128,43 @@ class OnboardingNotifier extends _$OnboardingNotifier {
       return false;
     }
 
-    try {
-      final user = User(
-        uid: authUid,
-        firstName: state.firstName!.trim(),
-        lastName: state.lastName!.trim(),
-        username: state.username!.trim(),
-        email: StringUtils.normalizeEmailKeepAlias(state.email!),
-        emailCanonical: StringUtils.normalizeEmail(state.email!),
-        interests: state.interests,
-        travelStyles: state.travelStyles,
-      );
-      final result = await FirebaseFirestoreApi().addUser(user);
-      state = state.copyWith(uid: user.uid);
-      return result;
-    } catch (e) {
-      debugPrint("Error creating user: $e");
-      return false;
-    }
+    final user = User(
+      uid: authUid,
+      firstName: state.firstName!.trim(),
+      lastName: state.lastName!.trim(),
+      username: state.username!.trim(),
+      biography: state.biography ?? '',
+      phoneNumber: state.phoneNumber ?? '',
+      email: StringUtils.normalizeEmailKeepAlias(state.email!),
+      emailCanonical: StringUtils.normalizeEmail(state.email!),
+      interests: state.interests,
+      travelStyles: state.travelStyles,
+      image: state.image ?? '',
+    );
+    final result = await FirebaseFirestoreApi().addUser(user);
+    return result.when(
+      onSuccess: (success) {
+        state = state.copyWith(uid: user.uid);
+        return success.data;
+      },
+      onFailure: (failure) {
+        debugPrint("Error creating user: ${failure.message}");
+        return false;
+      },
+    );
   }
 }
 
 class OnboardingState {
   OnboardingState({
     this.uid,
+    this.image,
     this.firstName,
     this.lastName,
     this.email,
     this.username,
+    this.biography,
+    this.phoneNumber,
     this.password,
     this.confirmPassword,
     this.interests = const {},
@@ -151,10 +183,13 @@ class OnboardingState {
   ];
 
   String? uid;
+  String? image;
   String? firstName;
   String? lastName;
   String? email;
   String? username;
+  String? biography;
+  String? phoneNumber;
   String? password;
   String? confirmPassword;
   Set<Interest> interests;
@@ -164,10 +199,13 @@ class OnboardingState {
 
   OnboardingState copyWith({
     String? uid,
+    String? image,
     String? firstName,
     String? lastName,
     String? email,
     String? username,
+    String? biography,
+    String? phoneNumber,
     String? password,
     String? confirmPassword,
     Set<Interest>? interests,
@@ -177,10 +215,13 @@ class OnboardingState {
   }) {
     return OnboardingState(
       uid: uid ?? this.uid,
+      image: image ?? this.image,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
       email: email ?? this.email,
       username: username ?? this.username,
+      biography: biography ?? this.biography,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
       password: password ?? this.password,
       confirmPassword: confirmPassword ?? this.confirmPassword,
       interests: interests ?? this.interests,

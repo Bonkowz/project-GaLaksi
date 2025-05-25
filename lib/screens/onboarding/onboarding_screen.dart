@@ -54,6 +54,7 @@ class _OnboardingAppBar extends ConsumerWidget implements PreferredSizeWidget {
             ? (onboardingState.currentIndex + 1) / OnboardingState.pages.length
             : 0.0;
     return AppBar(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       title: TweenAnimationBuilder<double>(
         duration: Durations.medium1,
         curve: Curves.easeInOutCubic,

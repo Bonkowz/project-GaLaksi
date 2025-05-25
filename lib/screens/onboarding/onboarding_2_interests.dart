@@ -1,9 +1,8 @@
-import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/models/user/interest_model.dart';
 import 'package:galaksi/providers/onboarding/onboarding_notifier.dart';
-import 'package:collection/collection.dart';
+import 'package:galaksi/widgets/interest_selection.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class Onboarding2Interests extends ConsumerStatefulWidget {
@@ -16,10 +15,6 @@ class Onboarding2Interests extends ConsumerStatefulWidget {
 
 class _Onboarding2InterestsState extends ConsumerState<Onboarding2Interests> {
   final selection = <Interest>{};
-
-  final categorizedInterests = Interest.values.groupListsBy(
-    (interest) => interest.category,
-  );
 
   void _saveInterests() {
     ref.read(onboardingNotifierProvider.notifier).updateInterests(selection);
@@ -76,46 +71,9 @@ class _Onboarding2InterestsState extends ConsumerState<Onboarding2Interests> {
           const SizedBox(height: 16),
           Expanded(
             child: SingleChildScrollView(
-              child: Column(
-                children:
-                    categorizedInterests.entries.map((entry) {
-                      final category = entry.key;
-                      final interests = entry.value;
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 18, bottom: 6),
-                            child: Text(
-                              StringUtils.capitalize(category.title),
-                              style: textTheme.bodyLarge!.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 4,
-                            children:
-                                interests.map((e) {
-                                  return InputChip(
-                                    label: Text(e.title),
-                                    selected: selection.contains(e),
-                                    onSelected: (selected) {
-                                      setState(() {
-                                        if (selected) {
-                                          selection.add(e);
-                                        } else {
-                                          selection.remove(e);
-                                        }
-                                      });
-                                    },
-                                  );
-                                }).toList(),
-                          ),
-                        ],
-                      );
-                    }).toList(),
+              child: InterestSelection(
+                selection: selection,
+                onSelectionChanged: () => setState(() {}),
               ),
             ),
           ),

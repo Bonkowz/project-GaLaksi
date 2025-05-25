@@ -48,26 +48,28 @@ class CreateTravelPlanNotifier extends _$CreateTravelPlanNotifier {
       return false;
     }
 
-    try {
-      final travelPlan = TravelPlan(
-        id: '',
-        title: state.title!,
-        description: state.description,
-        creatorID: authUid,
-        sharedWith: state.sharedWith,
-        notes: state.notes,
-        activities: state.activities,
-        flightDetails: state.flightDetails,
-        accommodations: state.accommodations,
-      );
+    final travelPlan = TravelPlan(
+      id: '',
+      title: state.title!,
+      description: state.description,
+      creatorID: authUid,
+      sharedWith: state.sharedWith,
+      notes: state.notes,
+      activities: state.activities,
+      flightDetails: state.flightDetails,
+      accommodations: state.accommodations,
+    );
 
-      final result = await FirebaseFirestoreApi().createTravelPlan(travelPlan);
-
-      return result;
-    } catch (e) {
-      debugPrint("Error creating travel plan: $e");
-      return false;
-    }
+    final result = await FirebaseFirestoreApi().createTravelPlan(travelPlan);
+    return result.when(
+      onSuccess: (success) {
+        return success.data;
+      },
+      onFailure: (failure) {
+        debugPrint(failure.message);
+        return false;
+      },
+    );
   }
 
   void reset() {
