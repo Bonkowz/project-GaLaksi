@@ -373,6 +373,7 @@ class _CreateTravelActivityPageState
                         ),
                       ],
                     ),
+                    //TODO: Optimize using Mapbox
                     PlaceAutocomplete(
                       onPlaceSelected: (place) {
                         setState(() {
