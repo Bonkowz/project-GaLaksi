@@ -56,14 +56,15 @@ class CreateTravelActivityNotifier extends _$CreateTravelActivityNotifier {
     state = state.copyWith(reminders: reminders);
   }
 
-  Future<bool> addTravelActivity({required String travelPlanId}) async {
+  Future<FirestoreResult?> addTravelActivity({
+    required String travelPlanId,
+  }) async {
     final travelPlan =
         ref.read(travelPlanStreamProvider(travelPlanId)).valueOrNull;
-    if (travelPlan == null) {
-      return false;
-    }
 
-    debugPrint("Confirming PT 2: ${state.location}");
+    if (travelPlan == null) {
+      return null;
+    }
 
     final travelActivity = TravelActivity(
       startAt: state.startAt!,
@@ -73,30 +74,17 @@ class CreateTravelActivityNotifier extends _$CreateTravelActivityNotifier {
       reminders: state.reminders!,
     );
 
-    // Check if clashing time schedules
-    for (final existingActivity in travelPlan.activities) {
-      if (rangesOverlap(
-        travelActivity.startAt,
-        travelActivity.endAt,
-        existingActivity.startAt,
-        existingActivity.endAt,
-      )) {
-        // Conflict found
-        return false;
-      }
-    }
-
     final result = await FirebaseFirestoreApi().addTravelActivity(
       travelPlan.id,
       travelActivity,
     );
     return result.when(
       onSuccess: (success) {
-        return success.data;
+        return success;
       },
       onFailure: (failure) {
         debugPrint(failure.message);
-        return false;
+        return failure;
       },
     );
   }

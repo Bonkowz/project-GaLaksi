@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:galaksi/apis/firebase_firestore_api.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/providers/travel_activity/create_travel_activity_notifier.dart';
 import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
@@ -72,15 +73,12 @@ class _CreateTravelActivityPageState
       _isLoading = false;
     });
 
-    if (!result) {
+    if (result is FirestoreFailure) {
       if (mounted) {
         showDismissableSnackbar(
           context: context,
-          message:
-              "You are offline. This travel activity is currently pending. "
-              "Please connect to the internet before quitting the app to "
-              "succesfully create this activity.",
-          duration: const Duration(minutes: 1),
+          message: result.message,
+          duration: const Duration(seconds: 10),
         );
       }
     } else {

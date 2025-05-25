@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/screens/overlays/create_travel_activity_page.dart';
+import 'package:galaksi/utils/string_utils.dart';
 import 'package:galaksi/widgets/create_details_button.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:intl/intl.dart';
@@ -183,13 +184,6 @@ class ItineraryTab extends StatelessWidget {
                                     : IndicatorStyle.dot,
                         contentsBuilder: (context, index) {
                           final activity = activitiesForDay[index];
-                          final startTime = DateFormat(
-                            'h:mm a',
-                          ).format(activity.startAt.toLocal());
-                          final endTime = DateFormat(
-                            'h:mm a',
-                          ).format(activity.endAt.toLocal());
-                          final timeRange = "$startTime to $endTime";
 
                           return Padding(
                             padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
@@ -197,7 +191,7 @@ class ItineraryTab extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 Text(
-                                  timeRange,
+                                  StringUtils.getActivityTimeRange(activity),
                                   style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(fontWeight: FontWeight.bold),
                                   textAlign: TextAlign.left,
