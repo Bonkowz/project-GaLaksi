@@ -1,47 +1,14 @@
+// SUGGESTIONS/FIND SIMILAR PEOPLE
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:galaksi/models/user/interest_model.dart';
+import 'package:galaksi/models/user/travel_style_model.dart';
+import 'package:galaksi/providers/user_matching_provider.dart';
 import 'package:galaksi/widgets/user_avatar.dart';
-import '../../providers/user_matching_provider.dart';
-import '../../models/user/interest_model.dart';
-import '../../models/user/travel_style_model.dart';
 
-// TODOS:
-// "add friends" functionality
-// "friends" tab contents
-// "friend requests" tab contents
-class FindPeoplePage extends ConsumerWidget {
-  const FindPeoplePage({super.key});
+class SuggestionsTab extends ConsumerWidget {
+  const SuggestionsTab({super.key});
 
-  // TABS
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Social"),
-          bottom: const TabBar(
-            tabs: [
-              Tab(text: "Suggestions"),
-              Tab(text: "Friends"),
-              Tab(text: "Friend Requests"),
-            ],
-          ),
-        ),
-        body: TabBarView(
-          children: [
-            _SuggestionsTab(),
-            const Center(child: Text("Friends Content")),
-            const Center(child: Text("Friend Requests Content")),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// SUGGESTIONS/FIND SIMILAR PEOPLE
-class _SuggestionsTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userMatchesAsync = ref.watch(userMatchingProvider);
