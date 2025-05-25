@@ -39,7 +39,6 @@ class CreateTravelActivityNotifier extends _$CreateTravelActivityNotifier {
     );
 
     state = state.copyWith(endAt: newDateTime);
-    debugPrint("End at: ${state.endAt}");
   }
 
   void updateTitle(String title) {
@@ -47,9 +46,7 @@ class CreateTravelActivityNotifier extends _$CreateTravelActivityNotifier {
   }
 
   void updateLocation(Place place) {
-    debugPrint("Updated place to ${place.name}");
     state = state.copyWith(location: place);
-    debugPrint("Confirming: ${state.location?.displayName}");
   }
 
   void updateReminders(List<Duration> reminders) {
@@ -70,7 +67,7 @@ class CreateTravelActivityNotifier extends _$CreateTravelActivityNotifier {
       startAt: state.startAt!,
       endAt: state.endAt!,
       title: state.title!,
-      location: state.location ?? Place(displayName: 'Error', name: 'Error'),
+      location: state.location!,
       reminders: state.reminders!,
     );
 
