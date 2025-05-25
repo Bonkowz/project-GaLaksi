@@ -7,25 +7,27 @@ part 'user_matching_provider.g.dart';
 
 // MATCHING USERS
 class UserMatch {
-  final String userId;
-  final String firstName;
-  final String lastName;
-  final String username;
-  final List<String> interests;
-  final List<String> travelStyles;
-  final int commonInterests;
-  final int commonTravelStyles;
-
   UserMatch({
     required this.userId,
     required this.firstName,
     required this.lastName,
     required this.username,
+    required this.image,
     required this.interests,
     required this.travelStyles,
     required this.commonInterests,
     required this.commonTravelStyles,
   });
+
+  final String userId;
+  final String firstName;
+  final String lastName;
+  final String username;
+  final String image;
+  final List<String> interests;
+  final List<String> travelStyles;
+  final int commonInterests;
+  final int commonTravelStyles;
 
   /// total number of commonalities (interests + travel styles)
   int get totalCommonalities => commonInterests + commonTravelStyles;
@@ -103,6 +105,7 @@ UserMatch _createUserMatch(
     firstName: userData['firstName'] ?? '',
     lastName: userData['lastName'] ?? '',
     username: userData['username'] ?? '',
+    image: userData['image'] ?? '',
     interests: userInterests,
     travelStyles: userTravelStyles,
     commonInterests: commonInterests,
