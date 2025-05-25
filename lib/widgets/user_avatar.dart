@@ -6,31 +6,36 @@ class UserAvatar extends StatelessWidget {
   const UserAvatar({
     required this.image,
     required this.firstName,
-    required this.backgroundColor,
-    required this.textColor,
-    super.key,
+    this.backgroundColor,
+    this.textColor,
     this.textStyle,
     this.radius,
+    super.key,
   });
 
   final String image;
   final String firstName;
-  final Color backgroundColor;
-  final Color textColor;
+  final Color? backgroundColor;
+  final Color? textColor;
   final TextStyle? textStyle;
   final double? radius;
 
   @override
   Widget build(BuildContext context) {
+    final effectiveBackgroundColor =
+        backgroundColor ?? Theme.of(context).colorScheme.primaryContainer;
+    final effectiveTextColor =
+        textColor ?? Theme.of(context).colorScheme.onPrimaryContainer;
+
     if (image.isEmpty) {
       return CircleAvatar(
-        backgroundColor: backgroundColor,
+        backgroundColor: effectiveBackgroundColor,
         radius: radius,
         child: Text(
           firstName.isNotEmpty ? firstName[0].toUpperCase() : '',
           style:
               textStyle ??
-              TextStyle(fontWeight: FontWeight.bold, color: textColor),
+              TextStyle(fontWeight: FontWeight.bold, color: effectiveTextColor),
         ),
       );
     } else {
