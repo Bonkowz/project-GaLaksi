@@ -12,7 +12,7 @@ enum Interest {
   tennis(InterestCategory.sports, "Tennis"),
   yoga(InterestCategory.sports, "Yoga"),
   volleyball(InterestCategory.sports, "Volleyball"),
-  otherSports(InterestCategory.sports, "Other"),
+  otherSports(InterestCategory.sports, "Other Sports"),
 
   // Going Out
   bars(InterestCategory.goingOut, "Bars"),
@@ -26,7 +26,7 @@ enum Interest {
   nightClubs(InterestCategory.goingOut, "Night Clubs"),
   standup(InterestCategory.goingOut, "Standup"),
   theatre(InterestCategory.goingOut, "Theatre"),
-  otherGoingOut(InterestCategory.goingOut, "Other"),
+  otherGoingOut(InterestCategory.goingOut, "Other Going Out"),
 
   // Music
   blues(InterestCategory.music, "Blues"),
@@ -49,7 +49,7 @@ enum Interest {
   rock(InterestCategory.music, "Rock"),
   soul(InterestCategory.music, "Soul"),
   techno(InterestCategory.music, "Techno"),
-  otherMusic(InterestCategory.music, "Other"),
+  otherMusic(InterestCategory.music, "Other Music"),
 
   // Food and Drink
   beer(InterestCategory.foodAndDrink, "Beer"),
@@ -68,7 +68,7 @@ enum Interest {
   vegetarian(InterestCategory.foodAndDrink, "Vegetarian"),
   whisky(InterestCategory.foodAndDrink, "Whisky"),
   wine(InterestCategory.foodAndDrink, "Wine"),
-  otherFoodAndDrink(InterestCategory.foodAndDrink, "Other"),
+  otherFoodAndDrink(InterestCategory.foodAndDrink, "Other Food and Drink"),
 
   // Pets
   birds(InterestCategory.pets, "Birds"),
@@ -79,7 +79,7 @@ enum Interest {
   rabbits(InterestCategory.pets, "Rabbits"),
   snakes(InterestCategory.pets, "Snakes"),
   turtles(InterestCategory.pets, "Turtles"),
-  otherPets(InterestCategory.pets, "Other");
+  otherPets(InterestCategory.pets, "Other Pets");
 
   const Interest(this.category, this.title);
   final InterestCategory category;
