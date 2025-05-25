@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'user_matching_provider.g.dart';
 
 // MATCHING USERS
 class UserMatch {
@@ -26,13 +29,14 @@ class UserMatch {
 
   /// total number of commonalities (interests + travel styles)
   int get totalCommonalities => commonInterests + commonTravelStyles;
-  
+
   // checker if there is at least one common interest or travel style
   bool get hasAnyCommonalities => commonInterests > 0 || commonTravelStyles > 0;
 }
 
 // RIVERPOD PROVIDER (find matching users)
-final userMatchingProvider = StreamProvider<List<UserMatch>>((ref) {
+@riverpod
+Stream<List<UserMatch>> userMatching(Ref ref) {
   final currentUser = FirebaseAuth.instance.currentUser;
   if (currentUser == null) return Stream.value([]);
 
@@ -41,30 +45,39 @@ final userMatchingProvider = StreamProvider<List<UserMatch>>((ref) {
       .doc(currentUser.uid)
       .snapshots()
       .asyncMap((currentUserDoc) async {
-    if (!currentUserDoc.exists) return [];
+        if (!currentUserDoc.exists) return [];
 
-    // gets the current/logged in user's interests and travel styles
-    final currentUserData = currentUserDoc.data()!;
-    final currentUserInterests = List<String>.from(currentUserData['interests'] ?? []);
-    final currentUserTravelStyles = List<String>.from(currentUserData['travelStyles'] ?? []);
+        // gets the current/logged in user's interests and travel styles
+        final currentUserData = currentUserDoc.data()!;
+        final currentUserInterests = List<String>.from(
+          currentUserData['interests'] ?? [],
+        );
+        final currentUserTravelStyles = List<String>.from(
+          currentUserData['travelStyles'] ?? [],
+        );
 
-    //retrieve all other users from firestore
-    final allUsersSnapshot = await FirebaseFirestore.instance.collection('users').get();
-    
-    return allUsersSnapshot.docs
-        .where((doc) => doc.id != currentUser.uid)
-        .map((doc) => _createUserMatch(
-              doc,
-              currentUserInterests,
-              currentUserTravelStyles,
-            ))
-        // filter out users with no commonalities
-        .where((match) => match.hasAnyCommonalities)
-        // sort matches by total number of commonalities (descending)
-        .toList()
-      ..sort((a, b) => b.totalCommonalities.compareTo(a.totalCommonalities));
-  });
-});
+        //retrieve all other users from firestore
+        final allUsersSnapshot =
+            await FirebaseFirestore.instance.collection('users').get();
+
+        return allUsersSnapshot.docs
+            .where((doc) => doc.id != currentUser.uid)
+            .map(
+              (doc) => _createUserMatch(
+                doc,
+                currentUserInterests,
+                currentUserTravelStyles,
+              ),
+            )
+            // filter out users with no commonalities
+            .where((match) => match.hasAnyCommonalities)
+            // sort matches by total number of commonalities (descending)
+            .toList()
+          ..sort(
+            (a, b) => b.totalCommonalities.compareTo(a.totalCommonalities),
+          );
+      });
+}
 
 // retrieve current/logged in user's interests and travel styles
 UserMatch _createUserMatch(
@@ -76,8 +89,14 @@ UserMatch _createUserMatch(
   final userInterests = List<String>.from(userData['interests'] ?? []);
   final userTravelStyles = List<String>.from(userData['travelStyles'] ?? []);
 
-  final commonInterests = _countCommonItems(userInterests, currentUserInterests);
-  final commonTravelStyles = _countCommonItems(userTravelStyles, currentUserTravelStyles);
+  final commonInterests = _countCommonItems(
+    userInterests,
+    currentUserInterests,
+  );
+  final commonTravelStyles = _countCommonItems(
+    userTravelStyles,
+    currentUserTravelStyles,
+  );
 
   return UserMatch(
     userId: doc.id,
@@ -93,5 +112,7 @@ UserMatch _createUserMatch(
 
 // count the number of common items between two lists (list1 and list2).
 int _countCommonItems(List<String> list1, List<String> list2) {
-  return list1.where((item) => list2.contains(item)).length;  /// return count of similar items in both lists.
-} 
+  return list1.where((item) => list2.contains(item)).length;
+
+  /// return count of similar items in both lists.
+}
