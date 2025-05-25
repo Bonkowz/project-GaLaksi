@@ -27,6 +27,7 @@ dependencies:
   pretty_qr_code: ^3.4.0
   mobile_scanner: ^7.0.0
   timelines_plus: ^1.0.6
+  animated_list_plus: ^0.5.2
 
 dev_dependencies:
   flutter_test:
