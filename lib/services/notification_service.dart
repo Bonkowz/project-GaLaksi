@@ -30,6 +30,12 @@ class NotificationService {
     );
 
     await notificationsPlugin.initialize(initSettings);
+
+    notificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.requestNotificationsPermission();
   }
 
   NotificationDetails notificationDetails() {
@@ -50,12 +56,7 @@ class NotificationService {
     String? title,
     String? body,
   }) async {
-    return notificationsPlugin.show(
-      id,
-      title,
-      body,
-      const NotificationDetails(),
-    );
+    return notificationsPlugin.show(id, title, body, notificationDetails());
   }
 
   Future<void> scheduleNotification({
@@ -69,7 +70,7 @@ class NotificationService {
       title,
       body,
       convertToTZ(scheduledDate!, "Asia/Manila"),
-      const NotificationDetails(),
+      notificationDetails(),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
   }
