@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:galaksi/widgets/user_avatar.dart';
 import '../../providers/user_matching_provider.dart';
 import '../../models/user/interest_model.dart';
 import '../../models/user/travel_style_model.dart';
@@ -60,6 +61,7 @@ class _SuggestionsTab extends ConsumerWidget {
             return _UserProfileCard(
               name: '${match.firstName} ${match.lastName}',
               username: '@${match.username}',
+              image: match.image,
               interests: match.interests,
               travelStyles: match.travelStyles,
               commonInterests: match.commonInterests,
@@ -79,6 +81,7 @@ class _UserProfileCard extends StatelessWidget {
   const _UserProfileCard({
     required this.name,
     required this.username,
+    required this.image,
     required this.interests,
     required this.travelStyles,
     required this.commonInterests,
@@ -87,6 +90,7 @@ class _UserProfileCard extends StatelessWidget {
 
   final String name;
   final String username;
+  final String image;
   final List<String> interests;
   final List<String> travelStyles;
   final int commonInterests;
@@ -103,10 +107,7 @@ class _UserProfileCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CircleAvatar(
-              radius: 30,
-              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            ),
+            UserAvatar(image: image, firstName: name),
             const SizedBox(width: 16.0),
             Expanded(
               child: Column(
