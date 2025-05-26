@@ -189,18 +189,12 @@ class _FriendRequestCardDetails extends ConsumerWidget {
             ),
             IconButton(
               icon: const Icon(Symbols.more_vert_rounded),
-              color: Theme.of(context).colorScheme.primary,
               onPressed: () {
                 final isOutgoingRequest =
                     friendship.initiatorId == currentUser.uid;
                 showModalBottomSheet(
                   context: context,
                   showDragHandle: true,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(20),
-                    ),
-                  ),
                   builder:
                       (context) => FriendRequestBottomSheet(
                         user: user,

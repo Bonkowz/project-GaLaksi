@@ -120,9 +120,8 @@ class _UserProfileCard extends ConsumerWidget {
                 ],
               ),
             ),
-            // Refactored IconButton logic
-            Consumer(
-              builder: (context, ref, child) {
+            Builder(
+              builder: (context) {
                 // Find friendship from the watched state
                 Friendship? friendship;
                 for (final f in friendships) {
@@ -148,11 +147,6 @@ class _UserProfileCard extends ConsumerWidget {
                     showModalBottomSheet(
                       context: context,
                       showDragHandle: true,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(20),
-                        ),
-                      ),
                       builder:
                           (bottomSheetContext) => FriendRequestBottomSheet(
                             user: user,
@@ -169,11 +163,6 @@ class _UserProfileCard extends ConsumerWidget {
                     showModalBottomSheet(
                       context: context,
                       showDragHandle: true,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(20),
-                        ),
-                      ),
                       builder:
                           (bottomSheetContext) => _SendFriendRequestBottomSheet(
                             targetUser: user,
@@ -182,10 +171,8 @@ class _UserProfileCard extends ConsumerWidget {
                     );
                   };
                 }
-
                 return IconButton(
                   icon: Icon(iconData),
-                  color: Theme.of(context).colorScheme.primary,
                   onPressed: onPressedAction,
                 );
               },
