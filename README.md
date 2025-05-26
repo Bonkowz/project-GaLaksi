@@ -8,7 +8,11 @@
 - Vender, Alan Benedict Sison
 
 ## What is galaksi?
+GaLaksi! is a mobile travel planning app that helps users easily organize trips, create detailed itineraries, and connect with others who share similar interests and travel styles. Built with Firebase and designed for convenience, GaLaksi! lets users manage travel plans, share them via QR codes, and receive smart reminders—all in one sleek, user-friendly platform.
 
 ## How to install?
-
+1) Download the APK file.
+2) Run and install the app on your phone.
+3) Congratulations you are now a traveller of GaLaksi!
+   
 ## How to use Galaski?
