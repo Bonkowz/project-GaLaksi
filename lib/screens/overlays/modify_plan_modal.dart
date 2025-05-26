@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/apis/firebase_firestore_api.dart';
-import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
-import 'package:galaksi/providers/auth/auth_notifier.dart';
-import 'package:galaksi/providers/notifications/notification_service_provider.dart';
-import 'package:galaksi/providers/travel_plan/edit_travel_plan_notifier.dart';
 import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
 import 'package:galaksi/screens/travel_details/edit_travel_plan_page.dart';
 
 class ModifyPlanModal extends ConsumerWidget {
-  const ModifyPlanModal({super.key, required this.travelPlanId});
+  const ModifyPlanModal({required this.travelPlanId, super.key});
 
   final String travelPlanId;
 
@@ -31,7 +27,7 @@ class ModifyPlanModal extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Modify Plan',
+                    'Modify plan',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   IconButton(
@@ -44,13 +40,30 @@ class ModifyPlanModal extends ConsumerWidget {
               ),
               const SizedBox(height: 16.0),
               Text(
-                'Edit travel plan or delete',
+                'What would you like to do with this travel plan?',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 16.0),
               Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      Future.delayed(const Duration(milliseconds: 500), () {
+                        FirebaseFirestoreApi().deleteTravelPlan(travelPlan!.id);
+                      });
+                    },
+                    child: Text(
+                      'Delete',
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16.0),
+                  FilledButton(
                     onPressed: () {
                       Navigator.pop(context);
                       Navigator.of(context).push(
@@ -65,22 +78,7 @@ class ModifyPlanModal extends ConsumerWidget {
                       'Edit',
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                      Future.delayed(const Duration(milliseconds: 500), () {
-                        FirebaseFirestoreApi().deleteTravelPlan(travelPlan!.id);
-                      });
-                    },
-                    child: Text(
-                      'Delete',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        color: Theme.of(context).colorScheme.error,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
                   ),
