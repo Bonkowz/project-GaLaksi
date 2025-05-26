@@ -73,27 +73,22 @@ class FriendRequestBottomSheet extends ConsumerWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
-
-          // Action buttons
           if (isOutgoingRequest)
             SizedBox(
               width: double.infinity,
               child: FilledButton.icon(
                 onPressed: () {
-                  // Current user is cancelling the request they sent to "user"
                   friendshipNotifier.rejectFriendship(
-                    userId: currentUser.uid, // The one performing the action
-                    requesterUserId:
-                        user.uid, // The other user in the friendship
+                    userId: currentUser.uid,
+                    requesterUserId: user.uid,
                   );
                   Navigator.of(context).pop();
                 },
                 icon: const Icon(Symbols.cancel_rounded),
                 label: const Text("Cancel Request"),
                 style: FilledButton.styleFrom(
-                  backgroundColor: colorScheme.error,
-                  foregroundColor: colorScheme.onError,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  backgroundColor: colorScheme.errorContainer,
+                  foregroundColor: colorScheme.onErrorContainer,
                 ),
               ),
             )
@@ -103,12 +98,9 @@ class FriendRequestBottomSheet extends ConsumerWidget {
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () {
-                      // Current user is rejecting a request from "user"
                       friendshipNotifier.rejectFriendship(
-                        userId:
-                            currentUser.uid, // The one performing the action
-                        requesterUserId:
-                            user.uid, // The one who sent the request
+                        userId: currentUser.uid,
+                        requesterUserId: user.uid,
                       );
                       Navigator.of(context).pop();
                     },
@@ -117,7 +109,6 @@ class FriendRequestBottomSheet extends ConsumerWidget {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: colorScheme.error,
                       side: BorderSide(color: colorScheme.error),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                   ),
                 ),
@@ -133,9 +124,7 @@ class FriendRequestBottomSheet extends ConsumerWidget {
                     },
                     icon: const Icon(Symbols.person_add_rounded),
                     label: const Text("Accept"),
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
+                    style: FilledButton.styleFrom(),
                   ),
                 ),
               ],

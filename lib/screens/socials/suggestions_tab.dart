@@ -259,9 +259,6 @@ class _SendFriendRequestBottomSheet extends ConsumerWidget {
                   },
                   icon: const Icon(Symbols.send_rounded),
                   label: const Text("Send Request"),
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
                 ),
               ),
             ],
