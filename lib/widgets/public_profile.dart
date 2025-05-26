@@ -24,6 +24,7 @@ class _PublicProfileState extends ConsumerState<PublicProfile> {
   final double coverHeight = 150;
   final double profileHeight = 200;
   late final user = widget.user;
+
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
@@ -32,9 +33,69 @@ class _PublicProfileState extends ConsumerState<PublicProfile> {
       builder: (context, scrollController) {
         return SingleChildScrollView(
           controller: scrollController,
-          child: Column(children: [buildTop(), _profileInfo(), buildAbout()]),
+          child: Column(
+            children: [
+              buildTop(),
+              _profileInfo(),
+              _canViewPrivateDetails()
+                  ? buildAbout()
+                  : _buildPrivateProfileMessage(),
+            ],
+          ),
         );
       },
+    );
+  }
+
+  bool _canViewPrivateDetails() {
+    final currentUser = ref.watch(authNotifierProvider).user!;
+
+    // If the profile is not private, allow access
+    if (!user.isPrivate) {
+      return true;
+    }
+
+    // If profile is private, check friendship status
+    final friendships = ref.watch(friendshipNotifierProvider);
+    for (final friendship in friendships) {
+      if (friendship.involves(currentUser.uid) &&
+          friendship.involves(user.uid) &&
+          friendship.status == FriendshipStatus.friends) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  Widget _buildPrivateProfileMessage() {
+    return Padding(
+      padding: const EdgeInsets.all(32.0),
+      child: Column(
+        children: [
+          Icon(
+            Symbols.lock_rounded,
+            size: 64,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            "Private Profile",
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "This user's profile is private. Send a friend request to view their details.",
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -92,23 +153,12 @@ class _PublicProfileState extends ConsumerState<PublicProfile> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            spacing: 8,
-            children: [
-              Text(
-                "@${user.username}",
-                style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                  color: Theme.of(context).colorScheme.outline,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              if (user.isPrivate)
-                Icon(
-                  Symbols.visibility_off_rounded,
-                  color: Theme.of(context).colorScheme.outline,
-                ),
-            ],
+          Text(
+            "@${user.username}",
+            style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+              color: Theme.of(context).colorScheme.outline,
+            ),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
           _buildFriendButton(),
@@ -118,6 +168,11 @@ class _PublicProfileState extends ConsumerState<PublicProfile> {
   }
 
   Widget buildAbout() {
+    // Only show detailed information if user can view private details
+    if (!_canViewPrivateDetails()) {
+      return const SizedBox.shrink();
+    }
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
