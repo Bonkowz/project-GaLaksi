@@ -6,6 +6,7 @@ import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/providers/user_profile/friendship_notifier.dart';
 import 'package:galaksi/providers/user_profile/user_profile_notifier.dart';
 import 'package:galaksi/utils/dummy_data.dart';
+import 'package:galaksi/widgets/friend_bottom_sheet.dart';
 import 'package:galaksi/widgets/user_avatar.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -122,81 +123,6 @@ class _FriendCardDetails extends ConsumerWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class FriendBottomSheet extends ConsumerWidget {
-  const FriendBottomSheet({
-    required this.targetUser,
-    required this.currentUser,
-    super.key,
-  });
-
-  final User targetUser;
-  final User currentUser;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final friendshipNotifier = ref.read(friendshipNotifierProvider.notifier);
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              UserAvatar(user: targetUser),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "${targetUser.firstName} ${targetUser.lastName}",
-                      style: textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      "@${targetUser.username}",
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: FilledButton.icon(
-                  onPressed: () {
-                    friendshipNotifier.unfriend(
-                      userId: currentUser.uid,
-                      otherUserId: targetUser.uid,
-                    );
-                    Navigator.of(context).pop();
-                  },
-                  icon: const Icon(Symbols.person_remove_rounded),
-                  label: const Text("Unfriend"),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: colorScheme.errorContainer,
-                    foregroundColor: colorScheme.onErrorContainer,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-        ],
       ),
     );
   }

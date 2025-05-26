@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:galaksi/models/user/user_model.dart';
+import 'package:galaksi/widgets/public_profile.dart';
 
 class UserAvatar extends StatelessWidget {
   const UserAvatar({
@@ -27,8 +28,9 @@ class UserAvatar extends StatelessWidget {
     final effectiveTextColor =
         textColor ?? Theme.of(context).colorScheme.onPrimaryContainer;
 
+    Widget avatarContent;
     if (user.image.isEmpty) {
-      return CircleAvatar(
+      avatarContent = CircleAvatar(
         backgroundColor: effectiveBackgroundColor,
         radius: radius,
         child: Text(
@@ -39,10 +41,23 @@ class UserAvatar extends StatelessWidget {
         ),
       );
     } else {
-      return CircleAvatar(
+      avatarContent = CircleAvatar(
         foregroundImage: MemoryImage(base64Decode(user.image)),
         radius: radius,
       );
     }
+    return GestureDetector(
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          builder: (context) => PublicProfile(user: user),
+          showDragHandle: true,
+          useSafeArea: true,
+          isScrollControlled: true,
+          backgroundColor: Theme.of(context).colorScheme.surface,
+        );
+      },
+      child: avatarContent,
+    );
   }
 }

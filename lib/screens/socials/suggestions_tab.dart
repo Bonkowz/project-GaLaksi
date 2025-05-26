@@ -6,6 +6,7 @@ import 'package:galaksi/models/user/user_model.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/providers/user_profile/friendship_notifier.dart';
 import 'package:galaksi/providers/user_profile/user_matching_provider.dart';
+import 'package:galaksi/widgets/friend_bottom_sheet.dart';
 import 'package:galaksi/widgets/friend_request_bottom_sheet.dart';
 import 'package:galaksi/widgets/user_avatar.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -138,7 +139,14 @@ class _UserProfileCard extends ConsumerWidget {
                     friendship.status == FriendshipStatus.friends) {
                   iconData = Symbols.person_check_rounded;
                   onPressedAction = () {
-                    // TODO: Implement action for already friends (e.g., view profile or unfriend)
+                    showModalBottomSheet(
+                      context: context,
+                      builder:
+                          (context) => FriendBottomSheet(
+                            targetUser: user,
+                            currentUser: currentUser,
+                          ),
+                    );
                   };
                 } else if (friendship != null &&
                     friendship.status == FriendshipStatus.pending) {
