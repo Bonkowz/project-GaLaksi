@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 
 class TravelActivity {
   TravelActivity({
@@ -39,6 +40,30 @@ class TravelActivity {
       'reminders': reminders.map((e) => {'minutes': e.inMinutes}).toList(),
     };
   }
+
+  /// SRC: https://medium.com/@hamxa678/operator-overloading-in-dart-517dde92e23d
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! TravelActivity) return false;
+
+    final listEquals = const DeepCollectionEquality().equals;
+
+    return startAt == other.startAt &&
+        endAt == other.endAt &&
+        title == other.title &&
+        location == other.location && // Make sure Place also overrides ==
+        listEquals(reminders, other.reminders);
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    startAt,
+    endAt,
+    title,
+    location,
+    const DeepCollectionEquality().hash(reminders),
+  );
 }
 
 class Place {
@@ -58,4 +83,15 @@ class Place {
   Map<String, dynamic> toMap() {
     return {'name': name, 'display_name': displayName};
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! Place) return false;
+
+    return name == other.name && displayName == other.displayName;
+  }
+
+  @override
+  int get hashCode => Object.hash(name, displayName);
 }

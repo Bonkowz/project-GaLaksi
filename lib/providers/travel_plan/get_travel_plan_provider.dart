@@ -114,3 +114,85 @@ Stream<TravelPlan?> travelPlanStream(Ref ref, String travelPlanId) {
     },
   );
 }
+
+@riverpod
+Future<List<TravelPlan>> myTravelPlansSnapshot(Ref ref) async {
+  final currentAuthUser = ref.watch(currentUserStreamProvider);
+  final authUid = currentAuthUser.when(
+    data: (user) => user?.uid,
+    error: (error, stackTrace) {
+      debugPrint("Error fetching current user: $stackTrace");
+      return null;
+    },
+    loading: () {
+      debugPrint("Auth data is loading.");
+      return null;
+    },
+  );
+
+  // If the UID is null, we cannot create a profile
+  if (authUid == null) {
+    debugPrint("Error fetching travel plans");
+    return Future.value([]);
+  }
+
+  final result = await FirebaseFirestoreApi().fetchUserPlansSnapshot(authUid);
+
+  return result.when(
+    onSuccess:
+        (success) =>
+            success.data.docs
+                .map((doc) => TravelPlan.fromDocument(doc))
+                .toList(),
+    onFailure: (error) {
+      debugPrint("Error fetching my travel plans: ${error.message}");
+      return Future.value([]);
+    },
+  );
+}
+
+@riverpod
+Future<List<TravelPlan>> sharedTravelPlansSnapshot(Ref ref) async {
+  final currentAuthUser = ref.watch(currentUserStreamProvider);
+  final authUid = currentAuthUser.when(
+    data: (user) => user?.uid,
+    error: (error, stackTrace) {
+      debugPrint("Error fetching current user: $stackTrace");
+      return null;
+    },
+    loading: () {
+      debugPrint("Auth data is loading.");
+      return null;
+    },
+  );
+
+  // If the UID is null, we cannot create a profile
+  if (authUid == null) {
+    debugPrint("Error fetching travel plans");
+    return Future.value([]);
+  }
+
+  final result = await FirebaseFirestoreApi().fetchPlansSharedWithUserSnapshot(
+    authUid,
+  );
+
+  return result.when(
+    onSuccess:
+        (success) =>
+            success.data.docs
+                .map((doc) => TravelPlan.fromDocument(doc))
+                .toList(),
+    onFailure: (error) {
+      debugPrint("Error fetching shared travel plans: ${error.message}");
+      return Future.value([]);
+    },
+  );
+}
+
+@riverpod
+Future<List<TravelPlan>> allTravelPlansSnapshot(Ref ref) async {
+  final userPlans = await ref.watch(myTravelPlansSnapshotProvider.future);
+  final sharedPlans = await ref.watch(sharedTravelPlansSnapshotProvider.future);
+
+  return [...userPlans, ...sharedPlans];
+}

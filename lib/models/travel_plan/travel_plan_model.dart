@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:galaksi/models/travel_plan/accommodation_model.dart';
 import 'package:galaksi/models/travel_plan/flight_detail_model.dart';
 import 'package:galaksi/models/travel_plan/note_model.dart';
@@ -69,5 +70,19 @@ class TravelPlan {
       'flightDetails': flightDetails.map((flight) => flight.toMap()).toList(),
       'accomodations': accommodations.map((accom) => accom.toMap()).toList(),
     };
+  }
+
+  // SRC: https://stackoverflow.com/questions/76697156/how-do-i-compare-dart-records-with-deep-equality
+  bool hasDifferentActivities(TravelPlan other) {
+    final deepEq = const DeepCollectionEquality();
+
+    // Deep equality comparison for lists compares each element
+    return !deepEq.equals(activities, other.activities);
+  }
+
+  bool hasDifferentSharedWith(TravelPlan other) {
+    final deepEq = const DeepCollectionEquality();
+
+    return !deepEq.equals(sharedWith, other.sharedWith);
   }
 }

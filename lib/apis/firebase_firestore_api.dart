@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:galaksi/models/travel_plan/accommodation_model.dart';
 import 'package:galaksi/models/travel_plan/flight_detail_model.dart';
 import 'package:galaksi/models/travel_plan/note_model.dart';
+import 'package:galaksi/models/notification_model.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
 import 'package:galaksi/models/user/user_model.dart';
@@ -290,6 +291,8 @@ class FirebaseFirestoreApi {
       final snapshot = await docRef.get();
       final data = snapshot.data();
 
+      debugPrint("Starting add activity");
+
       if (data == null || !data.containsKey('activities')) {
         await docRef.update({
           'activities': FieldValue.arrayUnion([newActivity.toMap()]),
@@ -301,12 +304,15 @@ class FirebaseFirestoreApi {
       }
 
       final List<dynamic> docActivities = data['activities'];
-      final List<TravelActivity> existingActivities =
+      final existingActivities =
           docActivities.map((doc) => TravelActivity.fromMap(doc)).toList();
 
+      debugPrint("Checking for conflicts");
       // Check for conflict
       for (final activity in existingActivities) {
+        debugPrint("Conflict check");
         if (_hasTimeConflict(newActivity, activity)) {
+          debugPrint("Has conflict");
           return FirestoreFailure(
             message:
                 "Time conflict with activity: ${activity.title} from ${StringUtils.getActivityTimeRange(activity)}",
@@ -315,6 +321,7 @@ class FirebaseFirestoreApi {
         }
       }
 
+      debugPrint("No conflicts");
       // No conflict, add the activity
       await docRef.update({
         'activities': FieldValue.arrayUnion([newActivity.toMap()]),
@@ -331,6 +338,191 @@ class FirebaseFirestoreApi {
       );
     } catch (e) {
       debugPrint("Error adding travel activity: $e");
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  Future<FirestoreResult<bool>> addCloudNotification(
+    UserNotification notification,
+  ) async {
+    try {
+      await db
+          .collection("notifications")
+          .add(notification.toMap())
+          .timeout(const Duration(seconds: 10));
+      return const FirestoreSuccess(
+        message: "Notification added succesfully.",
+        data: true,
+      );
+    } on TimeoutException catch (_) {
+      return const FirestoreFailure(
+        message: "Request timed out. Please check your internet connection.",
+        error: FirestoreFailureError.networkError,
+      );
+    } catch (e) {
+      debugPrint("Error creating travel plan: $e");
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  Future<FirestoreResult<bool>> deleteCloudNotification(String id) async {
+    try {
+      final notificationSnapshot =
+          await db
+              .collection("notifications")
+              .where('notificationID', isEqualTo: id)
+              .limit(1)
+              .get();
+
+      if (notificationSnapshot.docs.isNotEmpty) {
+        await notificationSnapshot.docs.first.reference.delete();
+      } else {
+        debugPrint("Notification does not exist: $id");
+      }
+      return const FirestoreSuccess(
+        message: "Notification deleted succesfully.",
+        data: true,
+      );
+    } on TimeoutException catch (_) {
+      return const FirestoreFailure(
+        message: "Request timed out. Please check your internet connection.",
+        error: FirestoreFailureError.networkError,
+      );
+    } catch (e) {
+      debugPrint("Error creating travel plan: $e");
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  FirestoreResult<Stream<QuerySnapshot<Map<String, dynamic>>>>
+  fetchNotificationsToUser(String uid) {
+    try {
+      return FirestoreSuccess(
+        message: "Fetched notifications successfully.",
+        data:
+            db
+                .collection("notifications")
+                .where('to', arrayContains: uid)
+                .snapshots(),
+      );
+    } catch (e) {
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  Future<FirestoreResult<DocumentSnapshot<Map<String, dynamic>>>>
+  fetchNotificationFromID(String id) async {
+    try {
+      debugPrint("[NOT_TRACE] Trying to find notif: $id");
+      final notificationSnapshot =
+          await db
+              .collection("notifications")
+              .where('notificationID', isEqualTo: id)
+              .limit(1)
+              .get();
+
+      if (notificationSnapshot.docs.isEmpty) {
+        debugPrint("[NOT_TRACE] Notification not found!");
+        return const FirestoreFailure(
+          message: "Notification not found.",
+          error: FirestoreFailureError.notFound,
+        );
+      }
+
+      debugPrint("[NOT_TRACE] Notification found!");
+      return FirestoreSuccess(
+        message: "Notification fetched successfully",
+        data: notificationSnapshot.docs.first,
+      );
+    } catch (e) {
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  Future<FirestoreResult<bool>> markNotificationAsRead(String id) async {
+    try {
+      final querySnapshot =
+          await db
+              .collection("notifications")
+              .where('notificationID', isEqualTo: id)
+              .limit(1)
+              .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        return const FirestoreFailure(
+          message: "Notification not found.",
+          error: FirestoreFailureError.unknown,
+        );
+      }
+
+      final docId = querySnapshot.docs.first.id;
+
+      await db.collection("notifications").doc(docId).update({'isRead': true});
+
+      return const FirestoreSuccess(
+        message: "Notification marked as read successfully.",
+        data: true,
+      );
+    } on TimeoutException catch (_) {
+      return const FirestoreFailure(
+        message: "Request timed out. Please check your internet connection.",
+        error: FirestoreFailureError.networkError,
+      );
+    } catch (e) {
+      debugPrint("Error marking notification as read: $e");
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  Future<FirestoreResult<QuerySnapshot<Map<String, dynamic>>>>
+  fetchUserPlansSnapshot(String uid) async {
+    try {
+      return FirestoreSuccess(
+        message: "Fetched user travel plans successfully.",
+        data:
+            await db
+                .collection("plans")
+                .where('creatorID', isEqualTo: uid)
+                .get(),
+      );
+    } catch (e) {
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  Future<FirestoreResult<QuerySnapshot<Map<String, dynamic>>>>
+  fetchPlansSharedWithUserSnapshot(String uid) async {
+    try {
+      return FirestoreSuccess(
+        message: "Fetched shared travel plans successfully.",
+        data:
+            await db
+                .collection("plans")
+                .where('sharedWith', arrayContains: uid)
+                .get(),
+      );
+    } catch (e) {
       return const FirestoreFailure(
         message: "An unknown error occurred.",
         error: FirestoreFailureError.unknown,
@@ -364,7 +556,10 @@ class FirebaseFirestoreApi {
     }
   }
 
-  Future<FirestoreResult<bool>> addFlight(String planID, FlightDetail flight) async {
+  Future<FirestoreResult<bool>> addFlight(
+    String planID,
+    FlightDetail flight,
+  ) async {
     try {
       final docRef = FirebaseFirestore.instance.collection("plans").doc(planID);
 
@@ -389,8 +584,11 @@ class FirebaseFirestoreApi {
       );
     }
   }
-  
-  Future<FirestoreResult<bool>> addAccommodation(String planID, Accommodation accommodation) async {
+
+  Future<FirestoreResult<bool>> addAccommodation(
+    String planID,
+    Accommodation accommodation,
+  ) async {
     try {
       final docRef = FirebaseFirestore.instance.collection("plans").doc(planID);
 

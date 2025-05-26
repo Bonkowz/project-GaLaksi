@@ -115,6 +115,7 @@ abstract class StringUtils {
 
       switch (daysUntil) {
         case 1:
+          if (DateTime.now().day == earliestStart.day) return "Happening today";
           return "Happening tomorrow";
         case < 30:
           return "Happening in $daysUntil days";
@@ -133,5 +134,25 @@ abstract class StringUtils {
     final timeRange = "$startTime to $endTime";
 
     return timeRange;
+  }
+
+  static String timeAgo(DateTime sentTime) {
+    final now = DateTime.now();
+    final diff = now.difference(sentTime);
+
+    if (diff.inSeconds < 5) {
+      return "just now";
+    } else if (diff.inSeconds < 60) {
+      return "${diff.inSeconds}s";
+    } else if (diff.inMinutes < 60) {
+      return "${diff.inMinutes}m";
+    } else if (diff.inHours < 24) {
+      return "${diff.inHours}h";
+    } else if (diff.inDays < 7) {
+      return "${diff.inDays}d";
+    } else {
+      final weeks = (diff.inDays / 7).floor();
+      return "$weeks week${weeks > 1 ? 's' : ''} ago";
+    }
   }
 }
