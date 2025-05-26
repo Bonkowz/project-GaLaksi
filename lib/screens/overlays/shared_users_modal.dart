@@ -43,31 +43,35 @@ class _SharedUsersModalState extends ConsumerState<SharedUsersModal> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16.0),
-              ListView.builder(
-                shrinkWrap: true,
-                itemCount: widget.users.length,
-                itemBuilder: (context, index) {
-                  final userId = widget.users[index];
-                  final user = ref.watch(userProfileStreamProvider(userId));
+              const SizedBox(height: 4.0),
+              widget.users.isEmpty
+                  ? const Center(child: Text("No shared users yet."))
+                  : ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: widget.users.length,
+                    itemBuilder: (context, index) {
+                      final userId = widget.users[index];
+                      final user = ref.watch(userProfileStreamProvider(userId));
 
-                  return user.when(
-                    data: (user) {
-                      return _UserTile(user: user);
-                    },
-                    error: (error, stackTrace) {
-                      return ListTile(
-                        leading: const Icon(Icons.error, color: Colors.red),
-                        title: const Text('Failed to load user'),
-                        subtitle: Text(error.toString()),
+                      return user.when(
+                        data: (user) {
+                          return _UserTile(user: user);
+                        },
+                        error: (error, stackTrace) {
+                          return ListTile(
+                            leading: const Icon(Icons.error, color: Colors.red),
+                            title: const Text('Failed to load user'),
+                            subtitle: Text(error.toString()),
+                          );
+                        },
+                        loading: () {
+                          return Skeletonizer(
+                            child: _UserTile(user: dummyUser),
+                          );
+                        },
                       );
                     },
-                    loading: () {
-                      return Skeletonizer(child: _UserTile(user: dummyUser));
-                    },
-                  );
-                },
-              ),
+                  ),
             ],
           ),
         ),
@@ -84,6 +88,7 @@ class _UserTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      contentPadding: EdgeInsets.zero,
       leading: UserAvatar(
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         textColor: Theme.of(context).colorScheme.onPrimaryContainer,
@@ -93,12 +98,17 @@ class _UserTile extends StatelessWidget {
       title: Text(
         "${user.firstName} ${user.lastName}",
         style: const TextStyle(fontWeight: FontWeight.bold),
+
+        overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(user.username),
       // TODO: add role validation
       // subtitle: Text(testSharedUser[index]['role']!),
       trailing: IconButton(
-        icon: const Icon(Symbols.remove),
+        icon: Icon(
+          Symbols.remove_circle,
+          color: Theme.of(context).colorScheme.error,
+        ),
         onPressed: () {
           // TODO: add remove here
         },

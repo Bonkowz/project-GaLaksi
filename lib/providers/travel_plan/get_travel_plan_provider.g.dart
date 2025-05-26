@@ -25,6 +25,26 @@ final myTravelPlansStreamProvider = StreamProvider<List<TravelPlan>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MyTravelPlansStreamRef = StreamProviderRef<List<TravelPlan>>;
+String _$sharedTravelPlansStreamHash() =>
+    r'90ed5962b8f2630daeac0f5267eb5d4ab0b217ba';
+
+/// See also [sharedTravelPlansStream].
+@ProviderFor(sharedTravelPlansStream)
+final sharedTravelPlansStreamProvider =
+    StreamProvider<List<TravelPlan>>.internal(
+      sharedTravelPlansStream,
+      name: r'sharedTravelPlansStreamProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$sharedTravelPlansStreamHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef SharedTravelPlansStreamRef = StreamProviderRef<List<TravelPlan>>;
 String _$travelPlanStreamHash() => r'76781cbf92b1e0ab117926188eb320b2343d4ee8';
 
 /// Copied from Dart SDK
@@ -168,5 +188,68 @@ class _TravelPlanStreamProviderElement
   String get travelPlanId => (origin as TravelPlanStreamProvider).travelPlanId;
 }
 
+String _$myTravelPlansSnapshotHash() =>
+    r'39c846bcab993185e6bef57dd03881746cb36279';
+
+/// See also [myTravelPlansSnapshot].
+@ProviderFor(myTravelPlansSnapshot)
+final myTravelPlansSnapshotProvider =
+    AutoDisposeFutureProvider<List<TravelPlan>>.internal(
+      myTravelPlansSnapshot,
+      name: r'myTravelPlansSnapshotProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$myTravelPlansSnapshotHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef MyTravelPlansSnapshotRef =
+    AutoDisposeFutureProviderRef<List<TravelPlan>>;
+String _$sharedTravelPlansSnapshotHash() =>
+    r'ae8c77b88f2a69949a86fbdde625fadbea387c4a';
+
+/// See also [sharedTravelPlansSnapshot].
+@ProviderFor(sharedTravelPlansSnapshot)
+final sharedTravelPlansSnapshotProvider =
+    AutoDisposeFutureProvider<List<TravelPlan>>.internal(
+      sharedTravelPlansSnapshot,
+      name: r'sharedTravelPlansSnapshotProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$sharedTravelPlansSnapshotHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef SharedTravelPlansSnapshotRef =
+    AutoDisposeFutureProviderRef<List<TravelPlan>>;
+String _$allTravelPlansSnapshotHash() =>
+    r'243d436b8edfcbddb6d15ca87fa405bf062ea27a';
+
+/// See also [allTravelPlansSnapshot].
+@ProviderFor(allTravelPlansSnapshot)
+final allTravelPlansSnapshotProvider =
+    AutoDisposeFutureProvider<List<TravelPlan>>.internal(
+      allTravelPlansSnapshot,
+      name: r'allTravelPlansSnapshotProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$allTravelPlansSnapshotHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AllTravelPlansSnapshotRef =
+    AutoDisposeFutureProviderRef<List<TravelPlan>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

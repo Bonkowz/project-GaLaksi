@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:galaksi/screens/main/find_people_page.dart';
 import 'package:galaksi/screens/main/home_page.dart';
-import 'package:galaksi/screens/main/my_friends_page.dart';
+import 'package:galaksi/screens/main/notifications_page.dart';
 import 'package:galaksi/screens/main/profile_page.dart';
 import 'package:galaksi/screens/overlays/create_travel_plan_page.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 /// [BasePage] will act as a Parent of the following pages through a [NavigationBar]:
-/// [HomePage], [FindPeoplePage], [ProfilePage], [MyFriendsPage]
+/// [HomePage], [FindPeoplePage], [ProfilePage], [NotificationsPage]
 class BasePage extends StatefulWidget {
   const BasePage({super.key});
 
@@ -23,7 +23,7 @@ class _BasePageState extends State<BasePage> {
         const HomePage(),
         const FindPeoplePage(),
         const ProfilePage(),
-        const MyFriendsPage(),
+        const NotificationsPage(),
       ].map((page) {
         return AnimatedSwitcher(duration: Durations.short3, child: page);
       }).toList();

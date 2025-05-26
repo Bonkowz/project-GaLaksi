@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
+import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
+import 'package:galaksi/screens/overlays/modify_plan_modal.dart';
 import 'package:galaksi/screens/travel_details/edit_travel_plan_page.dart';
 import 'package:galaksi/screens/travel_details/itinerary_tab.dart';
 import 'package:galaksi/screens/travel_details/notes_tab.dart';
@@ -59,6 +61,8 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
   }
 
   Widget buildTravelPlan(TravelPlan plan) {
+    final authState = ref.watch(authNotifierProvider);
+    final user = authState.user;
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder:
@@ -87,18 +91,30 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
                     },
                   ),
                   const SizedBox(width: 4.0),
-                  IconButton(
-                    icon: const Icon(Symbols.settings),
-                    onPressed: () {
-                      debugPrint("Pressed");
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder:
-                              (context) => EditTravelPlanPage(travelPlan: plan),
-                        ),
-                      );
-                    },
-                  ),
+                  user?.uid == plan.creatorID
+                      ? IconButton(
+                        icon: const Icon(Symbols.settings),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Center(
+                                child: ModifyPlanModal(travelPlanId: plan.id),
+                              );
+                            },
+                          );
+
+                          // debugPrint("Pressed");
+                          // Navigator.of(context).push(
+                          //   MaterialPageRoute(
+                          //     builder:
+                          //         (context) =>
+                          //             EditTravelPlanPage(travelPlan: plan),
+                          //   ),
+                          // );
+                        },
+                      )
+                      : const SizedBox.shrink(),
                 ],
                 backgroundColor: Theme.of(context).colorScheme.primaryContainer,
                 expandedHeight: appBarHeight,

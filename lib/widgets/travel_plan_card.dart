@@ -51,6 +51,7 @@ class TravelPlanCard extends ConsumerWidget {
                             travelPlan.title,
                             style: textTheme.bodyLarge!.copyWith(
                               fontWeight: FontWeight.bold,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             textAlign: TextAlign.start,
                           ),
@@ -72,9 +73,12 @@ class TravelPlanCard extends ConsumerWidget {
                           spacing: 4,
                           children: [
                             const Icon(Symbols.calendar_month),
-                            Text(
-                              StringUtils.getTravelPlanDateRange(travelPlan),
-                              style: textTheme.bodyMedium,
+                            Expanded(
+                              child: Text(
+                                StringUtils.getTravelPlanDateRange(travelPlan),
+                                style: textTheme.bodyMedium,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ],
                         ),
@@ -82,11 +86,14 @@ class TravelPlanCard extends ConsumerWidget {
                           spacing: 4,
                           children: [
                             const Icon(Symbols.map),
-                            Text(
-                              travelPlan.activities.isEmpty
-                                  ? "No activities yet"
-                                  : "${travelPlan.activities.length} activit${travelPlan.activities.length > 1 ? "ies" : "y"}",
-                              style: textTheme.bodyMedium,
+                            Expanded(
+                              child: Text(
+                                travelPlan.activities.isEmpty
+                                    ? "No activities yet"
+                                    : "${travelPlan.activities.length} activit${travelPlan.activities.length > 1 ? "ies" : "y"}",
+                                style: textTheme.bodyMedium,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
                           ],
                         ),
