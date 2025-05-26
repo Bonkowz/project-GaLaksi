@@ -287,6 +287,8 @@ class FirebaseFirestoreApi {
       final snapshot = await docRef.get();
       final data = snapshot.data();
 
+      debugPrint("Starting add activity");
+
       if (data == null || !data.containsKey('activities')) {
         await docRef.update({
           'activities': FieldValue.arrayUnion([newActivity.toMap()]),
@@ -301,9 +303,12 @@ class FirebaseFirestoreApi {
       final List<TravelActivity> existingActivities =
           docActivities.map((doc) => TravelActivity.fromMap(doc)).toList();
 
+      debugPrint("Checking for conflicts");
       // Check for conflict
       for (final activity in existingActivities) {
+        debugPrint("Conflict check");
         if (_hasTimeConflict(newActivity, activity)) {
+          debugPrint("Has conflict");
           return FirestoreFailure(
             message:
                 "Time conflict with activity: ${activity.title} from ${StringUtils.getActivityTimeRange(activity)}",
@@ -312,6 +317,7 @@ class FirebaseFirestoreApi {
         }
       }
 
+      debugPrint("No conflicts");
       // No conflict, add the activity
       await docRef.update({
         'activities': FieldValue.arrayUnion([newActivity.toMap()]),
