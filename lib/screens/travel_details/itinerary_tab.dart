@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
-import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
 import 'package:galaksi/screens/overlays/create_travel_activity_page.dart';
 import 'package:galaksi/screens/overlays/edit_travel_activity_page.dart';
+import 'package:galaksi/screens/overlays/modify_activity_modal.dart';
 import 'package:galaksi/utils/string_utils.dart';
 import 'package:galaksi/widgets/create_details_button.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -115,20 +115,35 @@ class ItineraryTab extends StatelessWidget {
 
                           return InkWell(
                             onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => EditTravelActivityPage(
-                                        travelPlanId: travelPlanId,
-                                        originalActivity: activity,
-                                        indexAt: findActivityIndex(
-                                          originalActivities:
-                                              originalActivities,
-                                          activityToFind: activity,
-                                        ),
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Center(
+                                    child: ModifyActivityModal(
+                                      travelPlanId: travelPlanId,
+                                      originalActivity: activity,
+                                      indexAt: findActivityIndex(
+                                        originalActivities: originalActivities,
+                                        activityToFind: activity,
                                       ),
-                                ),
+                                    ),
+                                  );
+                                },
                               );
+                              // Navigator.of(context).push(
+                              //   MaterialPageRoute(
+                              //     builder:
+                              //         (context) => EditTravelActivityPage(
+                              //           travelPlanId: travelPlanId,
+                              //           originalActivity: activity,
+                              //           indexAt: findActivityIndex(
+                              //             originalActivities:
+                              //                 originalActivities,
+                              //             activityToFind: activity,
+                              //           ),
+                              //         ),
+                              //   ),
+                              // );
                             },
                             borderRadius: BorderRadius.all(Radius.circular(8)),
                             child: Padding(
