@@ -9,38 +9,7 @@ class NotesTab extends StatelessWidget {
 
   final String travelPlanId;
   final List<Note> notes;
-  final List<Note> notesTemp = [
-    Note(
-      authorID: "William",
-      message:
-          "I just want to remind everyone to be careful when descending down the mountain. Anyways, food is on me when we get down. :) Happy hiking!",
-      createdAt: DateTime(2025, 5, 5, 9, 1),
-    ),
-    Note(
-      authorID: "Claire",
-      message:
-          "Things to bring for Everest Summit: \n1. Hiking bag, \n2. Individual tents, \n3. Food and water not exceeding 25 kg",
-      createdAt: DateTime(2025, 5, 8, 14, 12),
-    ),
-    Note(
-      authorID: "David",
-      message:
-          "Don't forget the extra batteries for headlamps! It gets dark quickly up there.",
-      createdAt: DateTime(2025, 5, 6, 18, 30),
-    ),
-    Note(
-      authorID: "Sarah",
-      message:
-          "I've packed some high-energy snacks. Let me know if anyone has dietary restrictions.",
-      createdAt: DateTime(2025, 5, 7, 10, 0),
-    ),
-    Note(
-      authorID: "Michael",
-      message:
-          "Confirming the satellite phone is fully charged and tested. Safety first!",
-      createdAt: DateTime(2025, 5, 4, 22, 0),
-    ),
-  ];
+
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -54,9 +23,9 @@ class NotesTab extends StatelessWidget {
           ),
         ),
         SliverList.builder(
-          itemCount: notesTemp.length,
+          itemCount: notes.length,
           itemBuilder: (context, index) {
-            final note = notesTemp[index];
+            final note = notes[index];
             final formattedDate =
                 "${note.createdAt.toLocal().month}/${note.createdAt.toLocal().day}/${note.createdAt.toLocal().year}";
             final formattedTime =

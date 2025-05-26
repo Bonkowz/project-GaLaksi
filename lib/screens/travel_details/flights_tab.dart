@@ -151,12 +151,12 @@ class FlightsTab extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        IconButton(
-                          icon: const Icon(Symbols.edit, size: 20),
-                          onPressed: () {
-                            // TODO: Implement edit functionality for flight
-                          },
-                        ),
+                        // IconButton(
+                        //   icon: const Icon(Symbols.edit, size: 20),
+                        //   onPressed: () {
+                        //     // TODO: Implement edit functionality for flight
+                        //   },
+                        // ),
                         IconButton(
                           icon: const Icon(Symbols.delete, size: 20),
                           onPressed: () {

@@ -9,12 +9,12 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:galaksi/models/travel_plan/note_model.dart';
 import 'package:galaksi/providers/travel_activity/add_note_notifier.dart';
+import 'package:galaksi/providers/auth/auth_notifier.dart';
 
 // TODO: finish provider for note
 // NOTE: name, time, content
 class AddNotePage extends ConsumerStatefulWidget {
   const AddNotePage({required this.travelPlanId, super.key});
-
   final String travelPlanId;
 
   @override
@@ -27,6 +27,17 @@ class _AddNotePageState extends ConsumerState<AddNotePage> {
   bool _isLoading = false;
 
   Future<void> submit() async {
+    final user = ref.read(authNotifierProvider).user;
+    // if (user == null) {
+    //   if (mounted) {
+    //     showDismissableSnackbar(
+    //       context: context,
+    //       message: "You must be logged in to create a note",
+    //     );
+    //   }
+    //   return;
+    // }
+
     final formIsValid = _formKey.currentState?.validate() ?? false;
     if (!formIsValid) {
       return;
@@ -40,7 +51,9 @@ class _AddNotePageState extends ConsumerState<AddNotePage> {
       addNoteNotifierProvider.notifier,
     );
 
+    createAddNoteNotifier.updateAuthorID(user!.username);
     createAddNoteNotifier.updateMessage(titleTextController.text);
+    createAddNoteNotifier.updateCreatedAt(DateTime.now(), TimeOfDay.now());
 
     final travelPlan =
         ref.watch(travelPlanStreamProvider(widget.travelPlanId)).valueOrNull;
@@ -88,16 +101,16 @@ class _AddNotePageState extends ConsumerState<AddNotePage> {
     titleTextController.dispose();
     super.dispose();
   }
-
-  TimeOfDay? startTime;
   /// Utility function for FormField
+  /// 
   String timeToString(TimeOfDay time) {
     return "${time.hourOfPeriod}:${time.minute.toString().padLeft(2, '0')} ${time.period.name.toUpperCase()}";
   }
-
   @override
   Widget build(BuildContext context) {
+    final user = ref.watch(authNotifierProvider).user;
     final notifier = ref.read(addNoteNotifierProvider.notifier);
+    
     debugPrint('notifier hash in parent: ${notifier.hashCode}');
 
     final textTheme = Theme.of(context).textTheme;

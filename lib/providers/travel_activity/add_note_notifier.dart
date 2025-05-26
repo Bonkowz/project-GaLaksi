@@ -13,6 +13,9 @@ class AddNoteNotifier extends _$AddNoteNotifier {
     return NoteState();
   }
 
+  void updateAuthorID(String authorID) {
+    state = state.copyWith(authorID: authorID);
+  }
 
   void updateMessage(String message) {
     state = state.copyWith(message: message);

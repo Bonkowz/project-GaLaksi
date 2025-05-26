@@ -39,7 +39,7 @@ class _AddAccommodationPageState extends ConsumerState<AddAccommodationPage> {
       _isLoading = true;
     });
 
-    final createAddAccommodationNotifier= ref.read(
+    final createAddAccommodationNotifier = ref.read(
       createAddAccommodationNotifierProvider.notifier,
     );
 
@@ -80,7 +80,10 @@ class _AddAccommodationPageState extends ConsumerState<AddAccommodationPage> {
       }
     } else {
       if (mounted) {
-        showDismissableSnackbar(context: context, message: "Accommodation created!");
+        showDismissableSnackbar(
+          context: context,
+          message: "Accommodation created!",
+        );
       }
       // Pop after the success message
       if (mounted) {
@@ -98,7 +101,6 @@ class _AddAccommodationPageState extends ConsumerState<AddAccommodationPage> {
     super.dispose();
   }
 
-
   DateTime? startDate;
   DateTime? endDate;
   TimeOfDay? startTime;
@@ -114,7 +116,7 @@ class _AddAccommodationPageState extends ConsumerState<AddAccommodationPage> {
   String timeToString(TimeOfDay time) {
     return "${time.hourOfPeriod}:${time.minute.toString().padLeft(2, '0')} ${time.period.name.toUpperCase()}";
   }
-  
+
   // TODO: make this return the code of the area
   String placeToString(Place place) {
     return place.displayName;
@@ -189,13 +191,17 @@ class _AddAccommodationPageState extends ConsumerState<AddAccommodationPage> {
                         });
                       },
                       controller: startLocationController,
-                    ),                    Row(
+                    ),
+                    Row(
                       children: [
                         Expanded(
                           child: TextFormField(
                             readOnly: true,
                             controller: startTimeController,
-                            onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+                            onTapOutside:
+                                (event) =>
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus(),
                             onTap: () async {
                               final pickedDate = await showDatePicker(
                                 context: context,
@@ -206,17 +212,22 @@ class _AddAccommodationPageState extends ConsumerState<AddAccommodationPage> {
 
                               if (pickedDate != null) {
                                 startDate = pickedDate;
-                                
+
                                 final pickedTime = await showTimePicker(
                                   context: context,
-                                  initialTime: startTime ?? const TimeOfDay(hour: 14, minute: 0), // 2 PM default
+                                  initialTime:
+                                      startTime ??
+                                      const TimeOfDay(
+                                        hour: 14,
+                                        minute: 0,
+                                      ), // 2 PM default
                                 );
 
                                 if (pickedTime != null) {
                                   startTime = pickedTime;
-                                  
+
                                   setState(() {
-                                    startTimeController.text = 
+                                    startTimeController.text =
                                         '${dateToString(startDate!)} at ${timeToString(startTime!)}';
                                   });
                                 }
@@ -238,26 +249,38 @@ class _AddAccommodationPageState extends ConsumerState<AddAccommodationPage> {
                           child: TextFormField(
                             readOnly: true,
                             controller: endTimeController,
-                            onTapOutside: (event) => FocusManager.instance.primaryFocus?.unfocus(),
+                            onTapOutside:
+                                (event) =>
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus(),
                             onTap: () async {
                               final pickedDate = await showDatePicker(
                                 context: context,
-                                initialDate: endDate ?? (startDate?.add(const Duration(days: 1)) ?? DateTime.now()),
+                                initialDate:
+                                    endDate ??
+                                    (startDate?.add(const Duration(days: 1)) ??
+                                        DateTime.now()),
                                 firstDate: DateTime(2021),
                                 lastDate: DateTime(2030),
-                              );                              if (pickedDate != null) {
+                              );
+                              if (pickedDate != null) {
                                 endDate = pickedDate;
-                                
+
                                 final pickedTime = await showTimePicker(
                                   context: context,
-                                  initialTime: endTime ?? const TimeOfDay(hour: 11, minute: 0), // 11 AM default
+                                  initialTime:
+                                      endTime ??
+                                      const TimeOfDay(
+                                        hour: 11,
+                                        minute: 0,
+                                      ), // 11 AM default
                                 );
 
                                 if (pickedTime != null) {
                                   endTime = pickedTime;
-                                  
+
                                   setState(() {
-                                    endTimeController.text = 
+                                    endTimeController.text =
                                         '${dateToString(endDate!)} at ${timeToString(endTime!)}';
                                   });
                                 }
@@ -274,8 +297,10 @@ class _AddAccommodationPageState extends ConsumerState<AddAccommodationPage> {
                                 errorText: "Select check-out",
                               ),
                               (value) {
-                                if (startDate != null && endDate != null &&
-                                    startTime != null && endTime != null) {
+                                if (startDate != null &&
+                                    endDate != null &&
+                                    startTime != null &&
+                                    endTime != null) {
                                   final checkIn = DateTime(
                                     startDate!.year,
                                     startDate!.month,
