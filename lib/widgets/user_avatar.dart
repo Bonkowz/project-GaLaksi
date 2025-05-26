@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:galaksi/models/user/user_model.dart';
 import 'package:galaksi/widgets/public_profile.dart';
 
-class UserAvatar extends StatelessWidget {
+class UserAvatar extends StatefulWidget {
   const UserAvatar({
     required this.user,
     this.backgroundColor,
@@ -20,44 +20,57 @@ class UserAvatar extends StatelessWidget {
   final Color? textColor;
   final TextStyle? textStyle;
   final double? radius;
+  @override
+  State<UserAvatar> createState() => _UserAvatarState();
+}
 
+class _UserAvatarState extends State<UserAvatar> {
+  Widget? _cachedAvatar;
+  String? _lastImageData;
   @override
   Widget build(BuildContext context) {
     final effectiveBackgroundColor =
-        backgroundColor ?? Theme.of(context).colorScheme.primaryContainer;
+        widget.backgroundColor ??
+        Theme.of(context).colorScheme.primaryContainer;
     final effectiveTextColor =
-        textColor ?? Theme.of(context).colorScheme.onPrimaryContainer;
+        widget.textColor ?? Theme.of(context).colorScheme.onPrimaryContainer;
 
-    Widget avatarContent;
-    if (user.image.isEmpty) {
-      avatarContent = CircleAvatar(
-        backgroundColor: effectiveBackgroundColor,
-        radius: radius,
-        child: Text(
-          StringUtils.capitalize(user.firstName)[0],
-          style:
-              textStyle ??
-              TextStyle(fontWeight: FontWeight.bold, color: effectiveTextColor),
-        ),
-      );
-    } else {
-      avatarContent = CircleAvatar(
-        foregroundImage: MemoryImage(base64Decode(user.image)),
-        radius: radius,
-      );
+    if (_cachedAvatar == null || _lastImageData != widget.user.image) {
+      if (widget.user.image.isEmpty) {
+        _cachedAvatar = CircleAvatar(
+          backgroundColor: effectiveBackgroundColor,
+          radius: widget.radius,
+          child: Text(
+            StringUtils.capitalize(widget.user.firstName)[0],
+            style:
+                widget.textStyle ??
+                TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: effectiveTextColor,
+                ),
+          ),
+        );
+      } else {
+        _cachedAvatar = CircleAvatar(
+          foregroundImage: MemoryImage(base64Decode(widget.user.image)),
+          radius: widget.radius,
+        );
+      }
+      _lastImageData = widget.user.image;
     }
+
     return GestureDetector(
       onTap: () {
         showModalBottomSheet(
           context: context,
-          builder: (context) => PublicProfile(user: user),
+          builder: (context) => PublicProfile(user: widget.user),
           showDragHandle: true,
           useSafeArea: true,
           isScrollControlled: true,
           backgroundColor: Theme.of(context).colorScheme.surface,
         );
       },
-      child: avatarContent,
+      child: _cachedAvatar,
     );
   }
 }
