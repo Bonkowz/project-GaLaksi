@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:galaksi/models/notification_model.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
 import 'package:galaksi/models/user/user_model.dart';
@@ -334,6 +335,115 @@ class FirebaseFirestoreApi {
       );
     } catch (e) {
       debugPrint("Error adding travel activity: $e");
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  Future<FirestoreResult<bool>> addCloudNotification(
+    UserNotification notification,
+  ) async {
+    try {
+      await db
+          .collection("notifications")
+          .add(notification.toMap())
+          .timeout(const Duration(seconds: 10));
+      return const FirestoreSuccess(
+        message: "Notification added succesfully.",
+        data: true,
+      );
+    } on TimeoutException catch (_) {
+      return const FirestoreFailure(
+        message: "Request timed out. Please check your internet connection.",
+        error: FirestoreFailureError.networkError,
+      );
+    } catch (e) {
+      debugPrint("Error creating travel plan: $e");
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  Future<FirestoreResult<bool>> deleteCloudNotification(int id) async {
+    try {
+      final notificationSnapshot =
+          await db
+              .collection("notifications")
+              .where('notificationID', isEqualTo: id)
+              .limit(1)
+              .get();
+
+      if (notificationSnapshot.docs.isNotEmpty) {
+        await notificationSnapshot.docs.first.reference.delete();
+      } else {
+        debugPrint("Notification does not exist: $id");
+      }
+      return const FirestoreSuccess(
+        message: "Notification deleted succesfully.",
+        data: true,
+      );
+    } on TimeoutException catch (_) {
+      return const FirestoreFailure(
+        message: "Request timed out. Please check your internet connection.",
+        error: FirestoreFailureError.networkError,
+      );
+    } catch (e) {
+      debugPrint("Error creating travel plan: $e");
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  FirestoreResult<Stream<QuerySnapshot<Map<String, dynamic>>>>
+  fetchNotificationsToUser(String uid) {
+    try {
+      return FirestoreSuccess(
+        message: "Fetched notifications successfully.",
+        data:
+            db
+                .collection("notifications")
+                .where('to', arrayContains: uid)
+                .snapshots(),
+      );
+    } catch (e) {
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  Future<FirestoreResult<DocumentSnapshot<Map<String, dynamic>>>>
+  fetchNotificationFromID(String id) async {
+    try {
+      debugPrint("[NOT_TRACE] Trying to find notif: $id");
+      final notificationSnapshot =
+          await db
+              .collection("notifications")
+              .where('notificationID', isEqualTo: id)
+              .limit(1)
+              .get();
+
+      if (notificationSnapshot.docs.isEmpty) {
+        debugPrint("[NOT_TRACE] Notification not found!");
+        return const FirestoreFailure(
+          message: "Notification not found.",
+          error: FirestoreFailureError.notFound,
+        );
+      }
+
+      debugPrint("[NOT_TRACE] Notification found!");
+      return FirestoreSuccess(
+        message: "Notification fetched successfully",
+        data: notificationSnapshot.docs.first,
+      );
+    } catch (e) {
       return const FirestoreFailure(
         message: "An unknown error occurred.",
         error: FirestoreFailureError.unknown,

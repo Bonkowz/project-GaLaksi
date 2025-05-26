@@ -1,5 +1,10 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:galaksi/apis/firebase_firestore_api.dart';
+import 'package:galaksi/models/notification_model.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
+import 'package:galaksi/models/user/user_model.dart';
+import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/services/notification_service.dart';
 import 'package:galaksi/utils/time_utils.dart';
 
@@ -33,15 +38,77 @@ class NotificationSyncService {
       for (final reminder in activity.reminders) {
         final scheduledDate = activity.startAt.subtract(reminder);
         final id = Object.hash(plan.id, activity, reminder);
+        final stringId = "${plan.id}_${scheduledDate.toIso8601String()}";
+        final receivers = [...plan.sharedWith, plan.creatorID];
 
-        _notificationService.scheduleNotification(
-          id: id,
+        final notification = UserNotification(
+          notificationID: stringId,
+          to: receivers,
+          planID: plan.id,
           title: plan.title,
           body:
               "${activity.title} is starting in ${TimeUtils.convertDurationToStr(reminder)}!",
-          payload: plan.id,
-          scheduledDate: scheduledDate,
+          scheduledAt: scheduledDate,
+          isRead: false,
         );
+
+        _notificationService.scheduleNotification(
+          id: id,
+          title: notification.title,
+          body: notification.body,
+          payload: notification.planID,
+          scheduledDate: notification.scheduledAt,
+        );
+
+        debugPrint("[NOT_TRACE] To: ${notification.to.toString()}");
+        debugPrint("[NOT_TRACE] ${notification.body}");
+        final notificationQuery = await FirebaseFirestoreApi()
+            .fetchNotificationFromID(notification.notificationID);
+
+        UserNotification? userNotification;
+
+        notificationQuery.when(
+          onSuccess: (success) {
+            userNotification = UserNotification.fromDocument(success.data);
+            debugPrint(success.message);
+          },
+          onFailure: (error) {
+            userNotification = null;
+            debugPrint(error.message);
+          },
+        );
+
+        if (userNotification != null) {
+          debugPrint("Loaded notification: ${userNotification!.title}");
+          final deepEq = const DeepCollectionEquality();
+
+          final isSame =
+              userNotification!.planID == notification.planID &&
+              userNotification!.title == notification.title &&
+              userNotification!.body == notification.body &&
+              userNotification!.scheduledAt == notification.scheduledAt &&
+              deepEq.equals(userNotification!.to, notification.to);
+
+          if (isSame) {
+            debugPrint(
+              "[${DateTime.now()}] Skipped rescheduling (same): ${activity.title}",
+            );
+            continue;
+          }
+        } else {
+          debugPrint("Notification not found or failed to load.");
+        }
+
+        final result = await FirebaseFirestoreApi().addCloudNotification(
+          notification,
+        );
+
+        debugPrint(
+          "Cloud Notification: ${result.message} ${notification.title}",
+        );
+
+        final deleteResult = await FirebaseFirestoreApi()
+            .deleteCloudNotification(id);
 
         debugPrint("[${DateTime.now()}] Scheduled notif for ${activity.title}");
       }
@@ -76,6 +143,7 @@ class NotificationSyncService {
         );
       }
 
+      // Shared with has changed
       if (previousPlan != null &&
           updatedPlan.hasDifferentSharedWith(previousPlan)) {
         debugPrint(
@@ -102,6 +170,4 @@ class NotificationSyncService {
       await scheduleNotificationsForPlan(plan);
     }
   }
-
-  Future<void> syncCloudNotifications(TravelPlan plan) async {}
 }

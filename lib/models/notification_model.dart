@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Notification {
-  Notification({
+class UserNotification {
+  UserNotification({
+    required this.notificationID,
     required this.to,
     required this.planID,
     required this.title,
@@ -11,8 +12,10 @@ class Notification {
   });
 
   /// Factory to instantiate [Notification] from [Map]
-  factory Notification.fromMap(Map<String, dynamic> json) {
-    return Notification(
+  factory UserNotification.fromDocument(DocumentSnapshot doc) {
+    final json = doc.data() as Map<String, dynamic>;
+    return UserNotification(
+      notificationID: json['notificationID'],
       to: List<String>.from(json['to'] ?? []),
       planID: json['planID'] as String,
       title: json['title'] as String,
@@ -22,6 +25,7 @@ class Notification {
     );
   }
 
+  String notificationID; // Identifiable ID equal to local notification ID
   List<String>
   to; // List of people who are supposed to receive the notification. Owner + shared.
   String planID;
@@ -32,6 +36,7 @@ class Notification {
 
   Map<String, dynamic> toMap() {
     return {
+      'notificationID': notificationID,
       'to': to,
       'planID': planID,
       'title': title,
