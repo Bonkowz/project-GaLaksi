@@ -78,7 +78,7 @@ class NotificationCard extends StatelessWidget {
                   ),
                 ),
                 isRead
-                    ? const SizedBox.shrink()
+                    ? const SizedBox(width: 24)
                     : Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Container(

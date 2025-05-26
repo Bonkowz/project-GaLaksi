@@ -33,7 +33,7 @@ class MainApp extends ConsumerWidget {
 
     final textTheme = createTextTheme(context, "Figtree", "Figtree");
 
-    // Listen to changes in travel plan streams and sync notification
+    // My Travel Plans local notification listener
     ref.listen<AsyncValue<List<TravelPlan>>>(myTravelPlansStreamProvider, (
       prev,
       next,
@@ -48,6 +48,7 @@ class MainApp extends ConsumerWidget {
       );
     });
 
+    // Shared Travel Plans local notification listener
     ref.listen<AsyncValue<List<TravelPlan>>>(sharedTravelPlansStreamProvider, (
       prev,
       next,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/providers/notifications/notification_service_provider.dart';
+import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
 import 'package:galaksi/widgets/notification_card.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -47,7 +48,14 @@ class NotificationsView extends ConsumerWidget {
         }
 
         return RefreshIndicator(
-          onRefresh: () async {},
+          onRefresh: () async {
+            final mergedPlans = await ref.refresh(
+              allTravelPlansSnapshotProvider.future,
+            );
+            ref
+                .watch(notificationSyncServiceProvider)
+                .syncCloudNotifications(plans: mergedPlans);
+          },
           child: Scaffold(
             appBar: AppBar(
               backgroundColor: Theme.of(context).colorScheme.primaryContainer,

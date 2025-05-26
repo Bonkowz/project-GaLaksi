@@ -488,6 +488,44 @@ class FirebaseFirestoreApi {
       );
     }
   }
+
+  Future<FirestoreResult<QuerySnapshot<Map<String, dynamic>>>>
+  fetchUserPlansSnapshot(String uid) async {
+    try {
+      return FirestoreSuccess(
+        message: "Fetched user travel plans successfully.",
+        data:
+            await db
+                .collection("plans")
+                .where('creatorID', isEqualTo: uid)
+                .get(),
+      );
+    } catch (e) {
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  Future<FirestoreResult<QuerySnapshot<Map<String, dynamic>>>>
+  fetchPlansSharedWithUserSnapshot(String uid) async {
+    try {
+      return FirestoreSuccess(
+        message: "Fetched shared travel plans successfully.",
+        data:
+            await db
+                .collection("plans")
+                .where('sharedWith', arrayContains: uid)
+                .get(),
+      );
+    } catch (e) {
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
 }
 
 /// Represents a result of an attempted database access
