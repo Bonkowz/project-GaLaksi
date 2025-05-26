@@ -36,7 +36,7 @@ GaLaksi! is a mobile travel planning application designed to help users seamless
 ![image](https://github.com/user-attachments/assets/81432e4f-fe5b-42b3-84a8-fa652228c0ba)
 ![image](https://github.com/user-attachments/assets/2dd87da4-6219-4c46-884f-058b5dac0f5a)
 ![image](https://github.com/user-attachments/assets/530efc0d-e6e7-4b87-b5e7-1fe02c3058b3)
-- Set travel interests & travel preferences  
+- Set travel interests & travel preferences
 ![image](https://github.com/user-attachments/assets/8b471a92-c40f-4871-9be3-78b5be3d6c37)
 ![image](https://github.com/user-attachments/assets/3becd7b6-47a9-40ad-9caa-084253dc6055)
 
@@ -44,7 +44,7 @@ GaLaksi! is a mobile travel planning application designed to help users seamless
 
 ### 2. Create a Travel Plan
 - Add destination + dates  
-- Optional: Flights, lodging, checklists
+- Optional: Flights, lodging, checklist
 ![494821589_1797197747813181_7148265388779656796_n](https://github.com/user-attachments/assets/bddcb616-88df-40fb-90f1-1bc164a1fb8e)
 ![494815058_3054263351415072_5178352808325723336_n](https://github.com/user-attachments/assets/245c0536-ee03-4f10-9c51-504f34337835)
 
