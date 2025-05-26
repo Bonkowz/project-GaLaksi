@@ -47,8 +47,8 @@ class _AddFlightPageState extends ConsumerState<AddFlightPage> {
 
     createAddFlightDetailNotifier.updateFlightNumber(flightCodeController.text);
     createAddFlightDetailNotifier.updateAirline(airlinesController.text);
-    createAddFlightDetailNotifier.updateLocation(startLocationController.text);
-    createAddFlightDetailNotifier.updateDestination(endLocationController.text);
+    createAddFlightDetailNotifier.updateLocation(origin!);
+    createAddFlightDetailNotifier.updateDestination(destination!);
     createAddFlightDetailNotifier.updateDepartureAt(activityDate!, startTime!);
 
     final travelPlan =
@@ -118,10 +118,8 @@ class _AddFlightPageState extends ConsumerState<AddFlightPage> {
   String timeToString(TimeOfDay time) {
     return "${time.hourOfPeriod}:${time.minute.toString().padLeft(2, '0')} ${time.period.name.toUpperCase()}";
   }
-
-  // TODO: make this return the code of the area
   String placeToString(Place place) {
-    return place.displayName;
+    return place.displayName.split(',').first.trim();
   }
 
   @override

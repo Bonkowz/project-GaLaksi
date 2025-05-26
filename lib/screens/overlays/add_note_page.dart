@@ -28,15 +28,6 @@ class _AddNotePageState extends ConsumerState<AddNotePage> {
 
   Future<void> submit() async {
     final user = ref.read(authNotifierProvider).user;
-    // if (user == null) {
-    //   if (mounted) {
-    //     showDismissableSnackbar(
-    //       context: context,
-    //       message: "You must be logged in to create a note",
-    //     );
-    //   }
-    //   return;
-    // }
 
     final formIsValid = _formKey.currentState?.validate() ?? false;
     if (!formIsValid) {
@@ -102,7 +93,6 @@ class _AddNotePageState extends ConsumerState<AddNotePage> {
     super.dispose();
   }
   /// Utility function for FormField
-  /// 
   String timeToString(TimeOfDay time) {
     return "${time.hourOfPeriod}:${time.minute.toString().padLeft(2, '0')} ${time.period.name.toUpperCase()}";
   }
