@@ -30,9 +30,6 @@ class MainApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserStreamProvider);
-    final myTravelPlans = ref.watch(myTravelPlansStreamProvider);
-    final sharedPlans = ref.watch(sharedTravelPlansStreamProvider);
-    final notificationSyncService = ref.read(notificationSyncServiceProvider);
 
     final textTheme = createTextTheme(context, "Figtree", "Figtree");
 
