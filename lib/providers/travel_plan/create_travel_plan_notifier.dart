@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:galaksi/apis/firebase_firestore_api.dart';
 import 'package:galaksi/models/travel_plan/accommodation_model.dart';
@@ -6,6 +9,7 @@ import 'package:galaksi/models/travel_plan/note_model.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'create_travel_plan_notifier.g.dart';
@@ -27,6 +31,17 @@ class CreateTravelPlanNotifier extends _$CreateTravelPlanNotifier {
 
   void updateCreator(String id) {
     state = state.copyWith(creatorID: id);
+  }
+
+  void updateImage(XFile? imageFile) {
+    if (imageFile == null) {
+      state = state.copyWith(image: '');
+    } else {
+      final serializedImage = base64Encode(
+        File(imageFile.path).readAsBytesSync(),
+      );
+      state = state.copyWith(image: serializedImage);
+    }
   }
 
   Future<bool> createTravelPlan() async {
@@ -52,6 +67,7 @@ class CreateTravelPlanNotifier extends _$CreateTravelPlanNotifier {
       id: '',
       title: state.title!,
       description: state.description,
+      image: state.image,
       creatorID: authUid,
       sharedWith: state.sharedWith,
       notes: state.notes,
@@ -82,6 +98,7 @@ class TravelPlanState {
     this.id,
     this.title,
     this.description = '',
+    this.image = '',
     this.creatorID,
     this.sharedWith = const [],
     this.notes = const [],
@@ -93,6 +110,7 @@ class TravelPlanState {
   String? id;
   String? title;
   String description;
+  String image;
   String? creatorID;
   List<String> sharedWith;
   List<Note> notes;
@@ -105,6 +123,7 @@ class TravelPlanState {
     String? title,
     String? description,
     String? creatorID,
+    String? image,
     List<String>? sharedWith,
     List<Note>? notes,
     List<TravelActivity>? activities,
@@ -115,6 +134,7 @@ class TravelPlanState {
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
+      image: image ?? this.image,
       creatorID: creatorID ?? this.creatorID,
       sharedWith: sharedWith ?? this.sharedWith,
       notes: notes ?? this.notes,

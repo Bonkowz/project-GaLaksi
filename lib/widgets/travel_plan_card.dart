@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
@@ -22,19 +24,27 @@ class TravelPlanCard extends ConsumerWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const ClipRRect(
-                  borderRadius: BorderRadius.only(
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
                     bottomLeft: Radius.circular(12),
                   ),
                   child: AspectRatio(
                     aspectRatio: 16 / 19,
-                    child: Image(
-                      image: AssetImage(
-                        'assets/images/galaksi-placeholder.jpg',
-                      ),
-                      fit: BoxFit.cover,
-                    ),
+                    child:
+                        travelPlan.image.isNotEmpty
+                            ? Image(
+                              image: MemoryImage(
+                                base64Decode(travelPlan.image),
+                              ),
+                              fit: BoxFit.cover,
+                            )
+                            : const Image(
+                              image: AssetImage(
+                                'assets/images/galaksi-placeholder.jpg',
+                              ),
+                              fit: BoxFit.cover,
+                            ),
                   ),
                 ),
                 Expanded(

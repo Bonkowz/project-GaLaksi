@@ -16,9 +16,8 @@ class TravelPlan {
     required this.activities,
     required this.flightDetails,
     required this.accommodations,
+    this.image = '',
   });
-
-  /// TODO: Add attribute for travel plan image
 
   factory TravelPlan.fromDocument(DocumentSnapshot doc) {
     final map = doc.data() as Map<String, dynamic>;
@@ -28,6 +27,7 @@ class TravelPlan {
       title: map['title'],
       description: map['description'],
       creatorID: map['creatorID'],
+      image: map['image'] ?? '',
       sharedWith: List<String>.from(map['sharedWith'] ?? []),
       notes:
           (map['notes'] as List?)?.map((nt) => Note.fromMap(nt)).toList() ?? [],
@@ -53,6 +53,7 @@ class TravelPlan {
   String title;
   String description;
   String creatorID;
+  String image;
   List<String> sharedWith;
   List<Note> notes;
   List<TravelActivity> activities;
@@ -69,6 +70,7 @@ class TravelPlan {
       'activities': activities.map((activity) => activity.toMap()).toList(),
       'flightDetails': flightDetails.map((flight) => flight.toMap()).toList(),
       'accomodations': accommodations.map((accom) => accom.toMap()).toList(),
+      'image': image,
     };
   }
 
