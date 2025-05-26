@@ -9,6 +9,7 @@ import 'package:galaksi/widgets/place_autocomplete.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:galaksi/utils/country_codes.dart';
 
 class AddFlightPage extends ConsumerStatefulWidget {
   const AddFlightPage({required this.travelPlanId, super.key});
@@ -116,9 +117,15 @@ class _AddFlightPageState extends ConsumerState<AddFlightPage> {
   /// Utility function for FormField
   String timeToString(TimeOfDay time) {
     return "${time.hourOfPeriod}:${time.minute.toString().padLeft(2, '0')} ${time.period.name.toUpperCase()}";
-  }
-  String placeToString(Place place) {
-    return place.displayName.split(',').first.trim();
+  }  String placeToString(Place place) {
+    final parts = place.displayName.split(',');
+    final cityName = parts.first.trim();
+    final countryName = parts.last.trim();
+    
+    final countryCodes = CountryCodes();
+    final alpha3Code = countryCodes.getAlpha3(countryName) ?? countryName;
+    
+    return "$cityName ($alpha3Code)";
   }
 
   @override

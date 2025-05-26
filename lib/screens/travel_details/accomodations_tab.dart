@@ -132,22 +132,11 @@ class AccommodationsTab extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        // IconButton(
-                        //   icon: const Icon(Symbols.edit, size: 20),
-                        //   onPressed: () {
-                        //     // TODO: Implement edit functionality
-                        //     debugPrint(
-                        //       'Edit accommodation: ${accommodation.name}',
-                        //     );
-                        //   },
-                        // ),
                         IconButton(
                           icon: const Icon(Symbols.delete, size: 20),
                           onPressed: () {
-                            // TODO: Implement delete functionality
-                            debugPrint(
-                              'Delete accommodation: ${accommodation.name}',
-                            );
+                            final updatedAccommodations = List<Accommodation>.from(accommodations)
+                              ..removeAt(index);
                           },
                         ),
                       ],
