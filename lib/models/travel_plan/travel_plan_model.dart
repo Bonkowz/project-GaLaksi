@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:galaksi/models/travel_plan/accommodation_model.dart';
 import 'package:galaksi/models/travel_plan/flight_detail_model.dart';
 import 'package:galaksi/models/travel_plan/note_model.dart';
@@ -15,9 +16,8 @@ class TravelPlan {
     required this.activities,
     required this.flightDetails,
     required this.accommodations,
+    this.image = '',
   });
-
-  /// TODO: Add attribute for travel plan image
 
   factory TravelPlan.fromDocument(DocumentSnapshot doc) {
     final map = doc.data() as Map<String, dynamic>;
@@ -27,6 +27,7 @@ class TravelPlan {
       title: map['title'],
       description: map['description'],
       creatorID: map['creatorID'],
+      image: map['image'] ?? '',
       sharedWith: List<String>.from(map['sharedWith'] ?? []),
       notes:
           (map['notes'] as List?)?.map((nt) => Note.fromMap(nt)).toList() ?? [],
@@ -52,6 +53,7 @@ class TravelPlan {
   String title;
   String description;
   String creatorID;
+  String image;
   List<String> sharedWith;
   List<Note> notes;
   List<TravelActivity> activities;
@@ -68,6 +70,21 @@ class TravelPlan {
       'activities': activities.map((activity) => activity.toMap()).toList(),
       'flightDetails': flightDetails.map((flight) => flight.toMap()).toList(),
       'accomodations': accommodations.map((accom) => accom.toMap()).toList(),
+      'image': image,
     };
+  }
+
+  // SRC: https://stackoverflow.com/questions/76697156/how-do-i-compare-dart-records-with-deep-equality
+  bool hasDifferentActivities(TravelPlan other) {
+    final deepEq = const DeepCollectionEquality();
+
+    // Deep equality comparison for lists compares each element
+    return !deepEq.equals(activities, other.activities);
+  }
+
+  bool hasDifferentSharedWith(TravelPlan other) {
+    final deepEq = const DeepCollectionEquality();
+
+    return !deepEq.equals(sharedWith, other.sharedWith);
   }
 }

@@ -39,7 +39,6 @@ class CreateTravelActivityNotifier extends _$CreateTravelActivityNotifier {
     );
 
     state = state.copyWith(endAt: newDateTime);
-    debugPrint("End at: ${state.endAt}");
   }
 
   void updateTitle(String title) {
@@ -47,44 +46,40 @@ class CreateTravelActivityNotifier extends _$CreateTravelActivityNotifier {
   }
 
   void updateLocation(Place place) {
-    debugPrint("Updated place to ${place.name}");
     state = state.copyWith(location: place);
-    debugPrint("Confirming: ${state.location?.displayName}");
   }
 
   void updateReminders(List<Duration> reminders) {
     state = state.copyWith(reminders: reminders);
   }
 
-  Future<bool> addTravelActivity({required String travelPlanId}) async {
+  TravelActivity getActivity() {
+    return TravelActivity(
+      startAt: state.startAt!,
+      endAt: state.endAt!,
+      title: state.title!,
+      location: state.location!,
+      reminders: state.reminders!,
+    );
+  }
+
+  Future<FirestoreResult?> addTravelActivity({
+    required String travelPlanId,
+  }) async {
     final travelPlan =
         ref.read(travelPlanStreamProvider(travelPlanId)).valueOrNull;
-    if (travelPlan == null) {
-      return false;
-    }
 
-    debugPrint("Confirming PT 2: ${state.location}");
+    if (travelPlan == null) {
+      return null;
+    }
 
     final travelActivity = TravelActivity(
       startAt: state.startAt!,
       endAt: state.endAt!,
       title: state.title!,
-      location: state.location ?? Place(displayName: 'Error', name: 'Error'),
+      location: state.location!,
       reminders: state.reminders!,
     );
-
-    // Check if clashing time schedules
-    for (final existingActivity in travelPlan.activities) {
-      if (rangesOverlap(
-        travelActivity.startAt,
-        travelActivity.endAt,
-        existingActivity.startAt,
-        existingActivity.endAt,
-      )) {
-        // Conflict found
-        return false;
-      }
-    }
 
     final result = await FirebaseFirestoreApi().addTravelActivity(
       travelPlan.id,
@@ -92,11 +87,11 @@ class CreateTravelActivityNotifier extends _$CreateTravelActivityNotifier {
     );
     return result.when(
       onSuccess: (success) {
-        return success.data;
+        return success;
       },
       onFailure: (failure) {
         debugPrint(failure.message);
-        return false;
+        return failure;
       },
     );
   }

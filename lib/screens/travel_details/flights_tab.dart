@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:galaksi/screens/overlays/create_travel_activity_page.dart'; // Corrected line
 import 'package:galaksi/widgets/create_details_button.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:galaksi/models/travel_plan/flight_detail_model.dart';
+import 'package:galaksi/screens/overlays/add_flight_page.dart'; // Corrected line
 
 class FlightsTab extends StatelessWidget {
   FlightsTab({required this.travelPlanId, required this.flights, super.key});
@@ -10,50 +10,50 @@ class FlightsTab extends StatelessWidget {
   final String travelPlanId;
   final List<FlightDetail> flights;
 
-  final List<FlightDetail> dummyFlights = [
-    FlightDetail(
-      flightNumber: "UA123",
-      airline: "United Airlines",
-      location: "Denver (DEN)",
-      destination: "Kathmandu (KTM)",
-      departureAt: DateTime(2025, 5, 1, 10, 0), // May 1, 2025, 3:00 PM
-    ),
-    FlightDetail(
-      flightNumber: "QR456",
-      airline: "Qatar Airways",
-      location: "Kathmandu (KTM)",
-      destination: "Lukla (LUA)",
-      departureAt: DateTime(2025, 5, 3, 7, 30), // May 3, 2025, 7:30 AM
-    ),
-    FlightDetail(
-      flightNumber: "RA789",
-      airline: "Nepal Airlines",
-      location: "Lukla (LUA)",
-      destination: "Kathmandu (KTM)",
-      departureAt: DateTime(2025, 6, 8, 14, 0), // June 8, 2025, 2:00 PM
-    ),
-    FlightDetail(
-      flightNumber: "UA987",
-      airline: "United Airlines",
-      location: "Kathmandu (KTM)",
-      destination: "Denver (DEN)",
-      departureAt: DateTime(2025, 6, 10, 18, 0), // June 10, 2025, 6:00 PM
-    ),
-    FlightDetail(
-      flightNumber: "BA321",
-      airline: "British Airways",
-      location: "London (LHR)",
-      destination: "Kathmandu (KTM)",
-      departureAt: DateTime(2025, 4, 29, 20, 0), // April 29, 2025, 8:00 PM
-    ),
-    FlightDetail(
-      flightNumber: "Flight 101",
-      airline: "Cebu Pacific",
-      location: "Manila (MNL)",
-      destination: "Nagoya (NPL)",
-      departureAt: DateTime(2025, 5, 1, 10, 0),
-    ),
-  ];
+  // final List<FlightDetail> dummyFlights = [
+  //   FlightDetail(
+  //     flightNumber: "UA123",
+  //     airline: "United Airlines",
+  //     location: "Denver (DEN)",
+  //     destination: "Kathmandu (KTM)",
+  //     departureAt: DateTime(2025, 5, 1, 10, 0), // May 1, 2025, 3:00 PM
+  //   ),
+  //   FlightDetail(
+  //     flightNumber: "QR456",
+  //     airline: "Qatar Airways",
+  //     location: "Kathmandu (KTM)",
+  //     destination: "Lukla (LUA)",
+  //     departureAt: DateTime(2025, 5, 3, 7, 30), // May 3, 2025, 7:30 AM
+  //   ),
+  //   FlightDetail(
+  //     flightNumber: "RA789",
+  //     airline: "Nepal Airlines",
+  //     location: "Lukla (LUA)",
+  //     destination: "Kathmandu (KTM)",
+  //     departureAt: DateTime(2025, 6, 8, 14, 0), // June 8, 2025, 2:00 PM
+  //   ),
+  //   FlightDetail(
+  //     flightNumber: "UA987",
+  //     airline: "United Airlines",
+  //     location: "Kathmandu (KTM)",
+  //     destination: "Denver (DEN)",
+  //     departureAt: DateTime(2025, 6, 10, 18, 0), // June 10, 2025, 6:00 PM
+  //   ),
+  //   FlightDetail(
+  //     flightNumber: "BA321",
+  //     airline: "British Airways",
+  //     location: "London (LHR)",
+  //     destination: "Kathmandu (KTM)",
+  //     departureAt: DateTime(2025, 4, 29, 20, 0), // April 29, 2025, 8:00 PM
+  //   ),
+  //   FlightDetail(
+  //     flightNumber: "Flight 101",
+  //     airline: "Cebu Pacific",
+  //     location: "Manila (MNL)",
+  //     destination: "Nagoya (NPL)",
+  //     departureAt: DateTime(2025, 5, 1, 10, 0),
+  //   ),
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -64,28 +64,15 @@ class FlightsTab extends StatelessWidget {
             text: "Add a flight...",
             leadingIcon: const Icon(Symbols.add),
             trailingIcon: const Icon(Symbols.flight),
-            navigateTo: CreateTravelActivityPage(travelPlanId: travelPlanId),
+            navigateTo: AddFlightPage(travelPlanId: travelPlanId),
           ),
         ),
         SliverList.builder(
-          itemCount: dummyFlights.length,
+          itemCount: flights.length,
           itemBuilder: (context, index) {
-            final flight = dummyFlights[index];
-            final originCode = flight.location.substring(
-              flight.location.indexOf('(') + 1,
-              flight.location.indexOf(')'),
-            );
-            final destinationCode = flight.destination.substring(
-              flight.destination.indexOf('(') + 1,
-              flight.destination.indexOf(')'),
-            );
-
-            var terminalLocation = '';
-            if (flight.location.contains("MNL")) {
-              terminalLocation = "NAIA Terminal 3";
-            } else {
-              terminalLocation = flight.location;
-            }
+            final flight = flights[index];
+            final originCode = flight.location;
+            final destinationCode = flight.destination;
 
             return Card.outlined(
               color: Theme.of(context).colorScheme.surfaceContainerLowest,
@@ -122,7 +109,7 @@ class FlightsTab extends StatelessWidget {
                               const SizedBox(width: 8.0),
                               Expanded(
                                 child: Text(
-                                  terminalLocation,
+                                  flight.airline,
                                   style: Theme.of(
                                     context,
                                   ).textTheme.bodyMedium?.copyWith(
@@ -147,7 +134,7 @@ class FlightsTab extends StatelessWidget {
                               const SizedBox(width: 8.0),
                               Expanded(
                                 child: Text(
-                                  "${flight.flightNumber}, ${flight.airline}",
+                                  flight.flightNumber,
                                   style: Theme.of(
                                     context,
                                   ).textTheme.bodyMedium?.copyWith(
@@ -164,18 +151,18 @@ class FlightsTab extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        IconButton(
-                          icon: const Icon(Symbols.edit, size: 20),
-                          onPressed: () {
-                            // TODO: Implement edit functionality for flight
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Symbols.delete, size: 20),
-                          onPressed: () {
-                            // TODO: Implement delete functionality for flight
-                          },
-                        ),
+                        // IconButton(
+                        //   icon: const Icon(Symbols.edit, size: 20),
+                        //   onPressed: () {
+                        //     // TODO: Implement edit functionality for flight
+                        //   },
+                        // ),
+                        // IconButton(
+                        //   icon: const Icon(Symbols.delete, size: 20),
+                        //   onPressed: () {
+                        //     // TODO: Implement delete functionality for flight
+                        //   },
+                        // ),
                       ],
                     ),
                   ],

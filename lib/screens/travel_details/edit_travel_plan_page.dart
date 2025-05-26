@@ -1,10 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
 import 'package:galaksi/providers/travel_plan/edit_travel_plan_notifier.dart';
+import 'package:galaksi/screens/overlays/create_travel_plan_page.dart';
 import 'package:galaksi/utils/input_decorations.dart';
 import 'package:galaksi/utils/snackbar.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class EditTravelPlanPage extends ConsumerStatefulWidget {
@@ -23,6 +28,20 @@ class EditTravelPlanPageState extends ConsumerState<EditTravelPlanPage> {
   final descriptionScrollController = ScrollController();
 
   bool _isLoading = false;
+
+  void _saveImageFromGallery() async {
+    final imageFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      maxHeight: 600,
+      maxWidth: 600,
+    );
+    if (imageFile == null) {
+      return;
+    }
+    final imageSize = await imageFile.length();
+    debugPrint("IMAGE SIZE: $imageSize bytes");
+    ref.read(editTravelPlanNotifierProvider.notifier).updateImage(imageFile);
+  }
 
   Future<void> submit() async {
     final formIsValid = _formKey.currentState?.validate() ?? false;
@@ -122,32 +141,98 @@ class EditTravelPlanPageState extends ConsumerState<EditTravelPlanPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: [
+              Consumer(
+                builder: (context, ref, _) {
+                  final planState = ref.watch(editTravelPlanNotifierProvider);
+                  final hasImage = planState.image.isNotEmpty;
+                  Widget imageWidget;
+                  if (hasImage) {
+                    imageWidget = ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.memory(
+                        // decode base64 string to bytes
+                        base64Decode(planState.image),
+                        height: 120,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  } else {
+                    imageWidget = Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.camera_alt_outlined,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 32,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Insert image',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                  return GestureDetector(
+                    onTap: _isLoading ? null : _saveImageFromGallery,
+                    child: DottedBorder(
+                      fillColor: Theme.of(context).colorScheme.surface,
+                      color: Theme.of(context).colorScheme.primary,
+                      borderType: BorderType.roundedRectangle,
+                      radius: const Radius.circular(16),
+                      dashPattern: const [8, 4],
+                      strokeWidth: 1,
+                      child: Container(
+                        height: 120,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: imageWidget,
+                      ),
+                    ),
+                  );
+                },
+              ),
               Form(
                 key: _formKey,
                 child: Column(
                   spacing: 8,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    TextFormField(
-                      controller: titleTextController,
-                      onTapOutside:
-                          (event) =>
-                              FocusManager.instance.primaryFocus?.unfocus(),
-                      decoration: InputDecorations.outlineBorder(
-                        context: context,
-                        prefixIcon: const Icon(Symbols.title),
-                        hintText: "Trip Title",
-                        borderRadius: 16,
-                      ),
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(
-                          errorText: "Please enter a title",
-                        ),
-                        FormBuilderValidators.maxLength(
-                          15,
-                          errorText: "Title must be less than 15 characters.",
-                        ),
-                      ]),
+                    ValueListenableBuilder(
+                      valueListenable: titleTextController,
+                      builder: (context, value, _) {
+                        return TextFormField(
+                          controller: titleTextController,
+                          onTapOutside:
+                              (event) =>
+                                  FocusManager.instance.primaryFocus?.unfocus(),
+                          decoration: InputDecorations.outlineBorder(
+                            context: context,
+                            prefixIcon: const Icon(Symbols.title),
+                            hintText: "Trip Title",
+                            borderRadius: 16,
+                          ).copyWith(counterText: "${value.text.length} / 30"),
+                          validator: FormBuilderValidators.compose([
+                            FormBuilderValidators.required(
+                              errorText: "Please enter a title",
+                            ),
+                            FormBuilderValidators.maxLength(
+                              30,
+                              errorText:
+                                  "Title must be less than 30 characters.",
+                            ),
+                          ]),
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(30),
+                          ],
+                        );
+                      },
                     ),
                     TextFormField(
                       scrollController: descriptionScrollController,

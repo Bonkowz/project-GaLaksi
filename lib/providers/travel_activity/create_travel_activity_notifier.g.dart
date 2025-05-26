@@ -7,7 +7,7 @@ part of 'create_travel_activity_notifier.dart';
 // **************************************************************************
 
 String _$createTravelActivityNotifierHash() =>
-    r'fd7487dadbfe094f89410c3025fd3dc1b349358e';
+    r'c944702e7b97546489859aae81dc2c58ad40e540';
 
 /// See also [CreateTravelActivityNotifier].
 @ProviderFor(CreateTravelActivityNotifier)

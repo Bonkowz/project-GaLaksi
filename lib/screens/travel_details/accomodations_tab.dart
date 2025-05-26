@@ -1,8 +1,11 @@
+import 'dart:nativewrappers/_internal/vm/lib/mirrors_patch.dart';
+
 import 'package:flutter/material.dart';
-import 'package:galaksi/screens/overlays/create_travel_activity_page.dart';
+import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
 import 'package:galaksi/widgets/create_details_button.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:galaksi/models/travel_plan/accommodation_model.dart';
+import 'package:galaksi/screens/overlays/add_accomodation_page.dart';
 
 class AccommodationsTab extends StatelessWidget {
   AccommodationsTab({
@@ -13,39 +16,6 @@ class AccommodationsTab extends StatelessWidget {
   final String travelPlanId;
   final List<Accommodation> accommodations;
 
-  final List<Accommodation> dummyAccommodations = [
-    Accommodation(
-      name: "Kathmandu Guest House",
-      checkIn: DateTime(2025, 5, 1, 15, 0), // May 1, 2025, 3:00 PM
-      checkOut: DateTime(2025, 5, 3, 11, 0), // May 3, 2025, 11:00 AM
-      location: "Thamel, Kathmandu",
-    ),
-    Accommodation(
-      name: "Everest Base Camp Lodge",
-      checkIn: DateTime(2025, 5, 5, 12, 0), // May 5, 2025, 12:00 PM
-      checkOut: DateTime(2025, 5, 6, 10, 0), // May 6, 2025, 10:00 AM
-      location: "Everest Base Camp",
-    ),
-    Accommodation(
-      name: "Trekker's Inn Namche Bazaar",
-      checkIn: DateTime(2025, 5, 3, 14, 0), // May 3, 2025, 2:00 PM
-      checkOut: DateTime(2025, 5, 5, 10, 0), // May 5, 2025, 10:00 AM
-      location: "Namche Bazaar",
-    ),
-    Accommodation(
-      name: "Hotel Yak & Yeti",
-      checkIn: DateTime(2025, 6, 8, 15, 0), // June 8, 2025, 3:00 PM
-      checkOut: DateTime(2025, 6, 10, 11, 0), // June 10, 2025, 11:00 AM
-      location: "Kathmandu",
-    ),
-    Accommodation(
-      name: "Summit View Teahouse",
-      checkIn: DateTime(2025, 5, 25, 16, 0), // May 25, 2025, 4:00 PM
-      checkOut: DateTime(2025, 5, 27, 9, 0), // May 27, 2025, 9:00 AM
-      location: "Gorak Shep",
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -55,13 +25,13 @@ class AccommodationsTab extends StatelessWidget {
             text: "Add an accommodation...",
             leadingIcon: const Icon(Symbols.add),
             trailingIcon: const Icon(Symbols.hotel),
-            navigateTo: CreateTravelActivityPage(travelPlanId: travelPlanId),
+            navigateTo: AddAccommodationPage(travelPlanId: travelPlanId),
           ),
         ),
         SliverList.builder(
-          itemCount: dummyAccommodations.length,
+          itemCount: accommodations.length,
           itemBuilder: (context, index) {
-            final accommodation = dummyAccommodations[index];
+            final accommodation = accommodations[index];
             final formattedCheckInDate =
                 "${accommodation.checkIn.toLocal().month}/${accommodation.checkIn.toLocal().day}/${accommodation.checkIn.toLocal().year}";
             final formattedCheckInTime =
@@ -165,24 +135,18 @@ class AccommodationsTab extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        IconButton(
-                          icon: const Icon(Symbols.edit, size: 20),
-                          onPressed: () {
-                            // TODO: Implement edit functionality
-                            debugPrint(
-                              'Edit accommodation: ${accommodation.name}',
-                            );
-                          },
-                        ),
-                        IconButton(
-                          icon: const Icon(Symbols.delete, size: 20),
-                          onPressed: () {
-                            // TODO: Implement delete functionality
-                            debugPrint(
-                              'Delete accommodation: ${accommodation.name}',
-                            );
-                          },
-                        ),
+                        // IconButton(
+                        //   icon: const Icon(Symbols.delete, size: 20),
+                        //   onPressed: () {
+                        //     final updatedAccommodations = List<Accommodation>.from(accommodations)
+                        //       ..removeAt(index);
+                        //     final travelPlan = 
+                        //       ref
+                        //         .watch(travelPlanStreamProvider(widget.travelPlanId))
+                        //         .valueOrNull;
+                        //     final edit 
+                        //   },
+                        // ),
                       ],
                     ),
                   ],

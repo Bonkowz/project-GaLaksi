@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:galaksi/providers/travel_plan/create_travel_plan_notifier.dart';
 import 'package:galaksi/screens/overlays/scan_travel_plan_qr_code.dart';
 import 'package:galaksi/utils/input_decorations.dart';
 import 'package:galaksi/utils/snackbar.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'dart:convert';
 
 class CreateTravelPlanPage extends ConsumerStatefulWidget {
   const CreateTravelPlanPage({super.key});
@@ -71,6 +74,20 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
     }
   }
 
+  void _saveImageFromGallery() async {
+    final imageFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      maxHeight: 600,
+      maxWidth: 600,
+    );
+    if (imageFile == null) {
+      return;
+    }
+    final imageSize = await imageFile.length();
+    debugPrint("IMAGE SIZE: $imageSize bytes");
+    ref.read(createTravelPlanNotifierProvider.notifier).updateImage(imageFile);
+  }
+
   @override
   void dispose() {
     titleTextController.dispose();
@@ -119,23 +136,24 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              GestureDetector(
-                onTap: () {}, // TODO: Implement image picker
-                child: DottedBorder(
-                  fillColor: Theme.of(context).colorScheme.surface,
-                  color: accent,
-                  borderType: BorderType.roundedRectangle,
-                  radius: const Radius.circular(16),
-                  dashPattern: const [8, 4],
-                  strokeWidth: 1,
-                  child: Container(
-                    height: 120,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
+              Consumer(
+                builder: (context, ref, _) {
+                  final planState = ref.watch(createTravelPlanNotifierProvider);
+                  final hasImage = planState.image.isNotEmpty;
+                  Widget imageWidget;
+                  if (hasImage) {
+                    imageWidget = ClipRRect(
                       borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
+                      child: Image.memory(
+                        // decode base64 string to bytes
+                        base64Decode(planState.image),
+                        height: 120,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                    );
+                  } else {
+                    imageWidget = Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
@@ -146,9 +164,29 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
                         const SizedBox(height: 8),
                         Text('Insert image', style: TextStyle(color: accent)),
                       ],
+                    );
+                  }
+                  return GestureDetector(
+                    onTap: _isLoading ? null : _saveImageFromGallery,
+                    child: DottedBorder(
+                      fillColor: Theme.of(context).colorScheme.surface,
+                      color: accent,
+                      borderType: BorderType.roundedRectangle,
+                      radius: const Radius.circular(16),
+                      dashPattern: const [8, 4],
+                      strokeWidth: 1,
+                      child: Container(
+                        height: 120,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: imageWidget,
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
               Form(
                 key: _formKey,
@@ -156,26 +194,35 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
                   spacing: 0,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    TextFormField(
-                      controller: titleTextController,
-                      onTapOutside:
-                          (event) =>
-                              FocusManager.instance.primaryFocus?.unfocus(),
-                      decoration: InputDecorations.outlineBorder(
-                        context: context,
-                        prefixIcon: const Icon(Symbols.title),
-                        hintText: "Trip Title",
-                        borderRadius: 16,
-                      ),
-                      validator: FormBuilderValidators.compose([
-                        FormBuilderValidators.required(
-                          errorText: "Please enter a title",
-                        ),
-                        FormBuilderValidators.maxLength(
-                          15,
-                          errorText: "Title must be less than 15 characters.",
-                        ),
-                      ]),
+                    ValueListenableBuilder(
+                      valueListenable: titleTextController,
+                      builder: (context, value, _) {
+                        return TextFormField(
+                          controller: titleTextController,
+                          onTapOutside:
+                              (event) =>
+                                  FocusManager.instance.primaryFocus?.unfocus(),
+                          decoration: InputDecorations.outlineBorder(
+                            context: context,
+                            prefixIcon: const Icon(Symbols.title),
+                            hintText: "Trip Title",
+                            borderRadius: 16,
+                          ).copyWith(counterText: "${value.text.length} / 30"),
+                          validator: FormBuilderValidators.compose([
+                            FormBuilderValidators.required(
+                              errorText: "Please enter a title",
+                            ),
+                            FormBuilderValidators.maxLength(
+                              30,
+                              errorText:
+                                  "Title must be less than 30 characters.",
+                            ),
+                          ]),
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(30),
+                          ],
+                        );
+                      },
                     ),
                     TextFormField(
                       scrollController: descriptionScrollController,

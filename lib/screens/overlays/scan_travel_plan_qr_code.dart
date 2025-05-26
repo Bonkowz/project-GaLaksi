@@ -6,6 +6,7 @@ import 'package:galaksi/models/user/user_model.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/providers/travel_plan/travel_plan_users_provider.dart';
 import 'package:galaksi/utils/snackbar.dart';
+import 'package:galaksi/widgets/error_card.dart';
 import 'package:galaksi/widgets/user_avatar.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -226,37 +227,6 @@ class _ScanTravelPlanQrCodeState extends ConsumerState<ScanTravelPlanQrCode> {
         () => error = "An error occurred while joining the travel plan.",
       );
     }
-  }
-}
-
-class ErrorCard extends StatelessWidget {
-  const ErrorCard({required this.error, super.key});
-
-  final String? error;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Card.outlined(
-      color: colorScheme.errorContainer,
-      child: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Row(
-          spacing: 8,
-          children: [
-            const Icon(Symbols.error_rounded),
-            Text(
-              error!,
-              style: textTheme.bodyMedium?.copyWith(
-                color: colorScheme.onErrorContainer,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 
