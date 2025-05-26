@@ -300,7 +300,7 @@ class FirebaseFirestoreApi {
       }
 
       final List<dynamic> docActivities = data['activities'];
-      final List<TravelActivity> existingActivities =
+      final existingActivities =
           docActivities.map((doc) => TravelActivity.fromMap(doc)).toList();
 
       debugPrint("Checking for conflicts");

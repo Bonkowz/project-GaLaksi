@@ -4,9 +4,8 @@ import 'package:galaksi/services/notification_service.dart';
 import 'package:galaksi/utils/time_utils.dart';
 
 class NotificationSyncService {
-  final NotificationService _notificationService;
-
   NotificationSyncService(this._notificationService);
+  final NotificationService _notificationService;
 
   List<int> getNotificationIdsForPlan(TravelPlan plan) {
     final notificationIds = <int>[];
@@ -25,7 +24,7 @@ class NotificationSyncService {
     final ids = getNotificationIdsForPlan(plan);
     for (final id in ids) {
       await _notificationService.cancelNotification(id: id);
-      debugPrint("[${DateTime.now()}] Canceled notif for ${id}");
+      debugPrint("[${DateTime.now()}] Canceled notif for $id");
     }
   }
 

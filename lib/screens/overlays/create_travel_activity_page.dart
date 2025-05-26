@@ -369,7 +369,7 @@ class _CreateTravelActivityPageState
                               prefixIcon: const Icon(Symbols.alarm),
                               borderRadius: 16,
                               suffixIcon: IconButton(
-                                icon: Icon(Symbols.close),
+                                icon: const Icon(Symbols.close),
                                 onPressed: () {
                                   setState(() {
                                     userReminders.removeAt(index);

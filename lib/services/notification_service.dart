@@ -6,7 +6,7 @@ import 'package:galaksi/utils/time_utils.dart';
 class NotificationService {
   final notificationsPlugin = FlutterLocalNotificationsPlugin();
 
-  bool _isInitialized = false;
+  final bool _isInitialized = false;
 
   bool get isInitialized => _isInitialized;
 

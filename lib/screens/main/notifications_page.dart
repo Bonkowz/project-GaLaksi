@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/providers/notifications/notification_service_provider.dart';
 
@@ -15,7 +14,7 @@ class NotificationsPage extends ConsumerWidget {
           notificationService.scheduleNotification(
             title: "Yeah Boit",
             body: "Hello",
-            scheduledDate: DateTime.now().add(Duration(seconds: 5)),
+            scheduledDate: DateTime.now().add(const Duration(seconds: 5)),
           );
         },
         child: const Text("Send Notification"),
