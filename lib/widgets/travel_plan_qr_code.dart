@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'dart:ui';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
@@ -7,9 +8,9 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
 import 'package:saver_gallery/saver_gallery.dart';
-import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:galaksi/utils/snackbar.dart';
 
 class TravelPlanQrCode extends StatefulWidget {
   const TravelPlanQrCode({required TravelPlan travelPlan, super.key})
@@ -53,12 +54,12 @@ class _TravelPlanQrCodeState extends State<TravelPlanQrCode> {
       skipIfExists: false,
     );
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            result.isSuccess ? "Saved to gallery!" : "Failed to save",
-          ),
-        ),
+      showDismissableSnackbar(
+        context: context,
+        message:
+            result.isSuccess
+                ? "QR code saved to gallery!"
+                : "Failed to save QR code.",
       );
     }
   }
@@ -153,7 +154,7 @@ class _TravelPlanQrCodeState extends State<TravelPlanQrCode> {
               ),
             ),
             const Text("Scan the QR code!"),
-            const SizedBox(height: 16), 
+            const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: qrImageBytes == null ? null : _saveQrToGallery,
               icon: const Icon(Symbols.save_alt),
