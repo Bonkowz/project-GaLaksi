@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:galaksi/models/user/user_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_matching_provider.g.dart';
@@ -8,24 +9,12 @@ part 'user_matching_provider.g.dart';
 // MATCHING USERS
 class UserMatch {
   UserMatch({
-    required this.userId,
-    required this.firstName,
-    required this.lastName,
-    required this.username,
-    required this.image,
-    required this.interests,
-    required this.travelStyles,
+    required this.user,
     required this.commonInterests,
     required this.commonTravelStyles,
   });
 
-  final String userId;
-  final String firstName;
-  final String lastName;
-  final String username;
-  final String image;
-  final List<String> interests;
-  final List<String> travelStyles;
+  final User user;
   final int commonInterests;
   final int commonTravelStyles;
 
@@ -102,14 +91,10 @@ UserMatch _createUserMatch(
     currentUserTravelStyles,
   );
 
+  final user = User.fromDocument(doc);
+
   return UserMatch(
-    userId: doc.id,
-    firstName: userData['firstName'] ?? '',
-    lastName: userData['lastName'] ?? '',
-    username: userData['username'] ?? '',
-    image: userData['image'] ?? '',
-    interests: userInterests,
-    travelStyles: userTravelStyles,
+    user: user,
     commonInterests: commonInterests,
     commonTravelStyles: commonTravelStyles,
   );

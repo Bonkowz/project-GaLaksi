@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
+import 'package:galaksi/models/user/friendship_model.dart';
 import 'package:galaksi/models/user/user_model.dart';
 
 class FirebaseFirestoreApi {
@@ -298,6 +299,107 @@ class FirebaseFirestoreApi {
       );
     } catch (e) {
       debugPrint("Error adding travel activity: $e");
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  /// Fetch all [Friendship]s
+  FirestoreResult<Stream<QuerySnapshot<Map<String, dynamic>>>>
+  fetchFriendships() {
+    try {
+      return FirestoreSuccess(
+        data: db.collection("friendship").snapshots(),
+        message: "Fetched friendships successfully!",
+      );
+    } catch (e) {
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  /// Creates a new [Friendship] in the `friendship` collection
+  Future<FirestoreResult<bool>> addFriendship(Friendship friendship) async {
+    try {
+      await db
+          .collection("friendship")
+          .doc(friendship.documentId)
+          .set(friendship.toMap())
+          .timeout(const Duration(seconds: 10));
+      return const FirestoreSuccess(
+        message: "Friendship added succesfully.",
+        data: true,
+      );
+    } on TimeoutException catch (_) {
+      return const FirestoreFailure(
+        message: "Request timed out. Please check your internet connection.",
+        error: FirestoreFailureError.networkError,
+      );
+    } catch (e) {
+      debugPrint("Error adding friendship: $e");
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  /// Updates a [Friendship]
+  Future<FirestoreResult<bool>> updateFriendship(
+    Friendship friendship,
+    FriendshipStatus status,
+  ) async {
+    try {
+      final doc = db.collection("friendship").doc(friendship.documentId);
+      doc
+          .set(
+            Friendship.updateStatus(
+              friendship: friendship,
+              status: status,
+            ).toMap(),
+          )
+          .timeout(const Duration(seconds: 10));
+      return const FirestoreSuccess(
+        message: "Friendship updated succesfully.",
+        data: true,
+      );
+    } on TimeoutException catch (_) {
+      return const FirestoreFailure(
+        message: "Request timed out. Please check your internet connection.",
+        error: FirestoreFailureError.networkError,
+      );
+    } catch (e) {
+      debugPrint("Error updating friendship: $e");
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
+
+  /// Removes a [Friendship]
+  Future<FirestoreResult<bool>> removeFriendship(Friendship friendship) async {
+    try {
+      db
+          .collection("friendship")
+          .doc(friendship.documentId)
+          .delete()
+          .timeout(const Duration(seconds: 10));
+      return const FirestoreSuccess(
+        message: "Friendship removed succesfully.",
+        data: true,
+      );
+    } on TimeoutException catch (_) {
+      return const FirestoreFailure(
+        message: "Request timed out. Please check your internet connection.",
+        error: FirestoreFailureError.networkError,
+      );
+    } catch (e) {
+      debugPrint("Error removing friendship: $e");
       return const FirestoreFailure(
         message: "An unknown error occurred.",
         error: FirestoreFailureError.unknown,

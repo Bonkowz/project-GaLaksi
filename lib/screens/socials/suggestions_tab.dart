@@ -1,10 +1,13 @@
 // SUGGESTIONS/FIND SIMILAR PEOPLE
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:galaksi/models/user/interest_model.dart';
-import 'package:galaksi/models/user/travel_style_model.dart';
+import 'package:galaksi/models/user/friendship_model.dart';
+import 'package:galaksi/models/user/user_model.dart';
+import 'package:galaksi/providers/auth/auth_notifier.dart';
+import 'package:galaksi/providers/user_profile/friendship_notifier.dart';
 import 'package:galaksi/providers/user_profile/user_matching_provider.dart';
 import 'package:galaksi/widgets/user_avatar.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 class SuggestionsTab extends ConsumerWidget {
   const SuggestionsTab({super.key});
@@ -27,11 +30,7 @@ class SuggestionsTab extends ConsumerWidget {
           itemBuilder: (context, index) {
             final match = matches[index];
             return _UserProfileCard(
-              name: '${match.firstName} ${match.lastName}',
-              username: '@${match.username}',
-              image: match.image,
-              interests: match.interests,
-              travelStyles: match.travelStyles,
+              user: match.user,
               commonInterests: match.commonInterests,
               commonTravelStyles: match.commonTravelStyles,
             );
@@ -45,29 +44,22 @@ class SuggestionsTab extends ConsumerWidget {
 }
 
 // USER PROFILE CARD CONTENTS
-class _UserProfileCard extends StatelessWidget {
+class _UserProfileCard extends ConsumerWidget {
   const _UserProfileCard({
-    required this.name,
-    required this.username,
-    required this.image,
-    required this.interests,
-    required this.travelStyles,
+    required this.user,
     required this.commonInterests,
     required this.commonTravelStyles,
   });
 
-  final String name;
-  final String username;
-  final String image;
-  final List<String> interests;
-  final List<String> travelStyles;
+  final User user;
   final int commonInterests;
-
-  // number of commonalities/matches (interests + travel styles)
   final int commonTravelStyles;
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final friendshipNotifier = ref.read(friendshipNotifierProvider.notifier);
+    final friendships = ref.watch(friendshipNotifierProvider);
+    final currentUser = ref.watch(authNotifierProvider).user!;
+
     return Card.outlined(
       color: Theme.of(context).colorScheme.surfaceContainerLowest,
       child: Padding(
@@ -75,26 +67,27 @@ class _UserProfileCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            UserAvatar(image: image, firstName: name),
+            UserAvatar(image: user.image, firstName: user.firstName),
             const SizedBox(width: 16.0),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    name,
+                    "${user.firstName} ${user.lastName}",
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    username,
+                    user.username,
                     style: Theme.of(
                       context,
                     ).textTheme.bodyMedium?.copyWith(color: Colors.grey),
                   ),
                   // display interests if there is at least 1 common interest
-                  if (interests.isNotEmpty && commonInterests > 0) ...[
+                  if ((user.interests?.isNotEmpty ?? false) &&
+                      commonInterests > 0) ...[
                     const SizedBox(height: 15.0),
                     Text(
                       "Interests:",
@@ -103,19 +96,15 @@ class _UserProfileCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      interests
-                          .map(
-                            (interest) =>
-                                Interest.values
-                                    .firstWhere((i) => i.name == interest)
-                                    .title,
-                          )
+                      user.interests!
+                          .map((interest) => interest.title)
                           .join(", "),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
                   // display travel styles if there is at least 1 common travel style
-                  if (travelStyles.isNotEmpty && commonTravelStyles > 0) ...[
+                  if ((user.travelStyles?.isNotEmpty ?? false) &&
+                      commonTravelStyles > 0) ...[
                     const SizedBox(height: 15.0),
                     Text(
                       "Travel Styles:",
@@ -124,25 +113,53 @@ class _UserProfileCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      travelStyles
-                          .map(
-                            (style) =>
-                                TravelStyle.values
-                                    .firstWhere((t) => t.name == style)
-                                    .title,
-                          )
-                          .join(", "),
+                      user.travelStyles!.map((style) => style.title).join(", "),
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
                 ],
               ),
             ),
-            IconButton(
-              icon: const Icon(Icons.person_add),
-              color: Theme.of(context).colorScheme.primary,
-              onPressed: () {
-                // TODO: Implement add friend functionality
+            Builder(
+              builder: (context) {
+                // Find friendship from the watched state
+                Friendship? friendship;
+                for (final f in friendships) {
+                  if (f.involves(currentUser.uid) && f.involves(user.uid)) {
+                    friendship = f;
+                    break;
+                  }
+                }
+
+                if (friendship != null &&
+                    friendship.status == FriendshipStatus.friends) {
+                  return const Icon(Symbols.person_check_rounded);
+                }
+
+                Icon icon;
+                if (friendship == null) {
+                  icon = const Icon(Symbols.person_add_rounded);
+                } else {
+                  icon = const Icon(Symbols.pending_rounded);
+                }
+
+                return IconButton(
+                  icon: icon,
+                  color: Theme.of(context).colorScheme.primary,
+                  onPressed: () {
+                    if (friendship == null) {
+                      friendshipNotifier.requestFriendship(
+                        requesterUserId: currentUser.uid,
+                        userId: user.uid,
+                      );
+                    } else if (friendship.status == FriendshipStatus.pending) {
+                      friendshipNotifier.rejectFriendship(
+                        requesterUserId: currentUser.uid,
+                        userId: user.uid,
+                      );
+                    }
+                  },
+                );
               },
             ),
           ],
