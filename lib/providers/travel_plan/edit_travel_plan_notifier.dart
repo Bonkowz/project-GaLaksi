@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:galaksi/apis/firebase_firestore_api.dart';
 import 'package:galaksi/models/travel_plan/accommodation_model.dart';
@@ -6,6 +9,7 @@ import 'package:galaksi/models/travel_plan/note_model.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'edit_travel_plan_notifier.g.dart';
@@ -22,6 +26,7 @@ class EditTravelPlanNotifier extends _$EditTravelPlanNotifier {
       id: travelPlan.id,
       title: travelPlan.title,
       description: travelPlan.description,
+      image: travelPlan.image,
       creatorID: travelPlan.creatorID,
       sharedWith: travelPlan.sharedWith,
       notes: travelPlan.notes,
@@ -41,6 +46,17 @@ class EditTravelPlanNotifier extends _$EditTravelPlanNotifier {
 
   void updateActivities(List<TravelActivity> activities) {
     state = state.copyWith(activities: activities);
+  }
+
+  void updateImage(XFile? imageFile) {
+    if (imageFile == null) {
+      state = state.copyWith(image: '');
+    } else {
+      final serializedImage = base64Encode(
+        File(imageFile.path).readAsBytesSync(),
+      );
+      state = state.copyWith(image: serializedImage);
+    }
   }
 
   Future<bool> editTravelPlan() async {
@@ -66,6 +82,7 @@ class EditTravelPlanNotifier extends _$EditTravelPlanNotifier {
       id: state.id!,
       title: state.title!,
       description: state.description,
+      image: state.image,
       creatorID: authUid,
       sharedWith: state.sharedWith,
       notes: state.notes,
@@ -98,6 +115,7 @@ class TravelPlanState {
     this.id,
     this.title,
     this.description = '',
+    this.image = '',
     this.creatorID,
     this.sharedWith = const [],
     this.notes = const [],
@@ -109,6 +127,7 @@ class TravelPlanState {
   String? id;
   String? title;
   String description;
+  String image;
   String? creatorID;
   List<String> sharedWith;
   List<Note> notes;
@@ -120,6 +139,7 @@ class TravelPlanState {
     String? id,
     String? title,
     String? description,
+    String? image,
     String? creatorID,
     List<String>? sharedWith,
     List<Note>? notes,
@@ -131,6 +151,7 @@ class TravelPlanState {
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
+      image: image ?? this.image,
       creatorID: creatorID ?? this.creatorID,
       sharedWith: sharedWith ?? this.sharedWith,
       notes: notes ?? this.notes,

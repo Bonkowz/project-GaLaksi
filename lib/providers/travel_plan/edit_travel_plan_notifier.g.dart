@@ -7,7 +7,7 @@ part of 'edit_travel_plan_notifier.dart';
 // **************************************************************************
 
 String _$editTravelPlanNotifierHash() =>
-    r'3c1423ab4ba11c439a6690780271a2a449666de8';
+    r'232058df1b4efbcc885fd9e188c379f52d0e7521';
 
 /// See also [EditTravelPlanNotifier].
 @ProviderFor(EditTravelPlanNotifier)

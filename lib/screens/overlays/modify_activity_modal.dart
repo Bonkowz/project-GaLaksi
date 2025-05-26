@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:galaksi/apis/firebase_firestore_api.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
-import 'package:galaksi/providers/auth/auth_notifier.dart';
-import 'package:galaksi/providers/notifications/notification_service_provider.dart';
 import 'package:galaksi/providers/travel_plan/edit_travel_plan_notifier.dart';
 import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
 import 'package:galaksi/screens/overlays/edit_travel_activity_page.dart';
 
 class ModifyActivityModal extends ConsumerWidget {
   const ModifyActivityModal({
-    super.key,
     required this.travelPlanId,
     required this.originalActivity,
     required this.indexAt,
+    super.key,
   });
 
   final String travelPlanId;
