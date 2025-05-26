@@ -60,8 +60,10 @@ class NotificationSyncService {
           scheduledDate: notification.scheduledAt,
         );
 
-        debugPrint("[NOT_TRACE] To: ${notification.to.toString()}");
-        debugPrint("[NOT_TRACE] ${notification.body}");
+        debugPrint(
+          "[NOT_TRACE ${DateTime.now()}] To: ${notification.to.toString()}",
+        );
+        debugPrint("[NOT_TRACE ${DateTime.now()}] ${notification.body}");
         final notificationQuery = await FirebaseFirestoreApi()
             .fetchNotificationFromID(notification.notificationID);
 
@@ -110,7 +112,9 @@ class NotificationSyncService {
         final deleteResult = await FirebaseFirestoreApi()
             .deleteCloudNotification(id);
 
-        debugPrint("[${DateTime.now()}] Scheduled notif for ${activity.title}");
+        debugPrint(
+          "[NOT_TRACE ${DateTime.now()}] Scheduled notif for ${activity.title}",
+        );
       }
     }
   }
