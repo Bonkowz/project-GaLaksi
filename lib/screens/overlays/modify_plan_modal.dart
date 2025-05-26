@@ -6,22 +6,17 @@ import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/providers/notifications/notification_service_provider.dart';
 import 'package:galaksi/providers/travel_plan/edit_travel_plan_notifier.dart';
 import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
-import 'package:galaksi/screens/overlays/edit_travel_activity_page.dart';
+import 'package:galaksi/screens/travel_details/edit_travel_plan_page.dart';
 
-class ModifyActivityModal extends ConsumerWidget {
-  const ModifyActivityModal({
-    super.key,
-    required this.travelPlanId,
-    required this.originalActivity,
-    required this.indexAt,
-  });
+class ModifyPlanModal extends ConsumerWidget {
+  const ModifyPlanModal({super.key, required this.travelPlanId});
 
   final String travelPlanId;
-  final TravelActivity originalActivity;
-  final int indexAt;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final travelPlan =
+        ref.watch(travelPlanStreamProvider(travelPlanId)).valueOrNull;
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.8,
       child: Material(
@@ -36,7 +31,7 @@ class ModifyActivityModal extends ConsumerWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Modify Activity',
+                    'Modify Plan',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   IconButton(
@@ -49,7 +44,7 @@ class ModifyActivityModal extends ConsumerWidget {
               ),
               const SizedBox(height: 16.0),
               Text(
-                'Edit activity or delete',
+                'Edit travel plan or delete',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 16.0),
@@ -61,11 +56,8 @@ class ModifyActivityModal extends ConsumerWidget {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder:
-                              (context) => EditTravelActivityPage(
-                                travelPlanId: travelPlanId,
-                                originalActivity: originalActivity,
-                                indexAt: indexAt,
-                              ),
+                              (context) =>
+                                  EditTravelPlanPage(travelPlan: travelPlan!),
                         ),
                       );
                     },
@@ -80,21 +72,10 @@ class ModifyActivityModal extends ConsumerWidget {
                   TextButton(
                     onPressed: () async {
                       Navigator.pop(context);
-                      final travelPlan =
-                          ref
-                              .watch(travelPlanStreamProvider(travelPlanId))
-                              .valueOrNull;
-
-                      final editTravelPlanNotifier = ref.read(
-                        editTravelPlanNotifierProvider.notifier,
-                      );
-
-                      travelPlan!.activities.removeAt(indexAt);
-
-                      editTravelPlanNotifier.setCurrentTravelPlan(travelPlan);
-
-                      final result =
-                          await editTravelPlanNotifier.editTravelPlan();
+                      Navigator.pop(context);
+                      Future.delayed(const Duration(milliseconds: 500), () {
+                        FirebaseFirestoreApi().deleteTravelPlan(travelPlan!.id);
+                      });
                     },
                     child: Text(
                       'Delete',
