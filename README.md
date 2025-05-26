@@ -32,11 +32,15 @@ GaLaksi! is a mobile travel planning application designed to help users seamless
 ## 🚀 How to Use GaLaksi!
 
 ### 1. Login/Sign Up
-- Register with email/username  
-- Set travel interests & preferences  
-![494817250_1610705772947995_8328658995266805393_n](https://github.com/user-attachments/assets/b8fbbd8d-3648-4a65-be9b-c1748b8e2ba7)
-![494869051_1014403223796540_8675943656119669110_n](https://github.com/user-attachments/assets/fa50f60d-d4ab-4382-ad36-78a3eb71b43d)
-![494823564_9901372509923987_4600435025008573114_n](https://github.com/user-attachments/assets/5654baba-b2d2-48d7-9063-42c6b61af32c)
+- Login or SignUp with email/username
+![image](https://github.com/user-attachments/assets/81432e4f-fe5b-42b3-84a8-fa652228c0ba)
+![image](https://github.com/user-attachments/assets/2dd87da4-6219-4c46-884f-058b5dac0f5a)
+![image](https://github.com/user-attachments/assets/530efc0d-e6e7-4b87-b5e7-1fe02c3058b3)
+- Set travel interests & travel preferences  
+![image](https://github.com/user-attachments/assets/8b471a92-c40f-4871-9be3-78b5be3d6c37)
+![image](https://github.com/user-attachments/assets/3becd7b6-47a9-40ad-9caa-084253dc6055)
+
+
 
 ### 2. Create a Travel Plan
 - Add destination + dates  
