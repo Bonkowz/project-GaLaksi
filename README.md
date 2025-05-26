@@ -33,6 +33,7 @@ GaLaksi! is a mobile travel planning application designed to help users seamless
 
 ### 1. Login/Sign Up
 - Login or SignUp with email/username
+
 ![image](https://github.com/user-attachments/assets/81432e4f-fe5b-42b3-84a8-fa652228c0ba)
 ![image](https://github.com/user-attachments/assets/2dd87da4-6219-4c46-884f-058b5dac0f5a)
 ![image](https://github.com/user-attachments/assets/530efc0d-e6e7-4b87-b5e7-1fe02c3058b3)
