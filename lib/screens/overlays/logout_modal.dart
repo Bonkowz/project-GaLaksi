@@ -36,20 +36,8 @@ class LogoutModal extends ConsumerWidget {
               ),
               const SizedBox(height: 16.0),
               Row(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      ref.read(authNotifierProvider.notifier).signOut();
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      'Log out',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                    ),
-                  ),
                   TextButton(
                     onPressed: () {
                       Navigator.pop(context);
@@ -58,6 +46,26 @@ class LogoutModal extends ConsumerWidget {
                       'Never mind',
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                         color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  FilledButton(
+                    onPressed: () {
+                      ref.read(authNotifierProvider.notifier).signOut();
+                      Navigator.pop(context);
+                    },
+                    style: FilledButton.styleFrom(
+                      backgroundColor:
+                          Theme.of(context).colorScheme.errorContainer,
+                      foregroundColor:
+                          Theme.of(context).colorScheme.onErrorContainer,
+                    ),
+                    child: Text(
+                      'Log out',
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.error,
                       ),
                     ),
                   ),
