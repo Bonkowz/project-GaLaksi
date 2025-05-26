@@ -19,3 +19,5 @@ GaLaksi! is a mobile travel planning app that helps users easily organize trips,
 1) Login to the app or sign up.
 2) Add a travel plan to your profile.
 3) Select your travel plan, where you can add activitiese, flights, notes and lodging.
+4) In the freinds tabs you can find people with simillar interests and add them as friends.
+5) In the profile tab you can see your interests, and details.
