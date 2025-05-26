@@ -50,8 +50,7 @@ class NotesTab extends ConsumerWidget {
                           Row(
                             children: [
                               UserAvatar(
-                                image: user.image,
-                                firstName: user.firstName,
+                                user: user,
                                 backgroundColor:
                                     Theme.of(
                                       context,
@@ -119,8 +118,7 @@ class NotesTab extends ConsumerWidget {
                             Row(
                               children: [
                                 UserAvatar(
-                                  image: dummyUser.image,
-                                  firstName: dummyUser.firstName,
+                                  user: dummyUser,
                                   backgroundColor:
                                       Theme.of(
                                         context,
