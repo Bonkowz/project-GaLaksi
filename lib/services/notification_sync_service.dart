@@ -127,6 +127,13 @@ class NotificationSyncService {
         final stringId = "${plan.id}_${scheduledDate.toIso8601String()}";
         final receivers = [...plan.sharedWith, plan.creatorID];
 
+        // Delete all notification reminders for activities already started
+        if (activity.endAt.isBefore(DateTime.now())) {
+          debugPrint("[NOT_TRACE] Activity expired deleting: $stringId");
+          await FirebaseFirestoreApi().deleteCloudNotification(stringId);
+          continue;
+        }
+
         final notification = UserNotification(
           notificationID: stringId,
           to: receivers,
@@ -164,8 +171,8 @@ class NotificationSyncService {
             deepEq.equals(userNotification!.to, notification.to);
 
         if (!isSame) {
+          await FirebaseFirestoreApi().deleteCloudNotification(stringId);
           await FirebaseFirestoreApi().addCloudNotification(notification);
-          await FirebaseFirestoreApi().deleteCloudNotification(id);
           debugPrint(
             "[NOT_TRACE ${DateTime.now()}] Synced cloud notif for ${activity.title}",
           );

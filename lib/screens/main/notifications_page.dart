@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:galaksi/apis/firebase_firestore_api.dart';
 import 'package:galaksi/providers/notifications/notification_service_provider.dart';
 import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
 import 'package:galaksi/widgets/notification_card.dart';
@@ -10,7 +11,6 @@ class NotificationsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notificationService = ref.read(notificationServiceProvider);
     return Center(child: NotificationsView());
   }
 }
@@ -36,60 +36,60 @@ class NotificationsView extends ConsumerWidget {
                 return b.scheduledAt.compareTo(a.scheduledAt);
               });
 
-        if (visibleNotifs.isEmpty) {
-          return Center(
-            child: Text(
-              "No notifications... so far.",
-              style: Theme.of(
-                context,
-              ).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            centerTitle: true,
+            toolbarHeight: kToolbarHeight * 1.75,
+            title: Text(
+              "Your Notifications",
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
-          );
-        }
+          ),
+          body: RefreshIndicator(
+            onRefresh: () async {
+              final mergedPlans = await ref.refresh(
+                allTravelPlansSnapshotProvider.future,
+              );
+              ref
+                  .watch(notificationSyncServiceProvider)
+                  .syncCloudNotifications(plans: mergedPlans);
+            },
+            child:
+                visibleNotifs.isEmpty
+                    ? ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(16),
+                      children: [
+                        Center(child: Text("No notifications so far")),
+                      ],
+                    )
+                    : ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.all(16),
+                      itemCount: visibleNotifs.length,
+                      itemBuilder: (context, index) {
+                        final notif = visibleNotifs[index];
 
-        return RefreshIndicator(
-          onRefresh: () async {
-            final mergedPlans = await ref.refresh(
-              allTravelPlansSnapshotProvider.future,
-            );
-            ref
-                .watch(notificationSyncServiceProvider)
-                .syncCloudNotifications(plans: mergedPlans);
-          },
-          child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-              centerTitle: true,
-              toolbarHeight: kToolbarHeight * 1.75,
-              title: Text(
-                "Your Notifications",
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-            ),
-            body: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  spacing: 4,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children:
-                      visibleNotifs
-                          .map(
-                            (notif) => NotificationCard(
-                              notification: notif,
-                              leadingIcon: Icon(Symbols.alarm),
-                              isRead: notif.isRead,
-                            ),
-                          )
-                          .toList(),
-                ),
-              ),
-            ),
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                            bottom: 4,
+                          ), // spacing between cards
+                          child: NotificationCard(
+                            notification: notif,
+                            leadingIcon: Icon(Symbols.alarm),
+                            isRead: notif.isRead,
+                          ),
+                        );
+                      },
+                    ),
           ),
         );
       },
       loading:
-          () => const SingleChildScrollView(child: Center(child: Text(""))),
+          () => const SingleChildScrollView(
+            child: Center(child: CircularProgressIndicator()),
+          ),
       error: (err, stack) {
         debugPrint("$err");
         return Padding(

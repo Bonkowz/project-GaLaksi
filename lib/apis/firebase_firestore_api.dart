@@ -368,7 +368,7 @@ class FirebaseFirestoreApi {
     }
   }
 
-  Future<FirestoreResult<bool>> deleteCloudNotification(int id) async {
+  Future<FirestoreResult<bool>> deleteCloudNotification(String id) async {
     try {
       final notificationSnapshot =
           await db
