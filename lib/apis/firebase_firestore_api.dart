@@ -613,6 +613,32 @@ class FirebaseFirestoreApi {
       );
     }
   }
+
+  Future<FirestoreResult<bool>> deleteTravelPlan(String id) async {
+    try {
+      await db
+          .collection("plans")
+          .doc(id)
+          .delete()
+          .timeout(const Duration(seconds: 10));
+
+      return const FirestoreSuccess(
+        message: "Plan deleted successfully.",
+        data: true,
+      );
+    } on TimeoutException catch (_) {
+      return const FirestoreFailure(
+        message: "Request timed out. Please check your internet connection.",
+        error: FirestoreFailureError.networkError,
+      );
+    } catch (e) {
+      debugPrint("Error deleting travel plan: $e");
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
 }
 
 /// Represents a result of an attempted database access
