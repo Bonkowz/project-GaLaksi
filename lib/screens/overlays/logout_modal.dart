@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
+import 'package:galaksi/providers/notifications/notification_service_provider.dart';
 
 class LogoutModal extends ConsumerWidget {
   const LogoutModal({super.key});
@@ -40,6 +41,9 @@ class LogoutModal extends ConsumerWidget {
                   TextButton(
                     onPressed: () {
                       ref.read(authNotifierProvider.notifier).signOut();
+                      ref
+                          .read(notificationServiceProvider)
+                          .cancelAllNotifications();
                       Navigator.pop(context);
                     },
                     child: Text(
