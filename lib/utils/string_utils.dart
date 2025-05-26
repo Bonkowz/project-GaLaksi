@@ -115,6 +115,7 @@ abstract class StringUtils {
 
       switch (daysUntil) {
         case 1:
+          if (DateTime.now().day == earliestStart.day) return "Happening today";
           return "Happening tomorrow";
         case < 30:
           return "Happening in $daysUntil days";
