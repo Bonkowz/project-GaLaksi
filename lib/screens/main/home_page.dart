@@ -104,6 +104,7 @@ class TravelPlansView extends ConsumerWidget {
             ),
           );
         }
+
         return SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(16),

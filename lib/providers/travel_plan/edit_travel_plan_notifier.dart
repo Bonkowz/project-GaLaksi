@@ -39,6 +39,10 @@ class EditTravelPlanNotifier extends _$EditTravelPlanNotifier {
     state = state.copyWith(description: description);
   }
 
+  void updateActivities(List<TravelActivity> activities) {
+    state = state.copyWith(activities: activities);
+  }
+
   Future<bool> editTravelPlan() async {
     final currentAuthUser = ref.watch(currentUserStreamProvider);
     final authUid = currentAuthUser.when(

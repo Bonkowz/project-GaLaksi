@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/apis/firebase_firestore_api.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/providers/travel_activity/create_travel_activity_notifier.dart';
+import 'package:galaksi/providers/travel_plan/edit_travel_plan_notifier.dart';
 import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
 import 'package:galaksi/utils/input_decorations.dart';
 import 'package:galaksi/utils/snackbar.dart';
@@ -14,18 +15,25 @@ import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
-class CreateTravelActivityPage extends ConsumerStatefulWidget {
-  const CreateTravelActivityPage({required this.travelPlanId, super.key});
+class EditTravelActivityPage extends ConsumerStatefulWidget {
+  const EditTravelActivityPage({
+    required this.travelPlanId,
+    required this.originalActivity,
+    required this.indexAt,
+    super.key,
+  });
 
   final String travelPlanId;
+  final TravelActivity originalActivity;
+  final int indexAt;
 
   @override
-  ConsumerState<CreateTravelActivityPage> createState() =>
-      _CreateTravelActivityPageState();
+  ConsumerState<EditTravelActivityPage> createState() =>
+      _EditTravelActivityPageState();
 }
 
-class _CreateTravelActivityPageState
-    extends ConsumerState<CreateTravelActivityPage> {
+class _EditTravelActivityPageState
+    extends ConsumerState<EditTravelActivityPage> {
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<FormFieldState> dropdownKey = GlobalKey<FormFieldState>();
   final titleTextController = TextEditingController();
@@ -36,6 +44,18 @@ class _CreateTravelActivityPageState
   final locationFocusNode = FocusNode();
 
   bool _isLoading = false;
+
+  String _durationToMessage(Duration duration) {
+    if (duration.inDays >= 7) {
+      return "${duration.inDays ~/ 7} week(s) before";
+    } else if (duration.inDays >= 1) {
+      return "${duration.inDays} day(s) before";
+    } else if (duration.inHours >= 1) {
+      return "${duration.inHours} hour(s) before";
+    } else {
+      return "${duration.inMinutes} minute(s) before";
+    }
+  }
 
   Future<void> submit() async {
     final formIsValid = _formKey.currentState?.validate() ?? false;
@@ -61,6 +81,10 @@ class _CreateTravelActivityPageState
 
     final travelPlan =
         ref.watch(travelPlanStreamProvider(widget.travelPlanId)).valueOrNull;
+    final editTravelPlanNotifier = ref.read(
+      editTravelPlanNotifierProvider.notifier,
+    );
+
     if (travelPlan == null) {
       showDismissableSnackbar(
         context: context,
@@ -70,9 +94,12 @@ class _CreateTravelActivityPageState
       return;
     }
 
-    final result = await createTravelActivityNotifier.addTravelActivity(
-      travelPlanId: travelPlan.id,
-    );
+    travelPlan.activities[widget.indexAt] =
+        createTravelActivityNotifier.getActivity();
+
+    editTravelPlanNotifier.setCurrentTravelPlan(travelPlan);
+
+    final result = await editTravelPlanNotifier.editTravelPlan();
 
     setState(() {
       _isLoading = false;
@@ -82,13 +109,13 @@ class _CreateTravelActivityPageState
       if (mounted) {
         showDismissableSnackbar(
           context: context,
-          message: result.message,
+          message: result ? "Success" : "Fail",
           duration: const Duration(seconds: 10),
         );
       }
     } else {
       if (mounted) {
-        showDismissableSnackbar(context: context, message: "Activity created!");
+        showDismissableSnackbar(context: context, message: "Activity edited!");
       }
       // Pop after the success message
       if (mounted) {
@@ -141,10 +168,46 @@ class _CreateTravelActivityPageState
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      activityDate = widget.originalActivity.startAt;
+      startTime = TimeOfDay.fromDateTime(widget.originalActivity.startAt);
+      endTime = TimeOfDay.fromDateTime(widget.originalActivity.endAt);
+      placeSelected = widget.originalActivity.location;
+      userReminders =
+          widget.originalActivity.reminders.map((duration) {
+            // Try to find a matching message from the predefined reminders list
+            final matching = reminders.firstWhere(
+              (r) => r.duration == duration,
+              orElse:
+                  () => Reminder(
+                    duration: duration,
+                    message: _durationToMessage(duration),
+                  ),
+            );
+            return matching;
+          }).toList();
+
+      titleTextController.text = widget.originalActivity.title;
       activityDateController.text = dateToString(activityDate);
       startTimeController.text = timeToString(startTime);
       endTimeController.text = timeToString(endTime);
+      locationController.text = widget.originalActivity.location.displayName;
     });
+
+    userReminders =
+        widget.originalActivity.reminders.map((duration) {
+          // Try to find a matching message from the predefined reminders list
+          final matching = reminders.firstWhere(
+            (r) => r.duration == duration,
+            orElse:
+                () => Reminder(
+                  duration: duration,
+                  message: _durationToMessage(duration),
+                ),
+          );
+          return matching;
+        }).toList();
+
+    locationController.text = widget.originalActivity.location.displayName;
   }
 
   @override
@@ -170,7 +233,7 @@ class _CreateTravelActivityPageState
                     : const Icon(Symbols.check),
           ),
         ],
-        title: Text("Create a travel activity", style: textTheme.bodyLarge),
+        title: Text("Edit travel activity", style: textTheme.bodyLarge),
       ),
       body: SingleChildScrollView(
         child: Padding(
