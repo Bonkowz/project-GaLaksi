@@ -46,7 +46,7 @@ class _AddNotePageState extends ConsumerState<AddNotePage> {
 
     final createAddNoteNotifier = ref.read(addNoteNotifierProvider.notifier);
 
-    createAddNoteNotifier.updateAuthorID(user!.username);
+    createAddNoteNotifier.updateAuthorID(user!.uid);
     createAddNoteNotifier.updateMessage(titleTextController.text);
     createAddNoteNotifier.updateCreatedAt(DateTime.now(), TimeOfDay.now());
 
@@ -153,14 +153,12 @@ class _AddNotePageState extends ConsumerState<AddNotePage> {
                           (event) =>
                               FocusManager.instance.primaryFocus?.unfocus(),
                       keyboardType: TextInputType.multiline,
-                      maxLines: null,
+                      maxLines: 3,
                       decoration: InputDecorations.outlineBorder(
                         context: context,
                         prefixIcon: const Icon(Symbols.title),
                         hintText: "Note",
                         borderRadius: 16,
-                        // TODO: add padding to field
-                        // contentPadding: const EdgeInsets.only(bottom: 80.0),
                       ).copyWith(
                         counterText: "${titleTextController.text.length}",
                       ),
