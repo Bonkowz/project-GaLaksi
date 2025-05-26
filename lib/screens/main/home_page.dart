@@ -80,7 +80,7 @@ class HomePage extends ConsumerWidget {
         ),
         body: const TabBarView(
           physics: NeverScrollableScrollPhysics(),
-          children: [TravelPlansView(), Center(child: Text("Shared with you"))],
+          children: [TravelPlansView(), SharedTravelPlansView()],
         ),
       ),
     );
@@ -93,6 +93,54 @@ class TravelPlansView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final plansAsyncValue = ref.watch(myTravelPlansStreamProvider);
+
+    return plansAsyncValue.when(
+      data: (plans) {
+        if (plans.isEmpty) {
+          return Center(
+            child: Text(
+              "No plans... so far.",
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          );
+        }
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              spacing: 8,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children:
+                  plans
+                      .map((plan) => TravelPlanCard(travelPlan: plan))
+                      .toList(),
+            ),
+          ),
+        );
+      },
+      loading: () => const SingleChildScrollView(child: HomeLoading()),
+      error: (err, stack) {
+        debugPrint("$err");
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(
+            child: Text(
+              'Error: $err',
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class SharedTravelPlansView extends ConsumerWidget {
+  const SharedTravelPlansView({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final plansAsyncValue = ref.watch(sharedTravelPlansStreamProvider);
 
     return plansAsyncValue.when(
       data: (plans) {

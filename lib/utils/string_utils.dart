@@ -1,3 +1,4 @@
+import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
 import 'package:intl/intl.dart';
 
@@ -124,5 +125,13 @@ abstract class StringUtils {
     } else {
       return "Ongoing";
     }
+  }
+
+  static String getActivityTimeRange(TravelActivity activity) {
+    final startTime = DateFormat('h:mm a').format(activity.startAt.toLocal());
+    final endTime = DateFormat('h:mm a').format(activity.endAt.toLocal());
+    final timeRange = "$startTime to $endTime";
+
+    return timeRange;
   }
 }
