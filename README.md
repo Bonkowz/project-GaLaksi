@@ -61,14 +61,9 @@ GaLaksi! is a mobile travel planning application designed to help users seamless
 ![494826902_1093315106185376_6655715506052700203_n](https://github.com/user-attachments/assets/303239c0-b735-4f94-af11-917158ff847b)
 
 ### 4. Find Similar Travelers
-- Discover users in *Friends* tab
+- Discover and explore users in *Friends* tab
 
 ![image](https://github.com/user-attachments/assets/b7252ae0-0800-434e-b695-f3ace63fe1cc)
-
-- Explore public travel profiles
-  
-![image](https://github.com/user-attachments/assets/175d6be0-453f-4b55-b123-49520d75248b)
-
 
 ### 5. Edit Profile
 - Update photo, bio, preferences  
