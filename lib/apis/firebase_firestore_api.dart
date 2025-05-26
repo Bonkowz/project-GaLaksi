@@ -8,6 +8,7 @@ import 'package:galaksi/models/travel_plan/note_model.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
 import 'package:galaksi/models/user/user_model.dart';
+import 'package:galaksi/utils/string_utils.dart';
 
 class FirebaseFirestoreApi {
   FirebaseFirestoreApi() {
@@ -281,13 +282,42 @@ class FirebaseFirestoreApi {
 
   Future<FirestoreResult<bool>> addTravelActivity(
     String planID,
-    TravelActivity activity,
+    TravelActivity newActivity,
   ) async {
     try {
       final docRef = FirebaseFirestore.instance.collection("plans").doc(planID);
 
+      final snapshot = await docRef.get();
+      final data = snapshot.data();
+
+      if (data == null || !data.containsKey('activities')) {
+        await docRef.update({
+          'activities': FieldValue.arrayUnion([newActivity.toMap()]),
+        });
+        return const FirestoreSuccess(
+          message: "Successfully added travel activity!",
+          data: true,
+        );
+      }
+
+      final List<dynamic> docActivities = data['activities'];
+      final List<TravelActivity> existingActivities =
+          docActivities.map((doc) => TravelActivity.fromMap(doc)).toList();
+
+      // Check for conflict
+      for (final activity in existingActivities) {
+        if (_hasTimeConflict(newActivity, activity)) {
+          return FirestoreFailure(
+            message:
+                "Time conflict with activity: ${activity.title} from ${StringUtils.getActivityTimeRange(activity)}",
+            error: FirestoreFailureError.unknown,
+          );
+        }
+      }
+
+      // No conflict, add the activity
       await docRef.update({
-        'activities': FieldValue.arrayUnion([activity.toMap()]),
+        'activities': FieldValue.arrayUnion([newActivity.toMap()]),
       });
 
       return const FirestoreSuccess(
@@ -436,3 +466,8 @@ class FirestoreFailure<T extends Object> extends FirestoreResult<T> {
 
 /// Represents the different causes of a FirestoreFailure.
 enum FirestoreFailureError { notFound, networkError, unknown }
+
+// Helper function
+bool _hasTimeConflict(TravelActivity a, TravelActivity b) {
+  return a.startAt.isBefore(b.endAt) && a.endAt.isAfter(b.startAt);
+}

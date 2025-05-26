@@ -81,7 +81,6 @@ class _SharedUsersModalState extends ConsumerState<SharedUsersModal> {
           accommodations: travelPlan.accommodations,
         );
 
-        // Update in Firestore
         final result = await FirebaseFirestoreApi().editTravelPlan(updatedPlan);
         result.when(
           onSuccess: (success) {
@@ -110,6 +109,55 @@ class _SharedUsersModalState extends ConsumerState<SharedUsersModal> {
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  void _removeUser(String userId) async {
+    try {
+      setState(() => error = null);
+
+      final travelPlan =
+          ref.watch(travelPlanStreamProvider(widget.travelPlanId)).value!;
+
+      // Check if the user is removing themselves
+      final currentUserId = ref.watch(authNotifierProvider).user!.uid;
+      final isRemovingThemselves = userId == currentUserId;
+
+      final updatedSharedWith = List<String>.from(travelPlan.sharedWith);
+      updatedSharedWith.remove(userId);
+
+      final updatedPlan = TravelPlan(
+        id: travelPlan.id,
+        title: travelPlan.title,
+        description: travelPlan.description,
+        creatorID: travelPlan.creatorID,
+        sharedWith: updatedSharedWith,
+        notes: travelPlan.notes,
+        activities: travelPlan.activities,
+        flightDetails: travelPlan.flightDetails,
+        accommodations: travelPlan.accommodations,
+      );
+
+      final result = await FirebaseFirestoreApi().editTravelPlan(updatedPlan);
+      result.when(
+        onSuccess: (success) {
+          if (success.data) {
+            // If the user removed themselves, navigate back to the base page
+            if (isRemovingThemselves && mounted) {
+              Navigator.of(context).popUntil(ModalRoute.withName("/"));
+            }
+          } else {
+            setState(() => error = "Failed to remove user from travel plan.");
+          }
+        },
+        onFailure: (failure) {
+          setState(() => error = failure.message);
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        setState(() => error = "An error occurred while removing the user.");
       }
     }
   }
@@ -231,10 +279,13 @@ class _SharedUsersModalState extends ConsumerState<SharedUsersModal> {
                         final user = ref.watch(
                           userProfileStreamProvider(userId),
                         );
-
                         return user.when(
                           data: (user) {
-                            return _UserTile(user: user);
+                            return _UserTile(
+                              travelPlanId: widget.travelPlanId,
+                              user: user,
+                              onRemoveUser: _removeUser,
+                            );
                           },
                           error: (error, stackTrace) {
                             return ListTile(
@@ -248,7 +299,11 @@ class _SharedUsersModalState extends ConsumerState<SharedUsersModal> {
                           },
                           loading: () {
                             return Skeletonizer(
-                              child: _UserTile(user: dummyUser),
+                              child: _UserTile(
+                                travelPlanId: widget.travelPlanId,
+                                user: dummyUser,
+                                onRemoveUser: _removeUser,
+                              ),
                             );
                           },
                         );
@@ -264,14 +319,22 @@ class _SharedUsersModalState extends ConsumerState<SharedUsersModal> {
   }
 }
 
-class _UserTile extends StatelessWidget {
-  const _UserTile({required this.user});
+class _UserTile extends ConsumerWidget {
+  const _UserTile({
+    required this.travelPlanId,
+    required this.user,
+    required this.onRemoveUser,
+  });
 
   final User user;
+  final String travelPlanId;
+  final void Function(String) onRemoveUser;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final travelPlan = ref.watch(travelPlanStreamProvider(travelPlanId)).value!;
     return ListTile(
+      contentPadding: EdgeInsets.zero,
       leading: UserAvatar(
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         textColor: Theme.of(context).colorScheme.onPrimaryContainer,
@@ -281,16 +344,23 @@ class _UserTile extends StatelessWidget {
       title: Text(
         "${user.firstName} ${user.lastName}",
         style: const TextStyle(fontWeight: FontWeight.bold),
+
+        overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(user.username),
-      // TODO: add role validation
-      // subtitle: Text(testSharedUser[index]['role']!),
-      trailing: IconButton(
-        icon: const Icon(Symbols.remove),
-        onPressed: () {
-          // TODO: add remove here
-        },
-      ),
+      trailing:
+          travelPlan.creatorID == ref.watch(authNotifierProvider).user!.uid ||
+                  user.uid == ref.watch(authNotifierProvider).user!.uid
+              ? IconButton(
+                icon: Icon(
+                  Symbols.remove_circle,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+                onPressed: () {
+                  onRemoveUser(user.uid);
+                },
+              )
+              : null,
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:galaksi/models/travel_plan/flight_detail_model.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/providers/travel_activity/add_flight_notifier.dart';
 import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
@@ -172,11 +171,14 @@ class _AddFlightPageState extends ConsumerState<AddFlightPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.only(left: 4), 
+                                padding: const EdgeInsets.only(left: 4),
                                 child: Text(
                                   "Origin",
                                   style: textTheme.bodyMedium?.copyWith(
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    color:
+                                        Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                   ),
                                 ),
                               ),
@@ -191,7 +193,7 @@ class _AddFlightPageState extends ConsumerState<AddFlightPage> {
                             ],
                           ),
                         ),
-                        const SizedBox(width: 16,),
+                        const SizedBox(width: 16),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,7 +203,10 @@ class _AddFlightPageState extends ConsumerState<AddFlightPage> {
                                 child: Text(
                                   "Destination",
                                   style: textTheme.bodyMedium?.copyWith(
-                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    color:
+                                        Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                   ),
                                 ),
                               ),
@@ -270,7 +275,7 @@ class _AddFlightPageState extends ConsumerState<AddFlightPage> {
 
                         if (pickedDate != null) {
                           activityDate = pickedDate;
-                          
+
                           final pickedTime = await showTimePicker(
                             context: context,
                             initialTime: startTime ?? TimeOfDay.now(),
@@ -278,9 +283,9 @@ class _AddFlightPageState extends ConsumerState<AddFlightPage> {
 
                           if (pickedTime != null) {
                             startTime = pickedTime;
-                            
+
                             setState(() {
-                              departureAtController.text = 
+                              departureAtController.text =
                                   '${dateToString(activityDate!)} at ${timeToString(startTime!)}';
                             });
                           }

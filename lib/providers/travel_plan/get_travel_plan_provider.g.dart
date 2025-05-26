@@ -25,6 +25,26 @@ final myTravelPlansStreamProvider = StreamProvider<List<TravelPlan>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MyTravelPlansStreamRef = StreamProviderRef<List<TravelPlan>>;
+String _$sharedTravelPlansStreamHash() =>
+    r'90ed5962b8f2630daeac0f5267eb5d4ab0b217ba';
+
+/// See also [sharedTravelPlansStream].
+@ProviderFor(sharedTravelPlansStream)
+final sharedTravelPlansStreamProvider =
+    StreamProvider<List<TravelPlan>>.internal(
+      sharedTravelPlansStream,
+      name: r'sharedTravelPlansStreamProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$sharedTravelPlansStreamHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef SharedTravelPlansStreamRef = StreamProviderRef<List<TravelPlan>>;
 String _$travelPlanStreamHash() => r'76781cbf92b1e0ab117926188eb320b2343d4ee8';
 
 /// Copied from Dart SDK

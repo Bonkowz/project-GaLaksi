@@ -3,11 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
 import 'package:galaksi/utils/input_decorations.dart';
 import 'package:galaksi/utils/snackbar.dart';
-import 'package:galaksi/widgets/place_autocomplete.dart';
-import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:galaksi/models/travel_plan/note_model.dart';
 import 'package:galaksi/providers/travel_activity/add_note_notifier.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
 
@@ -38,11 +35,9 @@ class _AddNotePageState extends ConsumerState<AddNotePage> {
       _isLoading = true;
     });
 
-    final createAddNoteNotifier = ref.read(
-      addNoteNotifierProvider.notifier,
-    );
+    final createAddNoteNotifier = ref.read(addNoteNotifierProvider.notifier);
 
-    createAddNoteNotifier.updateAuthorID(user!.username);
+    createAddNoteNotifier.updateAuthorID(user!.uid);
     createAddNoteNotifier.updateMessage(titleTextController.text);
     createAddNoteNotifier.updateCreatedAt(DateTime.now(), TimeOfDay.now());
 
@@ -92,15 +87,16 @@ class _AddNotePageState extends ConsumerState<AddNotePage> {
     titleTextController.dispose();
     super.dispose();
   }
+
   /// Utility function for FormField
   String timeToString(TimeOfDay time) {
     return "${time.hourOfPeriod}:${time.minute.toString().padLeft(2, '0')} ${time.period.name.toUpperCase()}";
   }
+
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(authNotifierProvider).user;
     final notifier = ref.read(addNoteNotifierProvider.notifier);
-    
+
     debugPrint('notifier hash in parent: ${notifier.hashCode}');
 
     final textTheme = Theme.of(context).textTheme;
@@ -147,14 +143,12 @@ class _AddNotePageState extends ConsumerState<AddNotePage> {
                           (event) =>
                               FocusManager.instance.primaryFocus?.unfocus(),
                       keyboardType: TextInputType.multiline,
-                      maxLines: null,
+                      maxLines: 3,
                       decoration: InputDecorations.outlineBorder(
                         context: context,
                         prefixIcon: const Icon(Symbols.title),
                         hintText: "Note",
                         borderRadius: 16,
-                        // TODO: add padding to field
-                        // contentPadding: const EdgeInsets.only(bottom: 80.0),
                       ).copyWith(
                         counterText: "${titleTextController.text.length}",
                       ),
@@ -164,7 +158,6 @@ class _AddNotePageState extends ConsumerState<AddNotePage> {
                         ),
                       ]),
                     ),
-                   
                   ],
                 ),
               ),
@@ -175,4 +168,3 @@ class _AddNotePageState extends ConsumerState<AddNotePage> {
     );
   }
 }
-

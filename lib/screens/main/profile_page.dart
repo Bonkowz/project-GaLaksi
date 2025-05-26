@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/models/user/interest_model.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/screens/overlays/edit_profile_page.dart';
+import 'package:galaksi/screens/overlays/logout_modal.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
@@ -89,9 +90,17 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               ),
               IconButton(
                 onPressed: () {
-                  ref.read(authNotifierProvider.notifier).signOut();
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const Center(child: LogoutModal());
+                    },
+                  );
                 },
-                icon: const Icon(Symbols.logout_rounded),
+                icon: Icon(
+                  Symbols.logout_rounded,
+                  color: Theme.of(context).colorScheme.error,
+                ),
               ),
             ],
           ),

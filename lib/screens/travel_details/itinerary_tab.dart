@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:galaksi/models/travel_plan/travel_activity_model.dart';
 import 'package:galaksi/screens/overlays/create_travel_activity_page.dart';
+import 'package:galaksi/utils/string_utils.dart';
 import 'package:galaksi/widgets/create_details_button.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:intl/intl.dart';
@@ -15,6 +16,10 @@ class ItineraryTab extends StatelessWidget {
 
   final String travelPlanId;
   final List<TravelActivity> activities;
+
+  bool isFuture(DateTime time) {
+    return time.isAfter(DateTime.now());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +57,7 @@ class ItineraryTab extends StatelessWidget {
           itemBuilder: (context, index) {
             final date = sortedGroupedEntries[index].key;
             final activitiesForDay = sortedGroupedEntries[index].value;
-            final formattedDateHeader = DateFormat('MMM d,yyyy').format(date);
+            final formattedDateHeader = DateFormat('MMM d, yyyy').format(date);
             return Card.outlined(
               color: Theme.of(context).colorScheme.surfaceContainerLowest,
               child: Column(
@@ -101,32 +106,32 @@ class ItineraryTab extends StatelessWidget {
                         lastConnectorStyle: ConnectorStyle.transparent,
                         contentsAlign: ContentsAlign.basic,
                         indicatorStyleBuilder:
-                            (context, index) => IndicatorStyle.dot,
+                            (context, index) =>
+                                isFuture(activitiesForDay[index].startAt)
+                                    ? IndicatorStyle.outlined
+                                    : IndicatorStyle.dot,
                         contentsBuilder: (context, index) {
                           final activity = activitiesForDay[index];
-                          final startTime =
-                              "${activity.startAt.toLocal().hour}:${activity.startAt.toLocal().minute.toString().padLeft(2, '0')}";
-                          final endTime =
-                              "${activity.endAt.toLocal().hour}:${activity.endAt.toLocal().minute.toString().padLeft(2, '0')}";
-                          final timeRange = "$startTime to $endTime";
 
                           return Padding(
                             padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
                             child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 Text(
-                                  timeRange,
+                                  StringUtils.getActivityTimeRange(activity),
                                   style: Theme.of(context).textTheme.bodyMedium
                                       ?.copyWith(fontWeight: FontWeight.bold),
-                                  textAlign: TextAlign.right,
+                                  textAlign: TextAlign.left,
                                 ),
                                 Text(
                                   activity.title,
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                                 Text(
-                                  activity.location.displayName,
+                                  activity.location.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: Theme.of(
                                     context,
                                   ).textTheme.bodySmall?.copyWith(
