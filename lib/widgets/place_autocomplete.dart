@@ -31,6 +31,7 @@ class PlaceAutocompleteState extends ConsumerState<PlaceAutocomplete> {
   void initState() {
     super.initState();
     _controller = widget.controller;
+    _controller.text = widget.controller.text;
   }
 
   void _handleCustomPlace() {
@@ -75,6 +76,14 @@ class PlaceAutocompleteState extends ConsumerState<PlaceAutocomplete> {
         focusNode,
         onFieldSubmitted,
       ) {
+        if (textEditingController.text.isEmpty &&
+            widget.controller.text.isNotEmpty) {
+          textEditingController.text = widget.controller.text;
+          textEditingController.selection = TextSelection.fromPosition(
+            TextPosition(offset: textEditingController.text.length),
+          );
+        }
+
         textEditingController.addListener(() {
           if (_controller.text != textEditingController.text) {
             _controller.text = textEditingController.text;

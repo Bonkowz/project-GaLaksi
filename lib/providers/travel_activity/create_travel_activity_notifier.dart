@@ -53,6 +53,16 @@ class CreateTravelActivityNotifier extends _$CreateTravelActivityNotifier {
     state = state.copyWith(reminders: reminders);
   }
 
+  TravelActivity getActivity() {
+    return TravelActivity(
+      startAt: state.startAt!,
+      endAt: state.endAt!,
+      title: state.title!,
+      location: state.location!,
+      reminders: state.reminders!,
+    );
+  }
+
   Future<FirestoreResult?> addTravelActivity({
     required String travelPlanId,
   }) async {
