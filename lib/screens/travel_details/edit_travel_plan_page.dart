@@ -148,7 +148,7 @@ class EditTravelPlanPageState extends ConsumerState<EditTravelPlanPage> {
                               errorText: "Please enter a title",
                             ),
                             FormBuilderValidators.maxLength(
-                              20,
+                              30,
                               errorText:
                                   "Title must be less than 30 characters.",
                             ),
