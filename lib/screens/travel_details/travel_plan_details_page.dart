@@ -30,12 +30,11 @@ class _TravelPlanDetailsPageState extends ConsumerState<TravelPlanDetailsPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final double appBarHeight = 280;
-
   void _showSharedUsersDialog(BuildContext context, TravelPlan plan) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Center(child: SharedUsersModal(users: plan.sharedWith));
+        return Center(child: SharedUsersModal(travelPlanId: plan.id));
       },
     );
   }
