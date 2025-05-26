@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:galaksi/models/travel_plan/note_model.dart';
-import 'package:galaksi/screens/overlays/create_travel_activity_page.dart';
 import 'package:galaksi/widgets/create_details_button.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:galaksi/screens/overlays/add_note_page.dart';
 
 class NotesTab extends StatelessWidget {
   NotesTab({required this.travelPlanId, required this.notes, super.key});
@@ -50,7 +50,7 @@ class NotesTab extends StatelessWidget {
             text: "Add a note...",
             leadingIcon: const Icon(Symbols.add),
             trailingIcon: const Icon(Symbols.edit),
-            navigateTo: CreateTravelActivityPage(travelPlanId: travelPlanId),
+            navigateTo: AddNotePage(travelPlanId: travelPlanId),
           ),
         ),
         SliverList.builder(
