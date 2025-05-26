@@ -1,102 +1,124 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:galaksi/screens/traveldetails/travel_plan_details_page.dart';
+import 'package:galaksi/screens/travel_details/travel_plan_details_page.dart';
+import 'package:galaksi/utils/string_utils.dart';
 
-class TravelPlanCard extends StatelessWidget {
+class TravelPlanCard extends ConsumerWidget {
   const TravelPlanCard({required this.travelPlan, super.key});
 
   final TravelPlan travelPlan;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final textTheme = Theme.of(context).textTheme;
-
     return SizedBox(
       height: 170,
-      child: GestureDetector(
-        onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const TravelPlanDetailsPage(),
-            ),
-          );
-        },
-        child: Card.outlined(
-          margin: EdgeInsets.zero,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Expanded(
-                flex: 4,
-                child: ClipRRect(
+      child: Stack(
+        children: <Widget>[
+          Card.outlined(
+            margin: EdgeInsets.zero,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const ClipRRect(
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(12),
                     bottomLeft: Radius.circular(12),
                   ),
-                  child: Image(
-                    image: AssetImage('assets/images/galaksi-placeholder.jpg'),
-                    fit: BoxFit.cover,
+                  child: AspectRatio(
+                    aspectRatio: 16 / 19,
+                    child: Image(
+                      image: AssetImage(
+                        'assets/images/galaksi-placeholder.jpg',
+                      ),
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                flex: 6,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    spacing: 4,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Text(
-                          travelPlan.title,
-                          style: textTheme.bodyLarge!.copyWith(
-                            fontWeight: FontWeight.bold,
+                Expanded(
+                  flex: 6,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      spacing: 4,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 4),
+                          child: Text(
+                            travelPlan.title,
+                            style: textTheme.bodyLarge!.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.start,
                           ),
-                          textAlign: TextAlign.start,
                         ),
-                      ),
-                      Row(
-                        spacing: 4,
-                        children: [
-                          const Icon(Symbols.alarm),
-                          Text(
-                            "Happening in 2 days",
-                            style: textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        spacing: 4,
-                        children: [
-                          const Icon(Symbols.calendar_month),
-                          Text(
-                            "May 5 - June 3, 2025",
-                            style: textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        spacing: 4,
-                        children: [
-                          const Icon(Symbols.map),
-                          Text(
-                            travelPlan.activities.isEmpty
-                                ? "No activities yet"
-                                : "${travelPlan.activities.length} activities",
-                            style: textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                    ],
+                        Row(
+                          spacing: 4,
+                          children: [
+                            const Icon(Symbols.alarm),
+                            Flexible(
+                              child: Text(
+                                StringUtils.getTravelPlanStatusText(travelPlan),
+                                overflow: TextOverflow.ellipsis,
+                                style: textTheme.bodyMedium,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          spacing: 4,
+                          children: [
+                            const Icon(Symbols.calendar_month),
+                            Text(
+                              StringUtils.getTravelPlanDateRange(travelPlan),
+                              style: textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          spacing: 4,
+                          children: [
+                            const Icon(Symbols.map),
+                            Text(
+                              travelPlan.activities.isEmpty
+                                  ? "No activities yet"
+                                  : "${travelPlan.activities.length} activit${travelPlan.activities.length > 1 ? "ies" : "y"}",
+                              style: textTheme.bodyMedium,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+          Positioned.fill(
+            child: Material(
+              clipBehavior: Clip.hardEdge,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder:
+                          (context) => TravelPlanDetailsPage(
+                            travelPlanId: travelPlan.id,
+                          ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

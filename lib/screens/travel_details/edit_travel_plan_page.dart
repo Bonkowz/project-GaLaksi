@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
-import 'package:galaksi/providers/travel_plan/create_travel_plan_notifier.dart';
-import 'package:galaksi/screens/overlays/scan_travel_plan_qr_code.dart';
+import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
+import 'package:galaksi/providers/travel_plan/edit_travel_plan_notifier.dart';
 import 'package:galaksi/utils/input_decorations.dart';
 import 'package:galaksi/utils/snackbar.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-class CreateTravelPlanPage extends ConsumerStatefulWidget {
-  const CreateTravelPlanPage({super.key});
+class EditTravelPlanPage extends ConsumerStatefulWidget {
+  const EditTravelPlanPage({required this.travelPlan, super.key});
+
+  final TravelPlan travelPlan;
 
   @override
-  ConsumerState<CreateTravelPlanPage> createState() =>
-      _CreateTravelPlanPageState();
+  ConsumerState<EditTravelPlanPage> createState() => EditTravelPlanPageState();
 }
 
-class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
+class EditTravelPlanPageState extends ConsumerState<EditTravelPlanPage> {
   final _formKey = GlobalKey<FormState>();
   final titleTextController = TextEditingController();
   final descriptionTextController = TextEditingController();
@@ -34,13 +35,15 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
     });
 
     final travelPlanNotifier = ref.read(
-      createTravelPlanNotifierProvider.notifier,
+      editTravelPlanNotifierProvider.notifier,
     );
+
+    travelPlanNotifier.setCurrentTravelPlan(widget.travelPlan);
 
     travelPlanNotifier.updateTitle(titleTextController.text);
     travelPlanNotifier.updateDescription(descriptionTextController.text);
 
-    final result = await travelPlanNotifier.createTravelPlan();
+    final result = await travelPlanNotifier.editTravelPlan();
 
     setState(() {
       _isLoading = false;
@@ -61,7 +64,7 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
       if (mounted) {
         showDismissableSnackbar(
           context: context,
-          message: "Travel plan created!",
+          message: "Travel plan updated!",
         );
       }
       // Pop after the success message
@@ -69,6 +72,13 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
         Navigator.pop(context);
       }
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    titleTextController.text = widget.travelPlan.title;
+    descriptionTextController.text = widget.travelPlan.description;
   }
 
   @override
@@ -82,7 +92,6 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final accent = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
       appBar: AppBar(
@@ -103,57 +112,20 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
                     : const Icon(Symbols.check),
           ),
         ],
-        title: Text("Create a travel plan", style: textTheme.bodyLarge),
+        title: Text("Edit travel plan", style: textTheme.bodyLarge),
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            spacing: 20,
+            spacing: 16,
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: [
-              Text(
-                "Create from scratch",
-                style: textTheme.headlineMedium!.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {}, // TODO: Implement image picker
-                child: DottedBorder(
-                  fillColor: Theme.of(context).colorScheme.surface,
-                  color: accent,
-                  borderType: BorderType.roundedRectangle,
-                  radius: const Radius.circular(16),
-                  dashPattern: const [8, 4],
-                  strokeWidth: 1,
-                  child: Container(
-                    height: 120,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.surface,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.camera_alt_outlined,
-                          color: accent,
-                          size: 32,
-                        ),
-                        const SizedBox(height: 8),
-                        Text('Insert image', style: TextStyle(color: accent)),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
               Form(
                 key: _formKey,
                 child: Column(
-                  spacing: 0,
+                  spacing: 8,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     TextFormField(
@@ -196,89 +168,10 @@ class _CreateTravelPlanPageState extends ConsumerState<CreateTravelPlanPage> {
                   ],
                 ),
               ),
-              const Row(
-                spacing: 16,
-                children: [
-                  Expanded(child: Divider()),
-                  Text("or"),
-                  Expanded(child: Divider()),
-                ],
-              ),
-              Text(
-                "Join a friend's travel plan",
-                style: textTheme.headlineMedium!.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  spacing: 8,
-                  children: [
-                    IconButton.filled(
-                      onPressed: _openScanner,
-                      icon: const Icon(Symbols.camera_alt_rounded),
-                      iconSize: 48,
-                      padding: const EdgeInsets.all(24.0),
-                    ),
-                    Text(
-                      "Ask your friend for their QR code!",
-                      style: textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         ),
       ),
     );
   }
-
-  void _openScanner() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => const ScanTravelPlanQrCode()),
-    );
-  }
 }
-
-class DottedBorder extends StatelessWidget {
-  const DottedBorder({
-    required this.child,
-    required this.color,
-    required this.borderType,
-    required this.radius,
-    required this.dashPattern,
-    required this.strokeWidth,
-    required this.fillColor,
-    super.key,
-  });
-
-  final Widget child;
-  final Color color;
-  final BorderType borderType;
-  final Radius radius;
-  final List<double> dashPattern;
-  final double strokeWidth;
-  final Color fillColor;
-
-  @override
-  Widget build(BuildContext context) {
-    // For simplicity, just use a Container with a border for now
-    return Container(
-      decoration: BoxDecoration(
-        color: fillColor,
-        border: Border.all(
-          color: color,
-          width: strokeWidth,
-          style: BorderStyle.solid,
-        ),
-        borderRadius: BorderRadius.all(radius),
-      ),
-      child: child,
-    );
-  }
-}
-
-enum BorderType { roundedRectangle }

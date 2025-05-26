@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:galaksi/widgets/home_loading.dart';
 import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
 import 'package:galaksi/widgets/travel_plan_card.dart';
@@ -117,7 +118,7 @@ class TravelPlansView extends ConsumerWidget {
           ),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => const SingleChildScrollView(child: HomeLoading()),
       error: (err, stack) {
         debugPrint("$err");
         return Padding(
