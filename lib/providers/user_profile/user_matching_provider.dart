@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/models/user/user_model.dart';
+import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_matching_provider.g.dart';
@@ -28,31 +28,18 @@ class UserMatch {
 // RIVERPOD PROVIDER (find matching users)
 @Riverpod(keepAlive: true)
 Stream<List<UserMatch>> userMatching(Ref ref) {
-  final currentUser = FirebaseAuth.instance.currentUser;
-  if (currentUser == null) return Stream.value([]);
+  final currentUser = ref.watch(authNotifierProvider).user!;
+  final currentUserInterests =
+      currentUser.interests?.map((i) => i.name).toList() ?? [];
+  final currentUserTravelStyles =
+      currentUser.travelStyles?.map((ts) => ts.name).toList() ?? [];
 
   return FirebaseFirestore.instance
       .collection('users')
       .where('isPrivate', isEqualTo: false)
       .snapshots()
+      .where((snapshot) => !snapshot.metadata.isFromCache)
       .asyncMap((allUsersSnapshot) async {
-        final currentUserDoc =
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(currentUser.uid)
-                .get();
-
-        if (!currentUserDoc.exists) return [];
-
-        // gets the current/logged in user's interests and travel styles
-        final currentUserData = currentUserDoc.data()!;
-        final currentUserInterests = List<String>.from(
-          currentUserData['interests'] ?? [],
-        );
-        final currentUserTravelStyles = List<String>.from(
-          currentUserData['travelStyles'] ?? [],
-        );
-
         return allUsersSnapshot.docs
             .where((doc) => doc.id != currentUser.uid)
             .map(
