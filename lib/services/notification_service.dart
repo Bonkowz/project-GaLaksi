@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:galaksi/utils/time_utils.dart';
 
@@ -63,15 +64,26 @@ class NotificationService {
     int id = 0,
     String? title,
     String? body,
+    String? payload,
     DateTime? scheduledDate,
   }) async {
     return notificationsPlugin.zonedSchedule(
       id,
       title,
       body,
-      convertToTZ(scheduledDate!, "Asia/Manila"),
+      payload: payload,
+      TimeUtils.convertToTZ(scheduledDate!, "Asia/Manila"),
       notificationDetails(),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
+  }
+
+  Future<void> cancelNotification({required int id}) async {
+    return notificationsPlugin.cancel(id);
+  }
+
+  Future<void> cancelAllNotifications() async {
+    debugPrint("Cancelling all notifs");
+    return notificationsPlugin.cancelAll();
   }
 }
