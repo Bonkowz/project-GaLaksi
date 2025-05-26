@@ -450,6 +450,44 @@ class FirebaseFirestoreApi {
       );
     }
   }
+
+  Future<FirestoreResult<bool>> markNotificationAsRead(String id) async {
+    try {
+      final querySnapshot =
+          await db
+              .collection("notifications")
+              .where('notificationID', isEqualTo: id)
+              .limit(1)
+              .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        return const FirestoreFailure(
+          message: "Notification not found.",
+          error: FirestoreFailureError.unknown,
+        );
+      }
+
+      final docId = querySnapshot.docs.first.id;
+
+      await db.collection("notifications").doc(docId).update({'isRead': true});
+
+      return const FirestoreSuccess(
+        message: "Notification marked as read successfully.",
+        data: true,
+      );
+    } on TimeoutException catch (_) {
+      return const FirestoreFailure(
+        message: "Request timed out. Please check your internet connection.",
+        error: FirestoreFailureError.networkError,
+      );
+    } catch (e) {
+      debugPrint("Error marking notification as read: $e");
+      return const FirestoreFailure(
+        message: "An unknown error occurred.",
+        error: FirestoreFailureError.unknown,
+      );
+    }
+  }
 }
 
 /// Represents a result of an attempted database access

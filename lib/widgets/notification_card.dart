@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:galaksi/apis/firebase_firestore_api.dart';
 import 'package:galaksi/models/notification_model.dart';
+import 'package:galaksi/screens/travel_details/travel_plan_details_page.dart';
+import 'package:galaksi/utils/string_utils.dart';
 
 class NotificationCard extends StatelessWidget {
   const NotificationCard({
@@ -17,7 +20,18 @@ class NotificationCard extends StatelessWidget {
     return Card.outlined(
       color: Theme.of(context).colorScheme.surfaceContainerLowest,
       child: InkWell(
-        onTap: () {},
+        onTap: () async {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder:
+                  (context) =>
+                      TravelPlanDetailsPage(travelPlanId: notification.planID),
+            ),
+          );
+          FirebaseFirestoreApi().markNotificationAsRead(
+            notification.notificationID,
+          );
+        },
         borderRadius: BorderRadius.circular(12),
         child: SizedBox(
           width: double.infinity,
@@ -37,21 +51,34 @@ class NotificationCard extends StatelessWidget {
                         notification.title,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          fontWeight: FontWeight.w900,
+                          fontWeight:
+                              isRead ? FontWeight.w600 : FontWeight.w900,
                         ),
                       ),
                       Text(
                         notification.body,
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                          fontWeight: FontWeight.w600,
+                          fontWeight:
+                              isRead ? FontWeight.normal : FontWeight.w900,
+                        ),
+                      ),
+                      Text(
+                        StringUtils.timeAgo(notification.scheduledAt),
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.labelMedium!.copyWith(
+                          fontWeight:
+                              isRead ? FontWeight.w600 : FontWeight.w900,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ],
                   ),
                 ),
                 isRead
-                    ? SizedBox.shrink()
+                    ? const SizedBox.shrink()
                     : Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Container(

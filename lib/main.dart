@@ -33,34 +33,34 @@ class MainApp extends ConsumerWidget {
 
     final textTheme = createTextTheme(context, "Figtree", "Figtree");
 
-    // // Listen to changes in travel plan streams and sync notification
-    // ref.listen<AsyncValue<List<TravelPlan>>>(myTravelPlansStreamProvider, (
-    //   prev,
-    //   next,
-    // ) async {
-    //   final prevPlans = prev?.valueOrNull ?? [];
-    //   final nextPlans = next.valueOrNull ?? [];
+    // Listen to changes in travel plan streams and sync notification
+    ref.listen<AsyncValue<List<TravelPlan>>>(myTravelPlansStreamProvider, (
+      prev,
+      next,
+    ) async {
+      final prevPlans = prev?.valueOrNull ?? [];
+      final nextPlans = next.valueOrNull ?? [];
 
-    //   final notificationSyncService = ref.read(notificationSyncServiceProvider);
-    //   await notificationSyncService.syncNotifications(
-    //     previousPlans: prevPlans,
-    //     nextPlans: nextPlans,
-    //   );
-    // });
+      final notificationSyncService = ref.read(notificationSyncServiceProvider);
+      await notificationSyncService.syncLocalNotifications(
+        previousPlans: prevPlans,
+        nextPlans: nextPlans,
+      );
+    });
 
-    // ref.listen<AsyncValue<List<TravelPlan>>>(sharedTravelPlansStreamProvider, (
-    //   prev,
-    //   next,
-    // ) async {
-    //   final prevPlans = prev?.valueOrNull ?? [];
-    //   final nextPlans = next.valueOrNull ?? [];
+    ref.listen<AsyncValue<List<TravelPlan>>>(sharedTravelPlansStreamProvider, (
+      prev,
+      next,
+    ) async {
+      final prevPlans = prev?.valueOrNull ?? [];
+      final nextPlans = next.valueOrNull ?? [];
 
-    //   final notificationSyncService = ref.read(notificationSyncServiceProvider);
-    //   await notificationSyncService.syncNotifications(
-    //     previousPlans: prevPlans,
-    //     nextPlans: nextPlans,
-    //   );
-    // });
+      final notificationSyncService = ref.read(notificationSyncServiceProvider);
+      await notificationSyncService.syncLocalNotifications(
+        previousPlans: prevPlans,
+        nextPlans: nextPlans,
+      );
+    });
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,

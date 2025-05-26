@@ -26,7 +26,14 @@ class NotificationsView extends ConsumerWidget {
         final now = DateTime.now();
 
         final visibleNotifs =
-            notifs.where((n) => now.isAfter(n.scheduledAt)).toList();
+            notifs.where((n) => now.isAfter(n.scheduledAt)).toList()
+              ..sort((a, b) {
+                if (a.isRead != b.isRead) {
+                  return a.isRead ? 1 : -1;
+                }
+
+                return b.scheduledAt.compareTo(a.scheduledAt);
+              });
 
         if (visibleNotifs.isEmpty) {
           return Center(
@@ -39,32 +46,35 @@ class NotificationsView extends ConsumerWidget {
           );
         }
 
-        return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-            centerTitle: true,
-            toolbarHeight: kToolbarHeight * 1.75,
-            title: Text(
-              "Your Notifications",
-              style: Theme.of(context).textTheme.bodyLarge,
+        return RefreshIndicator(
+          onRefresh: () async {},
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+              centerTitle: true,
+              toolbarHeight: kToolbarHeight * 1.75,
+              title: Text(
+                "Your Notifications",
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
             ),
-          ),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                spacing: 4,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children:
-                    visibleNotifs
-                        .map(
-                          (notif) => NotificationCard(
-                            notification: notif,
-                            leadingIcon: Icon(Symbols.alarm),
-                            isRead: notif.isRead,
-                          ),
-                        )
-                        .toList(),
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  spacing: 4,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children:
+                      visibleNotifs
+                          .map(
+                            (notif) => NotificationCard(
+                              notification: notif,
+                              leadingIcon: Icon(Symbols.alarm),
+                              isRead: notif.isRead,
+                            ),
+                          )
+                          .toList(),
+                ),
               ),
             ),
           ),

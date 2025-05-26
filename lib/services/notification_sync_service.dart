@@ -25,7 +25,7 @@ class NotificationSyncService {
     return notificationIds;
   }
 
-  Future<void> cancelNotificationsForPlan(TravelPlan plan) async {
+  Future<void> cancelLocalNotificationsForPlan(TravelPlan plan) async {
     final ids = getNotificationIdsForPlan(plan);
     for (final id in ids) {
       await _notificationService.cancelNotification(id: id);
@@ -33,7 +33,7 @@ class NotificationSyncService {
     }
   }
 
-  Future<void> scheduleNotificationsForPlan(TravelPlan plan) async {
+  Future<void> scheduleLocalNotificationsForPlan(TravelPlan plan) async {
     for (final activity in plan.activities) {
       for (final reminder in activity.reminders) {
         final scheduledDate = activity.startAt.subtract(reminder);
@@ -59,67 +59,11 @@ class NotificationSyncService {
           payload: notification.planID,
           scheduledDate: notification.scheduledAt,
         );
-
-        debugPrint(
-          "[NOT_TRACE ${DateTime.now()}] To: ${notification.to.toString()}",
-        );
-        debugPrint("[NOT_TRACE ${DateTime.now()}] ${notification.body}");
-        final notificationQuery = await FirebaseFirestoreApi()
-            .fetchNotificationFromID(notification.notificationID);
-
-        UserNotification? userNotification;
-
-        notificationQuery.when(
-          onSuccess: (success) {
-            userNotification = UserNotification.fromDocument(success.data);
-            debugPrint(success.message);
-          },
-          onFailure: (error) {
-            userNotification = null;
-            debugPrint(error.message);
-          },
-        );
-
-        if (userNotification != null) {
-          debugPrint("Loaded notification: ${userNotification!.title}");
-          final deepEq = const DeepCollectionEquality();
-
-          final isSame =
-              userNotification!.planID == notification.planID &&
-              userNotification!.title == notification.title &&
-              userNotification!.body == notification.body &&
-              userNotification!.scheduledAt == notification.scheduledAt &&
-              deepEq.equals(userNotification!.to, notification.to);
-
-          if (isSame) {
-            debugPrint(
-              "[${DateTime.now()}] Skipped rescheduling (same): ${activity.title}",
-            );
-            continue;
-          }
-        } else {
-          debugPrint("Notification not found or failed to load.");
-        }
-
-        final result = await FirebaseFirestoreApi().addCloudNotification(
-          notification,
-        );
-
-        debugPrint(
-          "Cloud Notification: ${result.message} ${notification.title}",
-        );
-
-        final deleteResult = await FirebaseFirestoreApi()
-            .deleteCloudNotification(id);
-
-        debugPrint(
-          "[NOT_TRACE ${DateTime.now()}] Scheduled notif for ${activity.title}",
-        );
       }
     }
   }
 
-  Future<void> syncNotifications({
+  Future<void> syncLocalNotifications({
     required List<TravelPlan> previousPlans,
     required List<TravelPlan> nextPlans,
   }) async {
@@ -160,8 +104,8 @@ class NotificationSyncService {
           updatedPlan.hasDifferentActivities(previousPlan) ||
           updatedPlan.hasDifferentSharedWith(previousPlan)) {
         debugPrint("[NOTIF CHANGE] ${updatedPlan.title}");
-        await cancelNotificationsForPlan(updatedPlan);
-        await scheduleNotificationsForPlan(updatedPlan);
+        await cancelLocalNotificationsForPlan(updatedPlan);
+        await scheduleLocalNotificationsForPlan(updatedPlan);
       }
     }
 
@@ -171,7 +115,70 @@ class NotificationSyncService {
     );
 
     for (final plan in removedPlans) {
-      await scheduleNotificationsForPlan(plan);
+      await cancelLocalNotificationsForPlan(plan);
+    }
+  }
+
+  Future<void> syncCloudNotificationForPlan(TravelPlan plan) async {
+    for (final activity in plan.activities) {
+      for (final reminder in activity.reminders) {
+        final scheduledDate = activity.startAt.subtract(reminder);
+        final id = Object.hash(plan.id, activity, reminder);
+        final stringId = "${plan.id}_${scheduledDate.toIso8601String()}";
+        final receivers = [...plan.sharedWith, plan.creatorID];
+
+        final notification = UserNotification(
+          notificationID: stringId,
+          to: receivers,
+          planID: plan.id,
+          title: plan.title,
+          body:
+              "${activity.title} is starting in ${TimeUtils.convertDurationToStr(reminder)}!",
+          scheduledAt: scheduledDate,
+          isRead: false,
+        );
+
+        // Fetch existing cloud notification
+        final notificationQuery = await FirebaseFirestoreApi()
+            .fetchNotificationFromID(notification.notificationID);
+
+        UserNotification? userNotification;
+
+        notificationQuery.when(
+          onSuccess: (success) {
+            userNotification = UserNotification.fromDocument(success.data);
+          },
+          onFailure: (_) {
+            userNotification = null;
+          },
+        );
+
+        final deepEq = const DeepCollectionEquality();
+
+        final isSame =
+            userNotification != null &&
+            userNotification!.planID == notification.planID &&
+            userNotification!.title == notification.title &&
+            userNotification!.body == notification.body &&
+            userNotification!.scheduledAt == notification.scheduledAt &&
+            deepEq.equals(userNotification!.to, notification.to);
+
+        if (!isSame) {
+          await FirebaseFirestoreApi().addCloudNotification(notification);
+          await FirebaseFirestoreApi().deleteCloudNotification(id);
+          debugPrint(
+            "[NOT_TRACE ${DateTime.now()}] Synced cloud notif for ${activity.title}",
+          );
+        } else {
+          debugPrint("Skipped cloud sync (no changes): ${activity.title}");
+        }
+      }
+    }
+  }
+
+  Future<void> syncCloudNotifications({required List<TravelPlan> plans}) async {
+    for (final plan in plans) {
+      await syncCloudNotificationForPlan(plan);
     }
   }
 }
