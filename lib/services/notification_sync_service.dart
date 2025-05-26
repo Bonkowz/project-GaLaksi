@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:galaksi/apis/firebase_firestore_api.dart';
 import 'package:galaksi/models/notification_model.dart';
 import 'package:galaksi/models/travel_plan/travel_plan_model.dart';
-import 'package:galaksi/models/user/user_model.dart';
-import 'package:galaksi/providers/auth/auth_notifier.dart';
 import 'package:galaksi/services/notification_service.dart';
 import 'package:galaksi/utils/time_utils.dart';
 
@@ -123,7 +121,6 @@ class NotificationSyncService {
     for (final activity in plan.activities) {
       for (final reminder in activity.reminders) {
         final scheduledDate = activity.startAt.subtract(reminder);
-        final id = Object.hash(plan.id, activity, reminder);
         final stringId = "${plan.id}_${scheduledDate.toIso8601String()}";
         final receivers = [...plan.sharedWith, plan.creatorID];
 
