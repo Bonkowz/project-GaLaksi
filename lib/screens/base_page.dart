@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:galaksi/screens/main/find_people_page.dart';
+import 'package:galaksi/screens/main/social_page.dart';
 import 'package:galaksi/screens/main/home_page.dart';
 import 'package:galaksi/screens/main/notifications_page.dart';
 import 'package:galaksi/screens/main/profile_page.dart';

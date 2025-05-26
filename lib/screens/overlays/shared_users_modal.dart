@@ -334,13 +334,7 @@ class _UserTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final travelPlan = ref.watch(travelPlanStreamProvider(travelPlanId)).value!;
     return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: UserAvatar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        textColor: Theme.of(context).colorScheme.onPrimaryContainer,
-        firstName: user.firstName,
-        image: user.image,
-      ),
+      leading: UserAvatar(user: user),
       title: Text(
         "${user.firstName} ${user.lastName}",
         style: const TextStyle(fontWeight: FontWeight.bold),

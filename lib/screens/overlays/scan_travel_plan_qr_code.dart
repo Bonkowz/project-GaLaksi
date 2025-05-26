@@ -299,7 +299,6 @@ class TravelPlanCreatorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     return Card.filled(
       child: Padding(
@@ -308,10 +307,7 @@ class TravelPlanCreatorCard extends StatelessWidget {
           spacing: 12,
           children: [
             UserAvatar(
-              image: creator.image,
-              firstName: creator.firstName,
-              backgroundColor: colorScheme.primaryContainer,
-              textColor: colorScheme.onPrimaryContainer,
+              user: creator,
               textStyle: textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -338,7 +334,6 @@ class TravelPlanSharedWithCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     return Card.outlined(
       child: Padding(
@@ -365,10 +360,7 @@ class TravelPlanSharedWithCard extends StatelessWidget {
                       children:
                           sharedWith.map((user) {
                             return UserAvatar(
-                              image: user.image,
-                              firstName: user.firstName,
-                              backgroundColor: colorScheme.primaryContainer,
-                              textColor: colorScheme.onPrimaryContainer,
+                              user: user,
                               textStyle: textTheme.labelLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
