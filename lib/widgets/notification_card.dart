@@ -9,6 +9,7 @@ class NotificationCard extends StatelessWidget {
     required this.notification,
     required this.leadingIcon,
     required this.isRead,
+    super.key,
   });
 
   final UserNotification notification;
