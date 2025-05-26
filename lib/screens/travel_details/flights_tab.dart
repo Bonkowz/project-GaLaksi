@@ -157,12 +157,12 @@ class FlightsTab extends StatelessWidget {
                         //     // TODO: Implement edit functionality for flight
                         //   },
                         // ),
-                        IconButton(
-                          icon: const Icon(Symbols.delete, size: 20),
-                          onPressed: () {
-                            // TODO: Implement delete functionality for flight
-                          },
-                        ),
+                        // IconButton(
+                        //   icon: const Icon(Symbols.delete, size: 20),
+                        //   onPressed: () {
+                        //     // TODO: Implement delete functionality for flight
+                        //   },
+                        // ),
                       ],
                     ),
                   ],

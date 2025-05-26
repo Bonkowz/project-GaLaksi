@@ -1,4 +1,7 @@
+import 'dart:nativewrappers/_internal/vm/lib/mirrors_patch.dart';
+
 import 'package:flutter/material.dart';
+import 'package:galaksi/providers/travel_plan/get_travel_plan_provider.dart';
 import 'package:galaksi/widgets/create_details_button.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:galaksi/models/travel_plan/accommodation_model.dart';
@@ -132,13 +135,18 @@ class AccommodationsTab extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        IconButton(
-                          icon: const Icon(Symbols.delete, size: 20),
-                          onPressed: () {
-                            final updatedAccommodations = List<Accommodation>.from(accommodations)
-                              ..removeAt(index);
-                          },
-                        ),
+                        // IconButton(
+                        //   icon: const Icon(Symbols.delete, size: 20),
+                        //   onPressed: () {
+                        //     final updatedAccommodations = List<Accommodation>.from(accommodations)
+                        //       ..removeAt(index);
+                        //     final travelPlan = 
+                        //       ref
+                        //         .watch(travelPlanStreamProvider(widget.travelPlanId))
+                        //         .valueOrNull;
+                        //     final edit 
+                        //   },
+                        // ),
                       ],
                     ),
                   ],
