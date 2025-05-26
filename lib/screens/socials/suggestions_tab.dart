@@ -67,7 +67,7 @@ class _UserProfileCard extends ConsumerWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            UserAvatar(image: user.image, firstName: user.firstName),
+            UserAvatar(user: user),
             const SizedBox(width: 16.0),
             Expanded(
               child: Column(
@@ -206,10 +206,7 @@ class _SendFriendRequestBottomSheet extends ConsumerWidget {
         children: [
           Row(
             children: [
-              UserAvatar(
-                image: targetUser.image,
-                firstName: targetUser.firstName,
-              ),
+              UserAvatar(user: targetUser),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(

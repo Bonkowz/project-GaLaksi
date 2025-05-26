@@ -1,11 +1,12 @@
 import 'dart:convert';
 
+import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:galaksi/models/user/user_model.dart';
 
 class UserAvatar extends StatelessWidget {
   const UserAvatar({
-    required this.image,
-    required this.firstName,
+    required this.user,
     this.backgroundColor,
     this.textColor,
     this.textStyle,
@@ -13,8 +14,7 @@ class UserAvatar extends StatelessWidget {
     super.key,
   });
 
-  final String image;
-  final String firstName;
+  final User user;
   final Color? backgroundColor;
   final Color? textColor;
   final TextStyle? textStyle;
@@ -27,12 +27,12 @@ class UserAvatar extends StatelessWidget {
     final effectiveTextColor =
         textColor ?? Theme.of(context).colorScheme.onPrimaryContainer;
 
-    if (image.isEmpty) {
+    if (user.image.isEmpty) {
       return CircleAvatar(
         backgroundColor: effectiveBackgroundColor,
         radius: radius,
         child: Text(
-          firstName.isNotEmpty ? firstName[0].toUpperCase() : '',
+          StringUtils.capitalize(user.firstName)[0],
           style:
               textStyle ??
               TextStyle(fontWeight: FontWeight.bold, color: effectiveTextColor),
@@ -40,7 +40,7 @@ class UserAvatar extends StatelessWidget {
       );
     } else {
       return CircleAvatar(
-        foregroundImage: MemoryImage(base64Decode(image)),
+        foregroundImage: MemoryImage(base64Decode(user.image)),
         radius: radius,
       );
     }

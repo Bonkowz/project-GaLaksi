@@ -157,7 +157,7 @@ class _FriendRequestCardDetails extends ConsumerWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            UserAvatar(image: user.image, firstName: user.firstName),
+            UserAvatar(user: user),
             const SizedBox(width: 16.0),
             Expanded(
               child: Column(

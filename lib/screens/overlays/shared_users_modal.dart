@@ -84,7 +84,7 @@ class _UserTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: UserAvatar(firstName: user.firstName, image: user.image),
+      leading: UserAvatar(user: user),
       title: Text(
         "${user.firstName} ${user.lastName}",
         style: const TextStyle(fontWeight: FontWeight.bold),

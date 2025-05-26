@@ -337,8 +337,7 @@ class TravelPlanCreatorCard extends StatelessWidget {
           spacing: 12,
           children: [
             UserAvatar(
-              image: creator.image,
-              firstName: creator.firstName,
+              user: creator,
               textStyle: textTheme.labelLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -391,8 +390,7 @@ class TravelPlanSharedWithCard extends StatelessWidget {
                       children:
                           sharedWith.map((user) {
                             return UserAvatar(
-                              image: user.image,
-                              firstName: user.firstName,
+                              user: user,
                               textStyle: textTheme.labelLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
