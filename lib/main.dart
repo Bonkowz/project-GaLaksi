@@ -36,42 +36,35 @@ class MainApp extends ConsumerWidget {
 
     final textTheme = createTextTheme(context, "Figtree", "Figtree");
 
+    // Listen to changes in travel plan streams and sync notification
     ref.listen<AsyncValue<List<TravelPlan>>>(myTravelPlansStreamProvider, (
-      previous,
+      prev,
       next,
-    ) {
-      next.when(
-        data: (plans) async {
-          for (final plan in plans) {
-            await notificationSyncService.cancelNotificationsForPlan(plan);
-            await notificationSyncService.scheduleNotificationsForPlan(plan);
-          }
-        },
-        loading: () {},
-        error: (error, stack) {
-          debugPrint("Error in travel plan stream: $error");
-        },
+    ) async {
+      final prevPlans = prev?.valueOrNull ?? [];
+      final nextPlans = next.valueOrNull ?? [];
+
+      final notificationSyncService = ref.read(notificationSyncServiceProvider);
+      await notificationSyncService.syncNotifications(
+        previousPlans: prevPlans,
+        nextPlans: nextPlans,
       );
     });
 
     ref.listen<AsyncValue<List<TravelPlan>>>(sharedTravelPlansStreamProvider, (
-      previous,
+      prev,
       next,
-    ) {
-      next.when(
-        data: (plans) async {
-          // Call sync when data updates
-          for (final plan in plans) {
-            await notificationSyncService.cancelNotificationsForPlan(plan);
-            await notificationSyncService.scheduleNotificationsForPlan(plan);
-          }
-        },
-        loading: () {},
-        error: (error, stack) {
-          debugPrint("Error in travel plan stream: $error");
-        },
+    ) async {
+      final prevPlans = prev?.valueOrNull ?? [];
+      final nextPlans = next.valueOrNull ?? [];
+
+      final notificationSyncService = ref.read(notificationSyncServiceProvider);
+      await notificationSyncService.syncNotifications(
+        previousPlans: prevPlans,
+        nextPlans: nextPlans,
       );
     });
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: scaffoldMessengerKey,
