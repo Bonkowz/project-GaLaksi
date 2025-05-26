@@ -26,7 +26,7 @@ final friendshipStreamProvider =
 // ignore: unused_element
 typedef FriendshipStreamRef = AutoDisposeStreamProviderRef<List<Friendship>>;
 String _$friendshipNotifierHash() =>
-    r'e610af98043164c4b4021139021616936755778d';
+    r'23dd5c6745f681cefa8fc0255d35d2dfc009c621';
 
 /// See also [FriendshipNotifier].
 @ProviderFor(FriendshipNotifier)

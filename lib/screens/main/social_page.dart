@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:galaksi/screens/socials/friend_requests_tab.dart';
+import 'package:galaksi/screens/socials/friends_tab.dart';
 import 'package:galaksi/screens/socials/suggestions_tab.dart';
 
 class FindPeoplePage extends ConsumerWidget {
@@ -22,11 +24,7 @@ class FindPeoplePage extends ConsumerWidget {
           ),
         ),
         body: const TabBarView(
-          children: [
-            SuggestionsTab(),
-            Center(child: Text("Friends Content")),
-            Center(child: Text("Friend Requests Content")),
-          ],
+          children: [SuggestionsTab(), FriendsTab(), FriendRequestsTab()],
         ),
       ),
     );

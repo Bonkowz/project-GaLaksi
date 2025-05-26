@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:galaksi/apis/firebase_firestore_api.dart';
 import 'package:galaksi/models/user/friendship_model.dart';
@@ -13,7 +12,6 @@ class FriendshipNotifier extends _$FriendshipNotifier {
     ref.listen(friendshipStreamProvider, (prev, next) async {
       final friendships = next.value ?? [];
       state = friendships;
-      debugPrint("$state");
     }, fireImmediately: true);
     return [];
   }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:galaksi/screens/main/social_page.dart';
 import 'package:galaksi/screens/main/home_page.dart';
-import 'package:galaksi/screens/socials/friends_page.dart';
 import 'package:galaksi/screens/main/profile_page.dart';
 import 'package:galaksi/screens/overlays/create_travel_plan_page.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -23,7 +22,7 @@ class _BasePageState extends State<BasePage> {
         const HomePage(),
         const FindPeoplePage(),
         const ProfilePage(),
-        const FriendsPage(),
+        const Placeholder(),
       ].map((page) {
         return AnimatedSwitcher(duration: Durations.short3, child: page);
       }).toList();
