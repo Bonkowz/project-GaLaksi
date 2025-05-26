@@ -34,45 +34,46 @@ GaLaksi! is a mobile travel planning application designed to help users seamless
 ### 1. Login/Sign Up
 - Login or SignUp with email/username
 
-![image](https://github.com/user-attachments/assets/81432e4f-fe5b-42b3-84a8-fa652228c0ba)![image](https://github.com/user-attachments/assets/2dd87da4-6219-4c46-884f-058b5dac0f5a)
-
+![image](https://github.com/user-attachments/assets/81432e4f-fe5b-42b3-84a8-fa652228c0ba)
+![image](https://github.com/user-attachments/assets/2dd87da4-6219-4c46-884f-058b5dac0f5a)
 
 - Set travel interests & travel preferences
   
 ![image](https://github.com/user-attachments/assets/8b471a92-c40f-4871-9be3-78b5be3d6c37)
 ![image](https://github.com/user-attachments/assets/3becd7b6-47a9-40ad-9caa-084253dc6055)
 
-
-
 ### 2. Create a Travel Plan
-- Add destination + dates
+- Add your destination or scan one from your friends!
 
 ![image](https://github.com/user-attachments/assets/e7f4ebdc-fc91-4371-bbe2-c12454e5c97d)
 ![image](https://github.com/user-attachments/assets/fc0bfebb-b2c8-4542-b723-d50f74f242a8)
 
-  
-- Additionaly: Flights, lodging, checklist
-  
-![494821589_1797197747813181_7148265388779656796_n](https://github.com/user-attachments/assets/bddcb616-88df-40fb-90f1-1bc164a1fb8e)![494815058_3054263351415072_5178352808325723336_n](https://github.com/user-attachments/assets/245c0536-ee03-4f10-9c51-504f34337835)
-
 ### 3. Manage Activities, Notes, Flights and Accomodations
 - Add Activities, Notes, Flights and Accomodations
-- Share via QR code  
+
 ![494818396_717752150805150_1476419755373855637_n](https://github.com/user-attachments/assets/05dc0f37-82e0-4f4c-be45-1623e876afec)
 ![494828067_1230471161948610_56029704419986660_n](https://github.com/user-attachments/assets/96d1329c-8d31-4b10-aa76-9102cfd879b6)
 ![494814397_1445112979953772_7377612639796933362_n](https://github.com/user-attachments/assets/456dfcd9-97a4-473b-b667-19ed0a461bdb)
 ![494815944_1215966616578127_2120645325040627178_n](https://github.com/user-attachments/assets/c62ab649-a39a-4687-97e8-c64933459b0e)
+
+- Share via QR code  
+
 ![494826902_1093315106185376_6655715506052700203_n](https://github.com/user-attachments/assets/303239c0-b735-4f94-af11-917158ff847b)
 
 ### 4. Find Similar Travelers
-- Discover users in *Friends* tab  
+- Discover users in *Friends* tab
+
+![image](https://github.com/user-attachments/assets/b7252ae0-0800-434e-b695-f3ace63fe1cc)
+
 - Explore public travel profiles
+  
 ![image](https://github.com/user-attachments/assets/175d6be0-453f-4b55-b123-49520d75248b)
 
 
 ### 5. Edit Profile
 - Update photo, bio, preferences  
-- Toggle privacy settings  
+- Toggle privacy settings
+
 ![494825026_632375413144962_2230135992050958068_n](https://github.com/user-attachments/assets/ef582fa3-aada-412c-915b-037e68a5af77)
 ![494822601_1052743933436838_4324924217693831099_n](https://github.com/user-attachments/assets/2b4b5fef-8fa7-400c-adad-d27173c3c4d4)
 
